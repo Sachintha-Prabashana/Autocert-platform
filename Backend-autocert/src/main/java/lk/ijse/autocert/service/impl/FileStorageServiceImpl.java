@@ -1,4 +1,4 @@
-package lk.ijse.autocertbackend.service.impl;
+package lk.ijse.autocert.service.impl;
 
 import lk.ijse.autocert.service.FileStorageService;
 import org.springframework.beans.factory.annotation.Value;

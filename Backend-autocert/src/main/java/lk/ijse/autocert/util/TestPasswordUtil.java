@@ -1,4 +1,4 @@
-package lk.ijse.autocertbackend.util;
+package lk.ijse.autocert.util;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 

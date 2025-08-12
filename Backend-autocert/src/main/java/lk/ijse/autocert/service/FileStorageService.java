@@ -1,4 +1,4 @@
-package lk.ijse.autocertbackend.service;
+package lk.ijse.autocert.service;
 
 import org.springframework.web.multipart.MultipartFile;
 

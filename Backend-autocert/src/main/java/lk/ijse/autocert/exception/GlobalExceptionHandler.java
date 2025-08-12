@@ -1,4 +1,4 @@
-package lk.ijse.autocertbackend.exception;
+package lk.ijse.autocert.exception;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import lk.ijse.autocert.dto.ApiResponse;

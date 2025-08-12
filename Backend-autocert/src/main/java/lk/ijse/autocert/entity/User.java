@@ -1,4 +1,4 @@
-package lk.ijse.autocertbackend.entity;
+package lk.ijse.autocert.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

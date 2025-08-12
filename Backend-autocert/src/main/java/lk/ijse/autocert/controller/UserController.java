@@ -1,4 +1,4 @@
-package lk.ijse.autocertbackend.controller;
+package lk.ijse.autocert.controller;
 
 import lk.ijse.autocert.dto.UpdateProfileDTO;
 import lk.ijse.autocert.dto.UserDTO;

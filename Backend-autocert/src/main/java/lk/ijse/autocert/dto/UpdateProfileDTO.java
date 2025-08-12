@@ -1,4 +1,4 @@
-package lk.ijse.autocertbackend.dto;
+package lk.ijse.autocert.dto;
 
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;

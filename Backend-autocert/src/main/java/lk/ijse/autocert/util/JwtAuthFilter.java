@@ -1,4 +1,4 @@
-package lk.ijse.autocertbackend.util;
+package lk.ijse.autocert.util;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

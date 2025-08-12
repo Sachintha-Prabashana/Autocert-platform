@@ -1,4 +1,4 @@
-package lk.ijse.autocertbackend.dto;
+package lk.ijse.autocert.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

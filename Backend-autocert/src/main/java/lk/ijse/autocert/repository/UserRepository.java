@@ -1,4 +1,4 @@
-package lk.ijse.autocertbackend.repository;
+package lk.ijse.autocert.repository;
 
 import lk.ijse.autocert.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;

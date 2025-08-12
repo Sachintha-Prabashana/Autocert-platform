@@ -1,4 +1,4 @@
-package lk.ijse.autocertbackend.entity;
+package lk.ijse.autocert.entity;
 
 public enum PaymentStatus {
     PENDING,

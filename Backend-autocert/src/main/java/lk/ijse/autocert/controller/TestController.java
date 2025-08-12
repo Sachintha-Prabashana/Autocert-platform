@@ -1,4 +1,4 @@
-package lk.ijse.autocertbackend.controller;
+package lk.ijse.autocert.controller;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;

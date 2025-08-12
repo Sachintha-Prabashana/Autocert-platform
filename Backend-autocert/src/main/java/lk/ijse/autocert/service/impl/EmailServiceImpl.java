@@ -1,4 +1,4 @@
-package lk.ijse.autocertbackend.service.impl;
+package lk.ijse.autocert.service.impl;
 
 import lk.ijse.autocert.service.EmailService;
 import lombok.RequiredArgsConstructor;

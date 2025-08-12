@@ -1,4 +1,4 @@
-package lk.ijse.autocertbackend.exception;
+package lk.ijse.autocert.exception;
 
 public class UserAlreadyExistsException extends RuntimeException {
     public UserAlreadyExistsException(String message) {

@@ -1,8 +1,7 @@
-package lk.ijse.autocertbackend.service;
+package lk.ijse.autocert.service;
 
 import jakarta.transaction.Transactional;
 import lk.ijse.autocert.dto.AuthDTO;
-import lk.ijse.autocert.dto.AuthResponseDTO;
 import lk.ijse.autocert.dto.GoogleLoginDTO;
 import lk.ijse.autocert.dto.RegisterDTO;
 import lk.ijse.autocert.entity.User;

@@ -1,4 +1,4 @@
-package lk.ijse.autocertbackend.controller;
+package lk.ijse.autocert.controller;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;

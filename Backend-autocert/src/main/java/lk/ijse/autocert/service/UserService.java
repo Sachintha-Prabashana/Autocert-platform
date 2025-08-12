@@ -1,4 +1,4 @@
-package lk.ijse.autocertbackend.service;
+package lk.ijse.autocert.service;
 
 public interface UserService {
 }

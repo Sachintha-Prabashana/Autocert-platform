@@ -1,4 +1,4 @@
-package lk.ijse.autocertbackend.config;
+package lk.ijse.autocert.config;
 
 import lk.ijse.autocert.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
