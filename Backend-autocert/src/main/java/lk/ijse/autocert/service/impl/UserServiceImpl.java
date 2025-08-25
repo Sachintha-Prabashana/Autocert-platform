@@ -4,18 +4,21 @@ import lk.ijse.autocert.dto.UpdateProfileDTO;
 import lk.ijse.autocert.dto.UserDTO;
 import lk.ijse.autocert.entity.User;
 import lk.ijse.autocert.repository.UserRepository;
-import lk.ijse.autocert.service.FileStorageService;
+import lk.ijse.autocert.service.ImgbbService;
+import lk.ijse.autocert.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl {
+public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final FileStorageService fileStorageService;
     private final ModelMapper modelMapper;  // Injected ModelMapper
+    private final ImgbbService imgbbService; // Assuming you have an ImgbbService for image uploads
 
     public UserDTO getUserByEmail(String email) {
         User user = userRepository.findByEmail(email)
@@ -25,7 +28,7 @@ public class UserServiceImpl {
         return modelMapper.map(user, UserDTO.class);
     }
 
-    public UserDTO updateProfile(String email, UpdateProfileDTO dto) {
+    public UserDTO updateProfile(String email, UpdateProfileDTO dto) throws IOException, InterruptedException {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -33,13 +36,20 @@ public class UserServiceImpl {
         user.setLastName(dto.getLastName());
         user.setPhone(dto.getPhone());
 
+        // Upload to ImgBB instead of local storage
         if (dto.getImage() != null && !dto.getImage().isEmpty()) {
-            String imageUrl = fileStorageService.storeFile(dto.getImage());
+            String imageUrl = imgbbService.uploadImage(dto.getImage());
             user.setProfileImageUrl(imageUrl);
         }
 
         User updatedUser = userRepository.save(user);
-        // Map updated user to DTO using ModelMapper
         return modelMapper.map(updatedUser, UserDTO.class);
     }
+
+    @Override
+    public User getUserEntityByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
 }

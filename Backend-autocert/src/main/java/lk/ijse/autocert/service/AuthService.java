@@ -2,8 +2,10 @@ package lk.ijse.autocert.service;
 
 import jakarta.transaction.Transactional;
 import lk.ijse.autocert.dto.AuthDTO;
+import lk.ijse.autocert.dto.AuthResponseDTO;
 import lk.ijse.autocert.dto.GoogleLoginDTO;
 import lk.ijse.autocert.dto.RegisterDTO;
+import lk.ijse.autocert.entity.Role;
 import lk.ijse.autocert.entity.User;
 import lk.ijse.autocert.exception.UserAlreadyExistsException;
 import lk.ijse.autocert.repository.UserRepository;
@@ -42,16 +44,14 @@ public class AuthService {
                 .build();
         userRepository.save(newUser);
 
-        emailService.sendSimpleEmail(
+        emailService.sendRegistrationEmail(
                 newUser.getEmail(),
-                "Registration Successful",
-                "Dear " + newUser.getFirstName() + ",\n\nThank you for registering at AutoCert! We're glad to have you.\n\nBest regards,\nAutoCert Team"
-        );
+                newUser.getFirstName());
         return "User registered successfully";
     }
 
     // Method to login a user and return a JWT token
-    public String authenticate(AuthDTO authDTO) {
+    public AuthResponseDTO authenticate(AuthDTO authDTO) {
         User user = userRepository.findByEmail(authDTO.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found with email: " + authDTO.getEmail()));
 
@@ -60,9 +60,11 @@ public class AuthService {
         }
 
         String token = jwtUtil.generateToken(user.getEmail());
-        return token;
+        String role = user.getRole().name();
 
+        return new AuthResponseDTO(token, role);
     }
+
 
     @Transactional
     public String loginWithGoogle(GoogleLoginDTO googleLoginDTO) throws GeneralSecurityException, IOException {
@@ -87,5 +89,9 @@ public class AuthService {
     }
 
 
-
+    public Role getUserRoleByEmail(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
+        return user.getRole();
+    }
 }

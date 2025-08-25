@@ -1,14 +1,17 @@
 package lk.ijse.autocert.dto;
 
+import lk.ijse.autocert.entity.InspectionType;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
-public class BookingDTO {
-    private Long id;
-    private Long vehicleId;
-    private Long ownerId;
-    private LocalDateTime appointmentDate;
-    private String status;
+public class BookingRequestDTO {
+    private String brand;
+    private String model;
+    private int year;
+    private String description;
+    private LocalDate appointmentDate;
+    private InspectionType inspectionType;
 }

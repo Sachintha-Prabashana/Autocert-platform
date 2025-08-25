@@ -1,14 +1,14 @@
 package lk.ijse.autocert.controller;
 
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lk.ijse.autocert.dto.ApiResponse;
-import lk.ijse.autocert.dto.AuthDTO;
-import lk.ijse.autocert.dto.GoogleLoginDTO;
-import lk.ijse.autocert.dto.RegisterDTO;
+import lk.ijse.autocert.dto.*;
+import lk.ijse.autocert.entity.Role;
 import lk.ijse.autocert.service.AuthService;
 import lk.ijse.autocert.service.EmailService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -32,62 +32,51 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse> loginUser(@RequestBody AuthDTO authDTO,
-                                                 HttpServletResponse response) {
+    public ResponseEntity<AuthResponseDTO> loginUser(@RequestBody AuthDTO authDTO) {
+        // ✅ Get AuthResponseDTO (token + role)
+        AuthResponseDTO authResponse = authService.authenticate(authDTO);
 
-        // ✅ Step 1: Authenticate and generate JWT token
-        String jwtToken = authService.authenticate(authDTO);
+        // ❌ Do not set cookie anymore
+        return ResponseEntity.ok(authResponse);
+    }
 
-        // ✅ Step 2: Create secure HttpOnly cookie
-        Cookie cookie = new Cookie("token", jwtToken);
-        cookie.setHttpOnly(true);       // 🔒 Prevent access from JS
-        cookie.setSecure(true);         // 🔐 Only sent via HTTPS (enable HTTPS in prod)
-        cookie.setPath("/");            // 📍 Makes cookie available across all endpoints
-        cookie.setMaxAge(24 * 60 * 60); // ⏳ Expires in 1 day
 
-        // ✅ Step 3: Add cookie to response
-        response.addCookie(cookie);
-
-        return ResponseEntity.ok(
-                new ApiResponse(200, "User logged in successfully", null)
-        );
+    @PostMapping("/logout")
+    public ResponseEntity<ApiResponse> logout() {
+        // ✅ Just return success, frontend will delete JS cookie
+        return ResponseEntity.ok(new ApiResponse(
+                200,
+                "User logged out successfully",
+                null,
+                null
+        ));
     }
 
     @PostMapping("/google")
-    public ResponseEntity<ApiResponse> loginWithGoogle(@RequestBody GoogleLoginDTO googleLoginDTO,
-                                                       HttpServletResponse response) {
+    public ResponseEntity<ApiResponse> loginWithGoogle(@RequestBody GoogleLoginDTO googleLoginDTO) {
         try {
-            String jwtToken = authService.loginWithGoogle(googleLoginDTO);
+            authService.loginWithGoogle(googleLoginDTO);
 
-            Cookie cookie = new Cookie("token", jwtToken);
-            cookie.setHttpOnly(true);
-            cookie.setSecure(true);
-            cookie.setPath("/");
-            cookie.setMaxAge(24 * 60 * 60);
-            response.addCookie(cookie);
-
+            // ✅ No cookie is set, frontend will create JS cookie
             return ResponseEntity.ok(new ApiResponse(200, "Google login successful", null));
         } catch (GeneralSecurityException | IOException e) {
             return ResponseEntity.status(401).body(new ApiResponse(401, "Invalid Google token", e.getMessage()));
         }
     }
 
-
-    // Sample dashboard endpoint accessible only by ADMIN
+    // Dashboard endpoints remain the same
     @GetMapping("/admin/dashboard")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse> adminDashboard() {
         return ResponseEntity.ok(new ApiResponse(200, "Welcome to Admin Dashboard", null));
     }
 
-    // Sample dashboard endpoint accessible only by CUSTOMER
     @GetMapping("/customer/dashboard")
     @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<ApiResponse> customerDashboard() {
         return ResponseEntity.ok(new ApiResponse(200, "Welcome to Customer Dashboard", null));
     }
 
-    // Sample dashboard endpoint accessible only by INSPECTOR
     @GetMapping("/inspector/dashboard")
     @PreAuthorize("hasRole('INSPECTOR')")
     public ResponseEntity<ApiResponse> inspectorDashboard() {

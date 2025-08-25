@@ -2,9 +2,301 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autocert - Trust in Every Vehicle Transaction</title>
+    <link rel="stylesheet" href="/Frontend/css/style.css">
 </head>
 <body>
+    <!-- Navigation -->
+    <nav class="nav" id="navbar">
+        <div class="nav-content">
+            <div class="logo">🚗 Autocert</div>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#listings">Listings</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <div class="auth-buttons">
+                <button class="btn-auth btn-signin" id="signInBtn">Sign In</button>
+                <button class="btn-auth btn-signup" id="signUpBtn">Sign Up</button>
+            </div>
+        </div>
+    </nav>
+ <!-- Sign Up Modal -->
+    <div class="modal" id="signUpModal">
+        <div class="modal-content">
+            <button class="modal-close" id="signUpModalClose">✕</button>
+            <div class="modal-header">
+                <h2>Join Autocert</h2>
+                <p>Create your account and start your journey</p>
+            </div>
+            <form id="signUpForm">
+                <div class="form-row">
+                    <div class="form-group form-half">
+                        <label for="firstName">First Name</label>
+                        <input type="text" id="firstName" class="form-input" placeholder="First name" required>
+                    </div>
+                    <div class="form-group form-half">
+                        <label for="lastName">Last Name</label>
+                        <input type="text" id="lastName" class="form-input" placeholder="Last name" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="signUpEmail">Email Address</label>
+                    <input type="email" id="signUpEmail" class="form-input" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group">
+                    <label for="phoneNumber">Phone Number</label>
+                    <input type="tel" id="phoneNumber" class="form-input" placeholder="Enter your phone number" required>
+                </div>
+                <div class="form-group">
+                    <label for="signUpPassword">Password</label>
+                    <input type="password" id="signUpPassword" class="form-input" placeholder="Create a password" required>
+                    <div class="password-strength" id="passwordStrength"></div>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" id="confirmPassword" class="form-input" placeholder="Confirm your password" required>
+                    <div class="password-match" id="passwordMatch"></div>
+                </div>
+                <button type="submit" class="signin-btn">Create Account</button>
+            </form>
+            <div class="divider">
+                <span>or continue with</span>
+            </div>
+            <button class="google-btn" id="googleSignUp">
+                <svg width="20" height="20" viewBox="0 0 24 24">
+                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                </svg>
+                Sign up with Google
+            </button>
+            <div class="signup-link">
+                Already have an account? <a href="#" id="switchToSignIn">Sign in here</a>
+            </div>
+        </div>
+    </div>
 
+    <!-- Sign In Modal -->
+    <div class="modal" id="signInModal">
+        <div class="modal-content">
+            <button class="modal-close" id="modalClose">✕</button>
+            <div class="modal-header">
+                <h2>Welcome Back</h2>
+                <p>Sign in to your Autocert account</p>
+            </div>
+            <form id="signInForm">
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" class="form-input" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" class="form-input" placeholder="Enter your password" required>
+                </div>
+                <div class="form-options">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="remember">
+                        <label for="remember">Remember me</label>
+                    </div>
+                    <a href="#" class="forgot-password">Forgot password?</a>
+                </div>
+                <button type="submit" class="signin-btn">Sign In</button>
+            </form>
+            <div class="divider">
+                <span>or continue with</span>
+            </div>
+            <button class="google-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24">
+                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                </svg>
+                Sign in with Google
+            </button>
+            <div class="signup-link">
+                Don't have an account? <a href="#" id="switchToSignUp">Sign up here</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="floating-shape shape-1"></div>
+        <div class="floating-shape shape-2"></div>
+        <div class="floating-shape shape-3"></div>
+        
+        <div class="hero-content">
+            <h1>Trust in Every Vehicle Transaction</h1>
+            <p>Professional vehicle inspections, seamless buying and selling experience. Your trusted partner in automotive excellence.</p>
+            <div class="cta-buttons">
+                <a href="#" class="btn btn-primary">Get Inspection</a>
+                <a href="#" class="btn btn-secondary">Browse Vehicles</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Listings Section -->
+    <section class="listings" id="listings">
+        <div class="container">
+            <h2 class="section-title fade-in">Featured Listings</h2>
+            <div class="listings-grid">
+                <div class="listing-card fade-in">
+                    <div class="listing-image">
+                        <div class="listing-badge">✅ Certified</div>
+                        <div class="listing-price">$24,999</div>
+                    </div>
+                    <div class="listing-content">
+                        <h3>2020 Honda Civic LX</h3>
+                        <p class="listing-details">45,000 miles • Automatic • FWD</p>
+                        <p class="listing-description">Excellent condition with full inspection report. One owner, clean history.</p>
+                        <div class="listing-features">
+                            <span class="feature-tag">🛡️ Warranty</span>
+                            <span class="feature-tag">📋 Inspected</span>
+                            <span class="feature-tag">🔧 Serviced</span>
+                        </div>
+                        <a href="#" class="btn-listing">View Details</a>
+                    </div>
+                </div>
+                
+                <div class="listing-card fade-in">
+                    <div class="listing-image">
+                        <div class="listing-badge">✅ Certified</div>
+                        <div class="listing-price">$31,500</div>
+                    </div>
+                    <div class="listing-content">
+                        <h3>2019 Toyota Camry SE</h3>
+                        <p class="listing-details">38,000 miles • Automatic • FWD</p>
+                        <p class="listing-description">Sport edition with premium features. Comprehensive inspection passed.</p>
+                        <div class="listing-features">
+                            <span class="feature-tag">🛡️ Warranty</span>
+                            <span class="feature-tag">📋 Inspected</span>
+                            <span class="feature-tag">⭐ Premium</span>
+                        </div>
+                        <a href="#" class="btn-listing">View Details</a>
+                    </div>
+                </div>
+                
+                <div class="listing-card fade-in">
+                    <div class="listing-image">
+                        <div class="listing-badge">✅ Certified</div>
+                        <div class="listing-price">$18,900</div>
+                    </div>
+                    <div class="listing-content">
+                        <h3>2018 Nissan Altima S</h3>
+                        <p class="listing-details">52,000 miles • CVT • FWD</p>
+                        <p class="listing-description">Well-maintained sedan with excellent fuel economy and safety ratings.</p>
+                        <div class="listing-features">
+                            <span class="feature-tag">🛡️ Warranty</span>
+                            <span class="feature-tag">📋 Inspected</span>
+                            <span class="feature-tag">⛽ Efficient</span>
+                        </div>
+                        <a href="#" class="btn-listing">View Details</a>
+                    </div>
+                </div>
+            </div>
+            <div class="listings-cta">
+                <a href="#" class="btn btn-primary">View All Listings</a>
+                <a href="#" class="btn btn-secondary">Sell Your Car</a>
+            </div>
+        </div>
+    </section>
+    <section class="features" id="features">
+        <div class="container">
+            <h2 class="section-title fade-in">Why Choose Autocert?</h2>
+            <div class="features-grid">
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">🔍</div>
+                    <h3>Professional Inspections</h3>
+                    <p>Comprehensive 150-point vehicle inspections by certified technicians. Get detailed reports with photos and recommendations.</p>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">💰</div>
+                    <h3>Secure Buying & Selling</h3>
+                    <p>Safe and transparent marketplace with verified listings, secure payments, and comprehensive buyer protection.</p>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">📱</div>
+                    <h3>Digital Experience</h3>
+                    <p>Modern platform with mobile app, real-time updates, digital documents, and seamless user experience.</p>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">🛡️</div>
+                    <h3>Trust & Transparency</h3>
+                    <p>Every vehicle comes with a detailed history report, inspection certificate, and warranty options for peace of mind.</p>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Fast & Efficient</h3>
+                    <p>Quick scheduling, same-day inspections available, and streamlined processes that save you time and money.</p>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">🎯</div>
+                    <h3>Expert Support</h3>
+                    <p>Dedicated customer support team and automotive experts available to guide you through every step.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item fade-in">
+                    <h3 id="inspections">0</h3>
+                    <p>Inspections Completed</p>
+                </div>
+                <div class="stat-item fade-in">
+                    <h3 id="vehicles">0</h3>
+                    <p>Vehicles Sold</p>
+                </div>
+                <div class="stat-item fade-in">
+                    <h3 id="customers">0</h3>
+                    <p>Happy Customers</p>
+                </div>
+                <div class="stat-item fade-in">
+                    <h3 id="rating">0</h3>
+                    <p>Average Rating</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-content fade-in">
+                <h2>Ready to Start Your Journey?</h2>
+                <p>Join thousands of satisfied customers who trust Autocert for their vehicle needs. Get started today and experience the difference.</p>
+                <a href="#" class="btn btn-primary">Get Started Now</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">About Us</a>
+                <a href="#">Contact</a>
+                <a href="#">Careers</a>
+            </div>
+            <p>&copy; 2025 Autocert. All rights reserved. Your trusted vehicle inspection and marketplace platform.</p>
+        </div>
+    </footer>
+
+    <!-- <script src="/Frontend/js/utils.js"></script> -->
+     <script src="/Frontend/js/script.js"></script>
+    <!-- <script src="/Frontend/js/login.js"></script>
+    <script src="/Frontend/js/register.js"></script> -->
+    
 </body>
 </html>

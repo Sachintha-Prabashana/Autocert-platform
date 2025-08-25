@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+
 
 @RestController
 @RequestMapping("/api/users")
@@ -30,10 +32,11 @@ public class UserController {
     public ResponseEntity<UserDTO> updateProfile(
             Authentication authentication,
             @ModelAttribute UpdateProfileDTO updateProfileDTO
-    ) {
+    ) throws IOException, InterruptedException {
         String email = authentication.getName();
         UserDTO updatedUser = userService.updateProfile(email, updateProfileDTO);
         return ResponseEntity.ok(updatedUser);
     }
+
 
 }
