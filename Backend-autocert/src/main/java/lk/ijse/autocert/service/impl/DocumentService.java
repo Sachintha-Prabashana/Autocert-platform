@@ -35,7 +35,7 @@ public class DocumentService {
                 .orElseThrow(() -> new IllegalArgumentException("Owner not found"));
 
         // Upload to Imgbb
-        String url = imgbbService.uploadImage(file);
+        String url = imgbbService.uploadFile(file);
 
         // Save document
         Document doc = Document.builder()
