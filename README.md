@@ -19,22 +19,20 @@
 ## Screenshots
 
 ### Home Page & Vehicle Marketplace
-![Home Page](<img width="1898" height="979" alt="Screenshot 2025-09-21 194841" src="https://github.com/user-attachments/assets/fc8e17f5-5547-4559-a11f-d8217fac61fe" />
-)
-*Modern landing page showcasing featured vehicles and inspection services*
+<img width="1898" height="979" alt="Screenshot 2025-09-21 194841" src="https://github.com/user-attachments/assets/68447d15-23ce-44aa-aebb-3671db865435" />
 
-![Vehicle Marketplace](<img width="1920" height="1080" alt="Screenshot 2025-09-21 195130" src="https://github.com/user-attachments/assets/73c3a6ed-bd7a-457a-8063-564c18e7f7ab" />
-)
+*Modern landing page showcasing featured vehicles and inspection services*
+<img width="1920" height="1080" alt="Screenshot 2025-09-21 195130" src="https://github.com/user-attachments/assets/8989b9e7-f077-42c9-96f5-d6da81da5310" />
+
 *Browse verified vehicles with detailed information and inspection status*
 *Customer portal for managing listings, bookings, and inspection reports*
 
 ### Add Listning Features
-![Add-listning Page](<img width="1920" height="1080" alt="Screenshot 2025-09-21 200045" src="https://github.com/user-attachments/assets/79c63fd6-60e2-4a12-a453-0817929bb5e6" />
-)
+<img width="1920" height="1080" alt="Screenshot 2025-09-21 200045" src="https://github.com/user-attachments/assets/6c5e7d1c-d79c-4837-9b39-2c4e5ab80ba4" />
 
-![Real-time Chat](<img width="1920" height="1080" alt="Screenshot 2025-09-21 200328" src="https://github.com/user-attachments/assets/131f3a2c-7ddc-4c0f-96db-8f12a0ba3ca0" />
-)
 *WebSocket-powered real-time messaging between buyers and sellers*
+<img width="1920" height="1080" alt="Screenshot 2025-09-21 200328" src="https://github.com/user-attachments/assets/01d3bf41-496f-4559-abd2-72294291e383" />
+
 
 ## Features Overview
 
