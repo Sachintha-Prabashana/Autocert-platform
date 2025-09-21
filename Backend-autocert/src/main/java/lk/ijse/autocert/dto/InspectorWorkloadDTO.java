@@ -9,12 +9,12 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class InspectorDTO {
-    private Long inspectorId;              // user id
-    private String name;                   // firstName + lastName
+public class InspectorWorkloadDTO {
+    private Long inspectorId;
+    private String name;
     private String email;
-    private String workingCenter;          // from InspectorProfile -> InspectionCenter
-    private List<String> specializations; // from InspectorProfile
-    private List<BookingInspectionDTO> assignedBookings; // bookings assigned to this inspector
+    private String workingCenter;
+    private List<String> specializations;
+    private int dailyBookingCount; // number of bookings on the specific day
 
 }

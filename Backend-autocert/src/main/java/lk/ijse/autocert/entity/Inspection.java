@@ -20,27 +20,23 @@ public class Inspection {
 
     private LocalDateTime inspectionDate;
 
+    private String vehicleDetails; // e.g., "Toyota Camry 2020"
+
     @Enumerated(EnumType.STRING)
-    private VehicleStatus result; // APPROVED, REJECTED
+    private ResultStatus result;
 
     @Enumerated(EnumType.STRING)
     private InspectionType type; // New field
 
-    private String report; // inspector’s remarks
+    @Column(length = 1000)
+    private String reportUrl; // Store either file path or a link to the PDF
 
     @ManyToOne
     @JoinColumn(name = "inspector_id")
     private User inspector;
 
-    @ManyToOne
-    @JoinColumn(name = "vehicle_id")
-    private Vehicle vehicle;
-
     @OneToOne
     @JoinColumn(name = "booking_id", nullable = false)
     private Booking booking;
 
-    @OneToOne
-    @JoinColumn(name = "booking_vehicle_id", nullable = false)
-    private BookingVehicle bookingVehicle;
 }

@@ -1,5 +1,6 @@
 package lk.ijse.autocert.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,6 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Table(name = "users")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,6 +28,10 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Builder.Default
     private Role role = Role.CUSTOMER; // ✅ Default set here; // e.g., ADMIN, CUSTOMER, INSPECTOR.
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private InspectorProfile inspectorProfile; // if role=INSPECTOR
 
     // Relationships
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)

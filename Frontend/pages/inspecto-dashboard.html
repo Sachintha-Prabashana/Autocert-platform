@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autocer Inspector Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+        :root {
+            --primary-color: #4A90E2;
+            --secondary-color: #50E3C2;
+            --background-color: #F4F7F9;
+            --card-background: #FFFFFF;
+            --text-color: #333333;
+            --text-light: #777777;
+            --border-color: #E0E6ED;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: var(--card-background);
+            padding: 20px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .sidebar nav ul {
+            list-style: none;
+            flex-grow: 1;
+        }
+
+        .sidebar nav ul li {
+            margin-bottom: 10px;
+        }
+
+        .sidebar nav ul li a {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            border-radius: 8px;
+            color: var(--text-light);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar nav ul li a i {
+            margin-right: 15px;
+            font-size: 18px;
+        }
+
+        .sidebar nav ul li a:hover,
+        .sidebar nav ul li a.active {
+            background-color: var(--primary-color);
+            color: white;
+            box-shadow: 0 4px 8px rgba(74, 144, 226, 0.2);
+        }
+
+        .logout-btn {
+            background-color: #E25E50;
+            color: white;
+            padding: 12px 20px;
+            text-align: center;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .logout-btn:hover {
+            background-color: #c34f43;
+        }
+
+        .main-content {
+            flex-grow: 1;
+            padding: 40px;
+        }
+
+        header.topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 30px;
+        }
+
+        .topbar h1 {
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+        .topbar .user-profile {
+            display: flex;
+            align-items: center;
+        }
+
+        .topbar .user-profile span {
+            font-weight: 500;
+        }
+
+        .topbar .user-profile img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-left: 15px;
+        }
+        
+        .dashboard-section {
+            background-color: var(--card-background);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+        }
+
+        .dashboard-section h2 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+        }
+
+        .inspection-list {
+            display: grid;
+            gap: 20px;
+        }
+
+        .inspection-card {
+            background-color: var(--background-color);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .inspection-card:hover {
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transform: translateY(-3px);
+        }
+
+        .inspection-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .inspection-card-header h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        .status-pill {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            color: white;
+            text-transform: uppercase;
+        }
+        
+        .status-pending { background-color: #F5A623; }
+        .status-completed { background-color: #50E3C2; }
+        .status-failed { background-color: #E25E50; }
+
+        .inspection-card-details p {
+            font-size: 14px;
+            margin-bottom: 5px;
+            color: var(--text-light);
+        }
+
+        .inspection-card-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .action-btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+
+        .action-btn i {
+            margin-right: 5px;
+        }
+
+        .action-btn.view { background-color: var(--primary-color); color: white; }
+        .action-btn.view:hover { background-color: #3a72c3; transform: translateY(-1px); }
+        .action-btn.update { background-color: var(--secondary-color); color: var(--text-color); }
+        .action-btn.update:hover { background-color: #44c2a4; transform: translateY(-1px); }
+        
+        /* Modal for Inspection Details */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: var(--card-background);
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 800px;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        .modal-content h3 {
+            margin-bottom: 20px;
+        }
+
+        .modal-content .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 25px;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .modal-section-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-top: 25px;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        .file-upload-box {
+            border: 2px dashed var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.2s ease;
+        }
+
+        .file-upload-box:hover {
+            border-color: var(--primary-color);
+        }
+        
+        .file-upload-box i {
+            font-size: 32px;
+            color: var(--text-light);
+        }
+        
+        .file-upload-box p {
+            margin-top: 10px;
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        .modal-buttons {
+            text-align: right;
+            margin-top: 20px;
+        }
+        
+        .modal-buttons button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .modal-buttons .cancel {
+            background-color: var(--border-color);
+            margin-right: 10px;
+        }
+        
+        .modal-buttons .submit {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-container {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            }
+            .sidebar nav ul {
+                flex-direction: row;
+                justify-content: space-around;
+            }
+            .sidebar nav ul li {
+                margin-bottom: 0;
+            }
+            .main-content {
+                padding: 20px;
+            }
+            .topbar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <div class="logo">Autocer Inspector</div>
+            <nav>
+                <ul>
+                    <li><a href="#" class="active" onclick="showDashboard()"><i class="fas fa-calendar-check"></i> My Schedule</a></li>
+                    <li><a href="#"><i class="fas fa-car-side"></i> Past Inspections</a></li>
+                    <li><a href="#" onclick="showListingSection()"><i class="fas fa-store"></i> List a Vehicle</a></li>
+                </ul>
+            </nav>
+            <a href="#" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Log Out</a>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <h1>My Schedule</h1>
+                <div class="user-profile">
+                    <span>Inspector Name</span>
+                    <img src="https://via.placeholder.com/150" alt="Inspector Profile">
+                </div>
+            </header>
+
+            <div id="dashboard-section" class="dashboard-section">
+                <h2>Today's Inspections</h2>
+                <div class="inspection-list">
+                    <div class="inspection-card">
+                        <div class="inspection-card-header">
+                            <h3>2022 Honda Civic</h3>
+                            <span class="status-pill status-pending">Pending</span>
+                        </div>
+                        <div class="inspection-card-details">
+                            <p><strong>Customer:</strong> Jane Doe</p>
+                            <p><strong>Time:</strong> 10:00 AM</p>
+                            <p><strong>Registration No.:</strong> ABC-123</p>
+                            <p><strong>Location:</strong> Autocer Center B</p>
+                        </div>
+                        <div class="inspection-card-actions">
+                            <button class="action-btn view" onclick="openDetailsModal('abc123')">
+                                <i class="fas fa-eye"></i> View Details
+                            </button>
+                            <button class="action-btn update" onclick="openUpdateModal('abc123')">
+                                <i class="fas fa-edit"></i> Update Status
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="inspection-card">
+                        <div class="inspection-card-header">
+                            <h3>2018 Toyota Camry</h3>
+                            <span class="status-pill status-completed">Completed</span>
+                        </div>
+                        <div class="inspection-card-details">
+                            <p><strong>Customer:</strong> John Smith</p>
+                            <p><strong>Time:</strong> 11:30 AM</p>
+                            <p><strong>Registration No.:</strong> XYZ-456</p>
+                            <p><strong>Location:</strong> Autocer Center B</p>
+                        </div>
+                        <div class="inspection-card-actions">
+                            <button class="action-btn view" onclick="openDetailsModal('xyz456')">
+                                <i class="fas fa-eye"></i> View Details
+                            </button>
+                            <button class="action-btn update" onclick="openUpdateModal('xyz456')" disabled>
+                                <i class="fas fa-edit"></i> Update Status
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="listing-section" class="dashboard-section" style="display: none;">
+                <h2>List a Vehicle for Sale</h2>
+                <p>This feature is available after a vehicle has passed an inspection. Enter the vehicle registration number to begin.</p>
+                <div class="form-group">
+                    <label for="reg-search">Vehicle Registration No.</label>
+                    <input type="text" id="reg-search" placeholder="Enter Registration No." required>
+                </div>
+                <button class="action-btn view">
+                    <i class="fas fa-search"></i> Search & List
+                </button>
+                <div id="listing-form" style="display: none; margin-top: 30px;">
+                    <div class="form-group">
+                        <label for="price">Price (in USD)</label>
+                        <input type="number" id="price" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="mileage">Mileage</label>
+                        <input type="number" id="mileage" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="photos">Upload Photos</label>
+                        <input type="file" id="photos" multiple accept="image/*" required>
+                    </div>
+                    <button class="action-btn update">
+                        <i class="fas fa-upload"></i> Submit Listing
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="details-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('details')">&times;</span>
+            <h3>Inspection Details</h3>
+            <div id="details-content">
+                <div class="modal-section-title">Customer Info</div>
+                <p><strong>Name:</strong> <span id="customer-name"></span></p>
+                <p><strong>Phone:</strong> <span id="customer-phone"></span></p>
+                <p><strong>Email:</strong> <span id="customer-email"></span></p>
+
+                <div class="modal-section-title">Vehicle Info</div>
+                <p><strong>Reg No:</strong> <span id="vehicle-reg"></span></p>
+                <p><strong>Make & Model:</strong> <span id="vehicle-make-model"></span></p>
+                <p><strong>Year:</strong> <span id="vehicle-year"></span></p>
+            </div>
+        </div>
+    </div>
+
+    <div id="update-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('update')">&times;</span>
+            <h3>Update Inspection Status</h3>
+            <div id="update-content">
+                <div class="form-group">
+                    <label for="status">Inspection Status</label>
+                    <select id="status" required>
+                        <option value="completed">Passed</option>
+                        <option value="failed">Failed</option>
+                        <option value="needs-repair">Needs Repair</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="report">Inspection Report</label>
+                    <div class="file-upload-box">
+                        <input type="file" id="report" style="display: none;">
+                        <i class="fas fa-upload"></i>
+                        <p>Drag & Drop or Click to Upload PDF/DOC</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="notes">Additional Notes</label>
+                    <textarea id="notes" rows="4"></textarea>
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button class="cancel" onclick="closeModal('update')">Cancel</button>
+                <button class="submit">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample data for demonstration
+        const inspections = {
+            'abc123': {
+                customer: 'Jane Doe',
+                phone: '+1-123-456-7890',
+                email: 'jane.doe@example.com',
+                make: 'Honda',
+                model: 'Civic',
+                year: '2022',
+                reg: 'ABC-123'
+            },
+            'xyz456': {
+                customer: 'John Smith',
+                phone: '+1-987-654-3210',
+                email: 'john.smith@example.com',
+                make: 'Toyota',
+                model: 'Camry',
+                year: '2018',
+                reg: 'XYZ-456'
+            }
+        };
+
+        function showDashboard() {
+            document.getElementById('dashboard-section').style.display = 'block';
+            document.getElementById('listing-section').style.display = 'none';
+        }
+
+        function showListingSection() {
+            document.getElementById('dashboard-section').style.display = 'none';
+            document.getElementById('listing-section').style.display = 'block';
+        }
+
+        function openDetailsModal(regId) {
+            const data = inspections[regId];
+            document.getElementById('customer-name').innerText = data.customer;
+            document.getElementById('customer-phone').innerText = data.phone;
+            document.getElementById('customer-email').innerText = data.email;
+            document.getElementById('vehicle-reg').innerText = data.reg;
+            document.getElementById('vehicle-make-model').innerText = `${data.make} ${data.model}`;
+            document.getElementById('vehicle-year').innerText = data.year;
+            document.getElementById('details-modal').style.display = 'flex';
+        }
+
+        function openUpdateModal(regId) {
+            // In a real app, you would fetch current status and reports
+            document.getElementById('update-modal').style.display = 'flex';
+        }
+
+        function closeModal(modalType) {
+            document.getElementById(modalType + '-modal').style.display = 'none';
+        }
+        
+        // Handle file upload click
+        document.querySelector('.file-upload-box').addEventListener('click', () => {
+            document.getElementById('report').click();
+        });
+
+    </script>
+</body>
+</html>

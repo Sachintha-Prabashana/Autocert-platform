@@ -36,6 +36,8 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable) // Disable CSRF for stateless APIs
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll() // Allow unauthenticated access to auth endpoints
+                        .requestMatchers("/api/vehicles/approved").permitAll() // ✅ Public: approved vehicles listing
+                        .requestMatchers("/ws/**").permitAll() // allow websocket connections
                         .anyRequest().authenticated() // Require authentication for all other endpoints
                 )
                 .sessionManagement(session -> session
@@ -59,7 +61,7 @@ public class SecurityConfig {
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList("http://127.0.0.1:3000", "http://localhost:3000")); // frontend
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true); // ✅ very important for cookies
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

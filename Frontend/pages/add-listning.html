@@ -1,0 +1,1327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoCert - List Your Vehicle</title>
+    <!-- SweetAlert2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            color: #334155;
+            min-height: 100vh;
+            padding: 0;
+        }
+
+        /* Navigation Bar Styles - UPDATED COLORS */
+        .header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #3b82f6 100%);
+            color: white;
+            padding: 1.5rem 0;
+            box-shadow: 0 8px 32px rgba(30, 58, 138, 0.25);
+            position: relative;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.05) 50%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .header-content {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.75rem;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .logo i {
+            color: #10b981;
+            font-size: 2rem;
+            filter: drop-shadow(0 2px 4px rgba(16, 185, 129, 0.3));
+        }
+
+        .nav-bar {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .nav-links li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 12px 20px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .nav-links li a:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-links li a.active {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.3), rgba(5, 150, 105, 0.3));
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            color: #ffffff;
+            box-shadow: 0 4px 16px rgba(16, 185, 129, 0.25);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-primary:hover {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-list-vehicle {
+            background: linear-gradient(135deg, #059669 0%, #10b981 50%, #34d399 100%);
+            color: white;
+            border: none;
+            font-weight: 700;
+            box-shadow: 0 6px 20px rgba(5, 150, 105, 0.35);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-list-vehicle:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(5, 150, 105, 0.45);
+            background: linear-gradient(135deg, #10b981 0%, #34d399 50%, #6ee7b7 100%);
+        }
+
+        .profile-trigger {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            padding: 10px 16px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+        }
+
+        .profile-trigger:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .profile-dropdown {
+            position: relative;
+        }
+
+        .profile-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(30, 58, 138, 0.25);
+            padding: 12px;
+            min-width: 220px;
+            z-index: 1000;
+            margin-top: 12px;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            backdrop-filter: blur(20px);
+        }
+
+        .profile-menu a {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 16px;
+            text-decoration: none;
+            color: #334155;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .profile-menu a:hover {
+            background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+            transform: translateX(4px);
+        }
+
+        .profile-menu hr {
+            margin: 12px 0;
+            border: none;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .profile-menu a.logout {
+            color: #dc2626;
+        }
+
+        .profile-menu a.logout:hover {
+            background: linear-gradient(135deg, #fef2f2, #fee2e2);
+        }
+
+        /* Mobile menu toggle */
+        .mobile-menu-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            padding: 8px;
+        }
+
+        .mobile-menu-toggle span {
+            width: 25px;
+            height: 3px;
+            background: white;
+            margin: 3px 0;
+            transition: 0.3s;
+            border-radius: 2px;
+        }
+
+        @media (max-width: 768px) {
+            .mobile-menu-toggle {
+                display: flex;
+            }
+
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+                flex-direction: column;
+                padding: 24px;
+                box-shadow: 0 8px 32px rgba(30, 58, 138, 0.25);
+                gap: 8px;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .nav-links li a {
+                padding: 16px 20px;
+                width: 100%;
+                justify-content: flex-start;
+                background: rgba(255, 255, 255, 0.1);
+            }
+
+            .header-content {
+                flex-wrap: wrap;
+                position: relative;
+            }
+
+            .user-info {
+                order: 3;
+                width: 100%;
+                justify-content: center;
+                margin-top: 24px;
+            }
+        }
+
+        /* Main Content Styles - UPDATED COLORS */
+        .main-container {
+            max-width: 1300px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(30, 58, 138, 0.12);
+            overflow: hidden;
+            min-height: 600px;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        .form-header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #3b82f6 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .form-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .form-header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .progress-container {
+            padding: 30px 40px 0 40px;
+            background: white;
+        }
+
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            position: relative;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e2e8f0;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-bottom: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .step.active .step-number {
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            color: white;
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);
+        }
+
+        .step.completed .step-number {
+            background: #10b981;
+            color: white;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .step-title {
+            font-size: 0.9rem;
+            color: #64748b;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .step.active .step-title {
+            color: #1e293b;
+            font-weight: 600;
+        }
+
+        .step-line {
+            position: absolute;
+            top: 20px;
+            left: 60%;
+            right: -40%;
+            height: 2px;
+            background: #e2e8f0;
+            z-index: -1;
+        }
+
+        .step:last-child .step-line {
+            display: none;
+        }
+
+        .step.completed .step-line {
+            background: #10b981;
+        }
+
+        .form-container {
+            padding: 20px 40px 40px 40px;
+        }
+
+        .step-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .step-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 25px;
+            text-align: center;
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        input, select, textarea {
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #fafbfc;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+            background: white;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+            font-family: inherit;
+        }
+
+        .required {
+            color: #dc2626;
+        }
+
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .nav-btn {
+            padding: 14px 24px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .btn-prev {
+            background: #f8fafc;
+            color: #475569;
+            border: 2px solid #e2e8f0;
+        }
+
+        .btn-prev:hover:not(:disabled) {
+            background: #f1f5f9;
+        }
+
+        .btn-prev:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-next, .btn-submit {
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #3b82f6 100%);
+            color: white;
+            box-shadow: 0 6px 20px rgba(30, 64, 175, 0.3);
+        }
+
+        .btn-next:hover, .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(30, 64, 175, 0.4);
+            background: linear-gradient(135deg, #3b82f6 0%, #1e40af 50%, #1e3a8a 100%);
+        }
+
+        .address-cascade {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .feature-item:hover {
+            border-color: #3b82f6;
+            background: #f0f4ff;
+        }
+
+        .feature-item.selected {
+            border-color: #3b82f6;
+            background: linear-gradient(135deg, rgba(30, 64, 175, 0.05), rgba(59, 130, 246, 0.05));
+        }
+
+        .feature-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #3b82f6;
+        }
+
+        .file-upload {
+            border: 3px dashed #cbd5e1;
+            border-radius: 12px;
+            padding: 40px 20px;
+            text-align: center;
+            background: white;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .file-upload:hover {
+            border-color: #3b82f6;
+            background: #f8f9ff;
+        }
+
+        .file-upload.dragover {
+            border-color: #3b82f6;
+            background: #f0f4ff;
+            transform: scale(1.02);
+        }
+
+        .file-upload input {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            display: block;
+            color: #3b82f6;
+        }
+
+        .photo-upload-section {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .upload-slots {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .photo-slot {
+            position: relative;
+            aspect-ratio: 1;
+            border: 3px dashed #cbd5e1;
+            border-radius: 12px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .photo-slot:hover {
+            border-color: #3b82f6;
+            background: #f8f9ff;
+            transform: translateY(-2px);
+        }
+
+        .photo-slot.has-image {
+            border-color: #10b981;
+            border-style: solid;
+        }
+
+        .upload-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            color: #64748b;
+        }
+
+        .upload-icon {
+            font-size: 2rem;
+            color: #64748b;
+        }
+
+        .upload-text {
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .preview-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .remove-photo {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 25px;
+            height: 25px;
+            background: rgba(220, 38, 38, 0.8);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .remove-photo:hover {
+            background: rgba(220, 38, 38, 1);
+            transform: scale(1.1);
+        }
+
+        .upload-info {
+            color: #64748b;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+
+        .price-container {
+            position: relative;
+        }
+
+        .currency-symbol {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #64748b;
+            font-weight: 600;
+        }
+
+        .price-input {
+            padding-left: 35px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .success-message {
+            text-align: center;
+            padding: 60px 40px;
+            background: white;
+        }
+
+        .success-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            display: block;
+            color: #10b981;
+        }
+
+        @media (max-width: 768px) {
+            .upload-slots {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+            
+            .container {
+                margin: 10px;
+                min-height: calc(100vh - 20px);
+            }
+
+            .form-container {
+                padding: 20px;
+            }
+
+            .progress-container {
+                padding: 20px;
+            }
+
+            .progress-steps {
+                flex-wrap: wrap;
+                gap: 15px;
+            }
+
+            .step {
+                flex: 0 0 calc(50% - 7.5px);
+            }
+
+            .step-line {
+                display: none;
+            }
+
+            .address-cascade {
+                grid-template-columns: 1fr;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .navigation-buttons {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <i class="fas fa-car"></i>
+                <span>AutoCert</span>
+            </div>
+            
+            <div class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            
+            <nav class="nav-bar">
+                <ul class="nav-links" id="navLinks">
+                    <li><a href="/Frontend/pages/customer-dashboard.html"><i class="fas fa-home"></i> Dashboard</a></li>
+                    <li><a href="/Backend-autocert/" onclick="scheduleInspection()"><i class="fas fa-clipboard-check"></i> Inspections</a></li>
+                    <li><a href="/Frontend/pages/my-listings.html" onclick="viewListings()"><i class="fas fa-list"></i> My Listings</a></li>
+                    <li><a href="/Frontend/pages/add-listing.html" class="btn btn-list-vehicle active"><i class="fas fa-plus-circle"></i> List Vehicle</a></li>
+                </ul>
+            </nav>
+
+            <div class="user-info">
+                <div class="profile-dropdown">
+                    <div class="profile-trigger" onclick="toggleProfileMenu()">
+                        <i class="fas fa-user-circle" style="font-size: 2.2rem;"></i>
+                        <div>
+                            <div style="font-weight: 700;">Loading...</div>
+                            <div style="font-size: 0.8rem; opacity: 0.9;">Premium Member</div>
+                        </div>
+                        <i class="fas fa-chevron-down" style="font-size: 0.8rem; opacity: 0.8;"></i>
+                    </div>
+                    <div id="profileMenu" class="profile-menu">
+                        <a href="#" onclick="viewProfile()">
+                            <i class="fas fa-user"></i>
+                            <span>View Profile</span>
+                        </a>
+                        <a href="#" onclick="viewProfile()">
+                            <i class="fas fa-edit"></i>
+                            <span>Update Profile</span>
+                        </a>
+                        <hr>
+                        <a href="#" class="logout" onclick="logout()">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Logout</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="main-container">
+        <div class="container">
+            <div class="form-header">
+                <h1>🚗 AutoCert Vehicle Listing</h1>
+                <p>List your vehicle in simple steps</p>
+            </div>
+
+            <div class="progress-container">
+                <div class="progress-steps">
+                    <div class="step active" data-step="1">
+                        <div class="step-number">1</div>
+                        <div class="step-title">Location</div>
+                        <div class="step-line"></div>
+                    </div>
+                    <div class="step" data-step="2">
+                        <div class="step-number">2</div>
+                        <div class="step-title">Basic Info</div>
+                        <div class="step-line"></div>
+                    </div>
+                    <div class="step" data-step="3">
+                        <div class="step-number">3</div>
+                        <div class="step-title">Details</div>
+                        <div class="step-line"></div>
+                    </div>
+                    <div class="step" data-step="4">
+                        <div class="step-number">4</div>
+                        <div class="step-title">Features</div>
+                        <div class="step-line"></div>
+                    </div>
+                    <div class="step" data-step="5">
+                        <div class="step-number">5</div>
+                        <div class="step-title">Photos</div>
+                        <div class="step-line"></div>
+                    </div>
+                    <div class="step" data-step="6">
+                        <div class="step-number">6</div>
+                        <div class="step-title">Contact</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-container">
+                <form id="vehicleForm">
+                    <!-- Step 1: Location -->
+                    <div class="step-content active" data-step="1">
+                        <div class="form-section">
+                            <h2 class="section-title">📍 Where is your vehicle located?</h2>
+                            <div class="address-cascade">
+                                <div class="form-group">
+                                    <label for="province">Province <span class="required">*</span></label>
+                                    <select id="province" name="province" required>
+                                        <option value="">Select Province</option>
+                                        <option value="western">Western Province</option>
+                                        <option value="central">Central Province</option>
+                                        <option value="southern">Southern Province</option>
+                                        <option value="northern">Northern Province</option>
+                                        <option value="eastern">Eastern Province</option>
+                                        <option value="north-western">North Western Province</option>
+                                        <option value="north-central">North Central Province</option>
+                                        <option value="uva">Uva Province</option>
+                                        <option value="sabaragamuwa">Sabaragamuwa Province</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="district">District <span class="required">*</span></label>
+                                    <select id="district" name="district" required disabled>
+                                        <option value="">Select District</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="city">City/Town <span class="required">*</span></label>
+                                    <select id="city" name="city" required disabled>
+                                        <option value="">Select City</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="navigation-buttons">
+                            <button type="button" class="nav-btn btn-prev" disabled>Previous</button>
+                            <button type="button" class="nav-btn btn-next" id="step1Next">Next</button>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Basic Info -->
+                    <div class="step-content" data-step="2">
+                        <div class="form-section">
+                            <h2 class="section-title">🚙 Basic Vehicle Information</h2>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="make">Make <span class="required">*</span></label>
+                                    <select id="make" name="make" required>
+                                        <option value="">Select Make</option>
+                                        <option value="toyota">Toyota</option>
+                                        <option value="honda">Honda</option>
+                                        <option value="nissan">Nissan</option>
+                                        <option value="suzuki">Suzuki</option>
+                                        <option value="mitsubishi">Mitsubishi</option>
+                                        <option value="mazda">Mazda</option>
+                                        <option value="bmw">BMW</option>
+                                        <option value="mercedes">Mercedes-Benz</option>
+                                        <option value="audi">Audi</option>
+                                        <option value="hyundai">Hyundai</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="model">Model <span class="required">*</span></label>
+                                    <input type="text" id="model" name="model" placeholder="e.g., Corolla, Civic, Alto" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="year">Year <span class="required">*</span></label>
+                                    <select id="year" name="year" required></select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="mileage">Mileage (km) <span class="required">*</span></label>
+                                    <input type="number" id="mileage" name="mileage" placeholder="e.g., 85000" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="condition">Condition <span class="required">*</span></label>
+                                    <select id="condition" name="condition" required>
+                                        <option value="">Select Condition</option>
+                                        <option value="EXCELLENT">Excellent</option>
+                                        <option value="GOOD">Good</option>
+                                        <option value="FAIR">Fair</option>
+                                        <option value="NEEDS_REPAIR">Needs Repair</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="bodyType">Body Type <span class="required">*</span></label>
+                                    <select id="bodyType" name="bodyType" required>
+                                        <option value="">Select Body Type</option>
+                                        <option value="SEDAN">Sedan</option>
+                                        <option value="HATCHBACK">Hatchback</option>
+                                        <option value="SUV">SUV</option>
+                                        <option value="WAGON">Wagon</option>
+                                        <option value="COUPE">Coupe</option>
+                                        <option value="CONVERTIBLE">Convertible</option>
+                                        <option value="VAN">Van</option>
+                                        <option value="PICKUP">Pickup</option>
+                                        <option value="OTHER">Other</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="navigation-buttons">
+                            <button type="button" class="nav-btn btn-prev" onclick="previousStep()">Previous</button>
+                            <button type="button" class="nav-btn btn-next" onclick="nextStep()">Next</button>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Technical Details -->
+                    <div class="step-content" data-step="3">
+                        <div class="form-section">
+                            <h2 class="section-title">⚙️ Technical Specifications</h2>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="engine">Engine <span class="required">*</span></label>
+                                    <input type="text" id="engine" name="engine" placeholder="e.g., 1.3L Petrol" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="transmission">Transmission <span class="required">*</span></label>
+                                    <select id="transmission" name="transmission" required>
+                                        <option value="">Select Transmission</option>
+                                        <option value="MANUAL">Manual</option>
+                                        <option value="AUTOMATIC">Automatic</option>
+                                        <option value="CVT">CVT</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="fuelType">Fuel Type <span class="required">*</span></label>
+                                    <select id="fuelType" name="fuelType" required>
+                                        <option value="">Select Fuel Type</option>
+                                        <option value="PETROL">Petrol</option>
+                                        <option value="Diesel">Diesel</option>
+                                        <option value="HYBRID">Hybrid</option>
+                                        <option value="ELECTRIC">Electric</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="exteriorColor">Color <span class="required">*</span></label>
+                                    <input type="text" id="color" name="color" placeholder="e.g., White, Black, Silver" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="navigation-buttons">
+                            <button type="button" class="nav-btn btn-prev" onclick="previousStep()">Previous</button>
+                            <button type="button" class="nav-btn btn-next" onclick="nextStep()">Next</button>
+                        </div>
+                    </div>
+
+                    <!-- Step 4: Features -->
+                    <div class="step-content" data-step="4">
+                        <div class="form-section">
+                            <h2 class="section-title">✨ Features & Equipment</h2>
+                            <div class="feature-grid">
+                                <div class="feature-item" onclick="toggleFeature(this)">
+                                    <input type="checkbox" id="airConditioning" name="features" value="airConditioning">
+                                    <label for="airConditioning">Air Conditioning</label>
+                                </div>
+                                <div class="feature-item" onclick="toggleFeature(this)">
+                                    <input type="checkbox" id="powerSteering" name="features" value="powerSteering">
+                                    <label for="powerSteering">Power Steering</label>
+                                </div>
+                                <div class="feature-item" onclick="toggleFeature(this)">
+                                    <input type="checkbox" id="powerWindows" name="features" value="powerWindows">
+                                    <label for="powerWindows">Power Windows</label>
+                                </div>
+                                <div class="feature-item" onclick="toggleFeature(this)">
+                                    <input type="checkbox" id="centralLocking" name="features" value="centralLocking">
+                                    <label for="centralLocking">Central Locking</label>
+                                </div>
+                                <div class="feature-item" onclick="toggleFeature(this)">
+                                    <input type="checkbox" id="abs" name="features" value="abs">
+                                    <label for="abs">ABS Brakes</label>
+                                </div>
+                                <div class="feature-item" onclick="toggleFeature(this)">
+                                    <input type="checkbox" id="airbags" name="features" value="airbags">
+                                    <label for="airbags">Airbags</label>
+                                </div>
+                                <div class="feature-item" onclick="toggleFeature(this)">
+                                    <input type="checkbox" id="soundSystem" name="features" value="soundSystem">
+                                    <label for="soundSystem">Sound System</label>
+                                </div>
+                                <div class="feature-item" onclick="toggleFeature(this)">
+                                    <input type="checkbox" id="alloyWheels" name="features" value="alloyWheels">
+                                    <label for="alloyWheels">Alloy Wheels</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="navigation-buttons">
+                            <button type="button" class="nav-btn btn-prev" onclick="previousStep()">Previous</button>
+                            <button type="button" class="nav-btn btn-next" onclick="nextStep()">Next</button>
+                        </div>
+                    </div>
+
+                    <!-- Step 5: Photos -->
+                    <div class="step-content" data-step="5">
+                        <div class="form-section">
+                            <h2 class="section-title">📸 Upload Vehicle Photos</h2>
+                            <div class="photo-upload-section">
+                                <div class="upload-slots">
+                                    <div class="photo-slot" onclick="triggerFileInput(0)">
+                                        <input type="file" class="photo-input" accept="image/*" style="display: none;" onchange="handlePhotoUpload(0, this)">
+                                        <div class="upload-placeholder">
+                                            <span class="upload-icon">📷</span>
+                                            <span class="upload-text">Main Photo</span>
+                                        </div>
+                                        <img class="preview-image" style="display: none;">
+                                        <button type="button" class="remove-photo" onclick="removePhoto(0)" style="display: none;">×</button>
+                                    </div>
+                                    <div class="photo-slot" onclick="triggerFileInput(1)">
+                                        <input type="file" class="photo-input" accept="image/*" style="display: none;" onchange="handlePhotoUpload(1, this)">
+                                        <div class="upload-placeholder">
+                                            <span class="upload-icon">📷</span>
+                                            <span class="upload-text">Photo 2</span>
+                                        </div>
+                                        <img class="preview-image" style="display: none;">
+                                        <button type="button" class="remove-photo" onclick="removePhoto(1)" style="display: none;">×</button>
+                                    </div>
+                                    <div class="photo-slot" onclick="triggerFileInput(2)">
+                                        <input type="file" class="photo-input" accept="image/*" style="display: none;" onchange="handlePhotoUpload(2, this)">
+                                        <div class="upload-placeholder">
+                                            <span class="upload-icon">📷</span>
+                                            <span class="upload-text">Photo 3</span>
+                                        </div>
+                                        <img class="preview-image" style="display: none;">
+                                        <button type="button" class="remove-photo" onclick="removePhoto(2)" style="display: none;">×</button>
+                                    </div>
+                                     <div class="photo-slot" onclick="triggerFileInput(3)">
+                                    <input type="file" class="photo-input" accept="image/*" style="display: none;" onchange="handlePhotoUpload(3, this)">
+                                    <div class="upload-placeholder">
+                                        <span class="upload-icon">📷</span>
+                                        <span class="upload-text">Photo 4</span>
+                                    </div>
+                                    <img class="preview-image" style="display: none;">
+                                    <button type="button" class="remove-photo" onclick="removePhoto(3)" style="display: none;">×</button>
+                                </div>
+                                <div class="photo-slot" onclick="triggerFileInput(4)">
+                                    <input type="file" class="photo-input" accept="image/*" style="display: none;" onchange="handlePhotoUpload(4, this)">
+                                    <div class="upload-placeholder">
+                                        <span class="upload-icon">📷</span>
+                                        <span class="upload-text">Photo 5</span>
+                                    </div>
+                                    <img class="preview-image" style="display: none;">
+                                    <button type="button" class="remove-photo" onclick="removePhoto(4)" style="display: none;">×</button>
+                                </div>
+                            </div>
+                            <p class="upload-info">Click on each slot to upload photos. First photo will be your main listing image.</p>
+                        </div>
+                    </div>
+                    <div class="navigation-buttons">
+                        <button type="button" class="nav-btn btn-prev" onclick="previousStep()">Previous</button>
+                        <button type="button" class="nav-btn btn-next" onclick="nextStep()">Next</button>
+                    </div>
+                </div>
+
+                <!-- Step 6: Contact & Price -->
+                <div class="step-content" data-step="6">
+                    <div class="form-section">
+                        <h2 class="section-title">💰 Price & Contact Information</h2>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="price">Asking Price <span class="required">*</span></label>
+                                <div class="price-container">
+                                    <span class="currency-symbol">Rs</span>
+                                    <input type="number" id="price" name="price" class="price-input" placeholder="2500000" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="negotiable">Price Negotiable?</label>
+                                <select id="negotiable" name="negotiable">
+                                    <option value="yes">Yes</option>
+                                    <option value="no">No</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="contactName">Your Name <span class="required">*</span></label>
+                                <input type="text" id="contactName" name="contactName" placeholder="Your full name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="contactPhone">Phone Number <span class="required">*</span></label>
+                                <input type="tel" id="contactPhone" name="contactPhone" placeholder="077 123 4567" required>
+                            </div>
+                            <div class="form-group full-width">
+                                <label for="description">Description (Optional)</label>
+                                <textarea id="description" name="description" placeholder="Describe your vehicle's condition, service history, or any special features..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="navigation-buttons">
+                        <button type="button" class="nav-btn btn-prev" onclick="previousStep()">Previous</button>
+                        <button type="submit" class="nav-btn btn-submit">🚀 List My Vehicle</button>
+                    </div>
+                </div>
+
+                <!-- Success Message -->
+                <div class="step-content" data-step="success">
+                    <div class="success-message">
+                        <span class="success-icon">🎉</span>
+                        <h2>Listing Submitted Successfully!</h2>
+                        <p>Your vehicle listing has been submitted and will be reviewed within 24 hours.</p>
+                        <p>We'll notify you via SMS and email once it's published.</p>
+                        <button type="button" class="nav-btn btn-next" onclick="location.reload()" style="margin-top: 20px;">List Another Vehicle</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        const API_BASE_USERS = "http://localhost:8080/api/users";
+
+         // ================== PROFILE ==================
+
+        function getToken() {
+            return localStorage.getItem("token");
+        }
+        async function loadUserProfile() {
+            const token = getToken();
+            if (!token) return;
+
+            try {
+                const res = await fetch(`${API_BASE_USERS}/me`, {
+                    method: "GET",
+                    headers: { "Authorization": "Bearer " + token }
+                });
+                if (!res.ok) throw new Error("Failed to fetch user info");
+                const user = await res.json();
+
+                // Header display
+                const headerName = document.querySelector(".profile-trigger div div:first-child");
+                const headerEmail = document.querySelector(".profile-trigger div div:last-child");
+                if (headerName) headerName.textContent = `${user.firstName} ${user.lastName}`;
+                if (headerEmail) headerEmail.textContent = user.email;
+
+                // Modal form
+                const modalFields = ["firstName", "lastName", "email", "phoneNumber"];
+                modalFields.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.value = user[id] || "";
+                });
+
+                // Profile image
+                const profileImg = document.getElementById("profileImage");
+                if (profileImg) profileImg.src = user.profileImageUrl || "https://via.placeholder.com/100x100/1e40af/white?text=JS";
+            } catch (err) {
+                console.error(err);
+                alert("Could not load user profile");
+            }
+        }
+
+        // ================== PROFILE MODAL ==================
+        function viewProfile() {
+            const modal = document.getElementById('updateProfileModal');
+            if (modal) modal.style.display = 'block';
+            toggleProfileMenu();
+        }
+        function closeProfileModal() {
+            const modal = document.getElementById('updateProfileModal');
+            if (modal) modal.style.display = 'none';
+        }
+        window.onclick = function(event) {
+            const modal = document.getElementById('updateProfileModal');
+            if (event.target == modal) closeProfileModal();
+        }
+
+        // ================== PROFILE IMAGE PREVIEW ==================
+        function previewImage(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const profileImg = document.getElementById('profileImage');
+                    if (profileImg) profileImg.src = e.target.result;
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // ================== SAVE PROFILE ==================
+        async function saveProfile() {
+            const token = getToken();
+            if (!token) { alert("Please login first!"); return; }
+
+            const formData = new FormData();
+            formData.append("firstName", document.getElementById("firstName").value);
+            formData.append("lastName", document.getElementById("lastName").value);
+            formData.append("phone", document.getElementById("phoneNumber").value);
+
+            const imageFile = document.getElementById("profilePicInput")?.files[0];
+            if (imageFile) formData.append("image", imageFile);
+
+            try {
+                const res = await fetch(`${API_BASE_USERS}/update`, {
+                    method: "PUT",
+                    headers: { "Authorization": "Bearer " + token },
+                    body: formData
+                });
+
+                if (!res.ok) throw new Error("Profile update failed");
+                const updatedUser = await res.json();
+
+                alert("Profile updated successfully!");
+                const headerName = document.querySelector(".profile-trigger div div:first-child");
+                if (headerName) headerName.textContent = `${updatedUser.firstName} ${updatedUser.lastName}`;
+                const profileImg = document.getElementById("profileImage");
+                if (profileImg) profileImg.src = updatedUser.profileImageUrl || "https://via.placeholder.com/100x100/1e40af/white?text=JS";
+
+                closeProfileModal();
+            } catch(err) {
+                console.error(err);
+                alert("Could not update profile");
+            }
+        }
+
+        // ================== LOGOUT ==================
+        function logout() {
+            if (confirm("Are you sure you want to logout?")) {
+                clearToken();
+                window.location.href = "/Frontend/index.html";
+            }
+        }
+
+         // Toggle profile dropdown menu
+    function toggleProfileMenu() {
+        const menu = document.getElementById("profileMenu");
+        if (!menu) return;
+        menu.style.display = menu.style.display === "block" ? "none" : "block";
+    }
+
+    // Close menu when clicking outside
+    window.addEventListener("click", function(event) {
+        const menu = document.getElementById("profileMenu");
+        const trigger = document.querySelector(".profile-trigger");
+        if (!menu || !trigger) return;
+
+        if (!trigger.contains(event.target) && !menu.contains(event.target)) {
+            menu.style.display = "none";
+        }
+    });
+
+    // You can still call loadUserProfile() on page load
+    document.addEventListener("DOMContentLoaded", loadUserProfile);
+
+        
+    </script>
+    <script src="/Frontend/js/vehicle.js"></script>
+    <script src="/Frontend/js/sell.js"></script>
+
+</body>
+</html>

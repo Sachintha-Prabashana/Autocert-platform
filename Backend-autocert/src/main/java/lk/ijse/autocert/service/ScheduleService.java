@@ -1,4 +1,9 @@
 package lk.ijse.autocert.service;
 
-public class ScheduleService {
+import lk.ijse.autocert.dto.TodayScheduleDTO;
+
+import java.util.List;
+
+public interface ScheduleService {
+    List<TodayScheduleDTO> getTodaySchedule() ;
 }

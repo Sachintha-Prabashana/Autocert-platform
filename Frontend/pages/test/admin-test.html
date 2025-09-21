@@ -1,0 +1,1533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoCert Admin Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+            line-height: 1.6;
+        }
+
+        .dashboard {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles - Automotive Theme */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(135deg, #1e40af 0%, #1d4ed8 100%);
+            color: white;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 1000;
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar.collapsed {
+            width: 70px;
+        }
+
+        .sidebar-header {
+            padding: 25px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo {
+            width: 45px;
+            height: 45px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .sidebar-title {
+            font-size: 22px;
+            font-weight: 700;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar.collapsed .sidebar-title {
+            opacity: 0;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 25px 0;
+        }
+
+        .nav-item {
+            margin: 8px 0;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            padding: 18px 25px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+            font-weight: 500;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-left-color: #f97316;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-link i {
+            width: 22px;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        .nav-text {
+            opacity: 1;
+            transition: opacity 0.3s ease;
+            font-weight: 500;
+        }
+
+        .sidebar.collapsed .nav-text {
+            opacity: 0;
+        }
+
+        .logout-section {
+            position: absolute;
+            bottom: 25px;
+            left: 0;
+            right: 0;
+            padding: 0 25px;
+        }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            width: 100%;
+            padding: 18px 25px;
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: rgba(255, 255, 255, 0.8);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .logout-btn:hover {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: #ef4444;
+            color: #fecaca;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            background: white;
+            padding: 25px 35px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 999;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .toggle-btn {
+            background: none;
+            border: none;
+            font-size: 22px;
+            color: #64748b;
+            cursor: pointer;
+            padding: 12px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-btn:hover {
+            background: #f1f5f9;
+            color: #1e40af;
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .notification-bell {
+            position: relative;
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: #64748b;
+            cursor: pointer;
+            padding: 12px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .notification-bell:hover {
+            background: #f1f5f9;
+            color: #f97316;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: #ef4444;
+            color: white;
+            font-size: 11px;
+            padding: 3px 7px;
+            border-radius: 12px;
+            min-width: 20px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 500;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #1e40af, #1d4ed8);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        /* Content Area */
+        .content {
+            flex: 1;
+            padding: 35px;
+            overflow-y: auto;
+            background: #f8fafc;
+        }
+
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        /* Stats Cards - Automotive Industry Colors */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            transition: all 0.3s ease;
+            border: 1px solid #f1f5f9;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+            border-color: #e2e8f0;
+        }
+
+        .stat-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: white;
+        }
+
+        .stat-icon.blue { background: linear-gradient(135deg, #1e40af, #1d4ed8); }
+        .stat-icon.green { background: linear-gradient(135deg, #059669, #047857); }
+        .stat-icon.orange { background: linear-gradient(135deg, #ea580c, #dc2626); }
+        .stat-icon.teal { background: linear-gradient(135deg, #0891b2, #0e7490); }
+        .stat-icon.red { background: linear-gradient(135deg, #dc2626, #b91c1c); }
+
+        .stat-info h3 {
+            font-size: 32px;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 8px;
+        }
+
+        .stat-info p {
+            color: #64748b;
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        /* Industry-Style Status Badges */
+        .status-badge {
+            padding: 8px 16px;
+            border-radius: 24px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-active { 
+            background: linear-gradient(135deg, #dcfce7, #bbf7d0); 
+            color: #166534;
+            border: 1px solid #22c55e;
+        }
+        .status-inactive { 
+            background: linear-gradient(135deg, #f8fafc, #f1f5f9); 
+            color: #475569;
+            border: 1px solid #94a3b8;
+        }
+        .status-pending { 
+            background: linear-gradient(135deg, #fef3c7, #fde68a); 
+            color: #a16207;
+            border: 1px solid #f59e0b;
+        }
+        .status-scheduled { 
+            background: linear-gradient(135deg, #dbeafe, #bfdbfe); 
+            color: #1e40af;
+            border: 1px solid #3b82f6;
+        }
+        .status-in-progress { 
+            background: linear-gradient(135deg, #cffafe, #a7f3d0); 
+            color: #0f766e;
+            border: 1px solid #14b8a6;
+        }
+        .status-completed { 
+            background: linear-gradient(135deg, #dcfce7, #bbf7d0); 
+            color: #166534;
+            border: 1px solid #22c55e;
+        }
+        .status-cancelled { 
+            background: linear-gradient(135deg, #fee2e2, #fecaca); 
+            color: #b91c1c;
+            border: 1px solid #ef4444;
+        }
+
+        /* Inspection Type Badges */
+        .type-badge {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .type-annual {
+            background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+            color: #1e40af;
+            border: 1px solid #3b82f6;
+        }
+        .type-safety {
+            background: linear-gradient(135deg, #fed7aa, #fdba74);
+            color: #c2410c;
+            border: 1px solid #f97316;
+        }
+        .type-emissions {
+            background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+            color: #166534;
+            border: 1px solid #22c55e;
+        }
+        .type-brake {
+            background: linear-gradient(135deg, #fee2e2, #fecaca);
+            color: #b91c1c;
+            border: 1px solid #ef4444;
+        }
+
+        /* Time Display */
+        .time-display {
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+            color: #0f172a;
+            background: #f8fafc;
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            font-size: 13px;
+        }
+
+        /* Data Tables */
+        .data-table {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            margin-bottom: 40px;
+            border: 1px solid #f1f5f9;
+        }
+
+        .table-header {
+            padding: 25px 30px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #fafbfc;
+        }
+
+        .table-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .table-controls {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-input {
+            padding: 12px 18px 12px 45px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 14px;
+            width: 280px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #1e40af;
+            box-shadow: 0 0 0 4px rgba(30, 64, 175, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #64748b;
+            font-size: 16px;
+        }
+
+        .filter-select {
+            padding: 12px 18px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 14px;
+            background: white;
+            cursor: pointer;
+            font-weight: 500;
+            min-width: 150px;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: #1e40af;
+        }
+
+        /* Icon Action Buttons */
+        .action-icon {
+            width: 36px;
+            height: 36px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .action-icon:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: -35px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1f2937;
+            color: white;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            white-space: nowrap;
+            z-index: 1000;
+            font-weight: 500;
+        }
+
+        .action-icon.view { 
+            background: #dbeafe; 
+            color: #1e40af; 
+        }
+        .action-icon.edit { 
+            background: #dcfce7; 
+            color: #166534; 
+        }
+        .action-icon.delete { 
+            background: #fee2e2; 
+            color: #dc2626; 
+        }
+        .action-icon.assign { 
+            background: #fed7aa; 
+            color: #c2410c; 
+        }
+        .action-icon.complete { 
+            background: #dcfce7; 
+            color: #166534; 
+        }
+        .action-icon.resend { 
+            background: #f3e8ff; 
+            color: #7c3aed; 
+        }
+        .action-icon.add { 
+            background: #1e40af; 
+            color: white; 
+            width: 44px;
+            height: 44px;
+            font-size: 16px;
+        }
+
+        .action-icon:hover {
+            transform: scale(1.15);
+        }
+
+        .action-icon.add:hover {
+            background: #1d4ed8;
+            transform: scale(1.1);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 18px 30px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        th {
+            background: #f8fafc;
+            font-weight: 700;
+            color: #374151;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        tr:hover {
+            background: #f8fafc;
+        }
+
+        /* Priority Indicators */
+        .priority-high { 
+            background: linear-gradient(135deg, #fee2e2, #fecaca); 
+            color: #b91c1c;
+            border: 1px solid #ef4444;
+        }
+        .priority-medium { 
+            background: linear-gradient(135deg, #fed7aa, #fdba74); 
+            color: #c2410c;
+            border: 1px solid #f97316;
+        }
+        .priority-low { 
+            background: linear-gradient(135deg, #dcfce7, #bbf7d0); 
+            color: #166534;
+            border: 1px solid #22c55e;
+        }
+
+        /* Vehicle Cards for Vehicle Listings */
+        .vehicle-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+        }
+
+        .vehicle-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            border: 1px solid #f1f5f9;
+        }
+
+        .vehicle-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+        }
+
+        .vehicle-header {
+            padding: 20px;
+            background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .vehicle-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .vehicle-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 5px;
+        }
+
+        .vehicle-id {
+            font-size: 13px;
+            color: #64748b;
+            font-family: monospace;
+            font-weight: 600;
+        }
+
+        .vehicle-body {
+            padding: 20px;
+        }
+
+        .vehicle-details {
+            display: grid;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #374151;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .detail-value {
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px;
+            color: #64748b;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #e2e8f0;
+            border-top: 4px solid #1e40af;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .vehicle-grid {
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 70px;
+            }
+            
+            .sidebar-title,
+            .nav-text {
+                display: none;
+            }
+            
+            .header {
+                padding: 20px 25px;
+            }
+            
+            .content {
+                padding: 25px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .table-controls {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 15px;
+            }
+            
+            .search-input {
+                width: 100%;
+            }
+
+            .vehicle-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Animation Classes */
+        .fade-in {
+            animation: fadeIn 0.6s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Enhanced notification styles */
+        .notification {
+            position: fixed;
+            top: 25px;
+            right: 25px;
+            padding: 18px 24px;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            z-index: 10000;
+            animation: slideInRight 0.4s ease;
+            max-width: 400px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .notification.success { background: linear-gradient(135deg, #059669, #047857); }
+        .notification.error { background: linear-gradient(135deg, #dc2626, #b91c1c); }
+        .notification.info { background: linear-gradient(135deg, #1e40af, #1d4ed8); }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-car-side"></i>
+                </div>
+                <h1 class="sidebar-title">AutoCert Pro</h1>
+            </div>
+            
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link active" data-section="dashboard">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span class="nav-text">Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-section="inspectors">
+                            <i class="fas fa-user-tie"></i>
+                            <span class="nav-text">Inspectors</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-section="users">
+                            <i class="fas fa-users"></i>
+                            <span class="nav-text">Customers</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-section="inspections">
+                            <i class="fas fa-clipboard-check"></i>
+                            <span class="nav-text">Inspections</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-section="centers">
+                            <i class="fas fa-building"></i>
+                            <span class="nav-text">Service Centers</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-section="vehicles">
+                            <i class="fas fa-car"></i>
+                            <span class="nav-text">Vehicle Fleet</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-section="reports">
+                            <i class="fas fa-chart-line"></i>
+                            <span class="nav-text">Analytics</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            
+            <div class="logout-section">
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span class="nav-text">Sign Out</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <button class="toggle-btn" onclick="toggleSidebar()">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h2 class="page-title" id="pageTitle">Dashboard Overview</h2>
+                </div>
+                <div class="header-right">
+                    <button class="notification-bell">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">3</span>
+                    </button>
+                    <div class="user-info">
+                        <div class="user-avatar">
+                            <i class="fas fa-user-shield"></i>
+                        </div>
+                        <span>System Admin</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <main class="content">
+                <!-- Dashboard Section -->
+                <div class="content-section active fade-in" id="dashboard">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon blue">
+                                <i class="fas fa-clipboard-list"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>847</h3>
+                                <p>Total Inspections</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon orange">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>23</h3>
+                                <p>Pending Assignments</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon green">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>156</h3>
+                                <p>Completed Today</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon teal">
+                                <i class="fas fa-user-tie"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>34</h3>
+                                <p>Active Inspectors</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon red">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>8</h3>
+                                <p>Issues Requiring Attention</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Inspectors Section -->
+                <div class="content-section" id="inspectors">
+                    <div class="data-table">
+                        <div class="table-header">
+                            <h3 class="table-title">Inspector Management</h3>
+                            <div class="table-controls">
+                                <div class="search-box">
+                                    <i class="fas fa-search search-icon"></i>
+                                    <input type="text" class="search-input" placeholder="Search inspectors..." oninput="filterInspectors(this.value)">
+                                </div>
+                                <select class="filter-select" id="centerFilter" onchange="filterInspectorsByCenter(this.value)">
+                                    <option value="">All Centers</option>
+                                    <option value="downtown">Downtown Center</option>
+                                    <option value="north">North Center</option>
+                                    <option value="south">South Center</option>
+                                </select>
+                                <button class="action-icon add" data-tooltip="Add Inspector" onclick="openAddInspectorModal()">
+                                    <i class="fas fa-user-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <table id="inspectorsTable">
+                            <thead>
+                                <tr>
+                                    <th>Inspector</th>
+                                    <th>Email</th>
+                                    <th>Center</th>
+                                    <th>Specializations</th>
+                                    <th>Login Status</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="inspectorsTableBody">
+                                <tr>
+                                    <td>
+                                        <div style="display: flex; align-items: center; gap: 12px;">
+                                            <div class="user-avatar" style="width: 35px; height: 35px; font-size: 14px;">JD</div>
+                                            <div>
+                                                <div style="font-weight: 600; color: #0f172a;">John Davis</div>
+                                                <div style="font-size: 12px; color: #64748b;">ID: INS-001</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>john.davis@autocert.com</td>
+                                    <td>Downtown Center</td>
+                                    <td>
+                                        <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+                                            <span class="type-badge type-safety">Safety</span>
+                                            <span class="type-badge type-emissions">Emissions</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="status-badge status-active">
+                                            <i class="fas fa-circle" style="font-size: 8px;"></i>
+                                            Online
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="status-badge status-active">
+                                            <i class="fas fa-check-circle" style="font-size: 10px;"></i>
+                                            Active
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="action-icon view" data-tooltip="View Details">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="action-icon edit" data-tooltip="Edit Inspector">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="action-icon resend" data-tooltip="Reset Password">
+                                                <i class="fas fa-key"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div style="display: flex; align-items: center; gap: 12px;">
+                                            <div class="user-avatar" style="width: 35px; height: 35px; font-size: 14px; background: linear-gradient(135deg, #059669, #047857);">SM</div>
+                                            <div>
+                                                <div style="font-weight: 600; color: #0f172a;">Sarah Miller</div>
+                                                <div style="font-size: 12px; color: #64748b;">ID: INS-002</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>sarah.miller@autocert.com</td>
+                                    <td>North Center</td>
+                                    <td>
+                                        <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+                                            <span class="type-badge type-annual">Engine</span>
+                                            <span class="type-badge type-brake">Brakes</span>
+                                            <span class="type-badge type-safety">Safety</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="status-badge status-inactive">
+                                            <i class="fas fa-circle" style="font-size: 8px;"></i>
+                                            Offline
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="status-badge status-active">
+                                            <i class="fas fa-check-circle" style="font-size: 10px;"></i>
+                                            Active
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="action-icon view" data-tooltip="View Details">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="action-icon edit" data-tooltip="Edit Inspector">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="action-icon resend" data-tooltip="Reset Password">
+                                                <i class="fas fa-key"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Users Section -->
+                <div class="content-section" id="users">
+                    <div class="data-table">
+                        <div class="table-header">
+                            <h3 class="table-title">Customer Management</h3>
+                            <div class="table-controls">
+                                <div class="search-box">
+                                    <i class="fas fa-search search-icon"></i>
+                                    <input type="text" class="search-input" id="userSearch" placeholder="Search customers..." oninput="filterUsers()">
+                                </div>
+                                <select class="filter-select" id="roleFilter" onchange="filterUsers()">
+                                    <option value="all">All Customers</option>
+                                    <option value="premium">Premium</option>
+                                    <option value="standard">Standard</option>
+                                </select>
+                            </div>
+                        </div>
+                        <table id="usersTable">
+                            <thead>
+                                <tr>
+                                    <th>Customer</th>
+                                    <th>Email</th>
+                                    <th>Plan</th>
+                                    <th>Status</th>
+                                    <th>Registration Date</th>
+                                    <th>Last Inspection</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody">
+                                <tr>
+                                    <td>
+                                        <div style="display: flex; align-items: center; gap: 12px;">
+                                            <div class="user-avatar" style="width: 35px; height: 35px; font-size: 14px; background: linear-gradient(135deg, #ea580c, #dc2626);">MJ</div>
+                                            <div>
+                                                <div style="font-weight: 600; color: #0f172a;">Michael Johnson</div>
+                                                <div style="font-size: 12px; color: #64748b;">ID: CUS-001</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>michael.johnson@email.com</td>
+                                    <td>
+                                        <span class="type-badge type-safety" style="background: linear-gradient(135fed7aa, #fdba74);">Premium</span>
+                                    </td>
+                                    <td>
+                                        <span class="status-badge status-active">
+                                            <i class="fas fa-check-circle" style="font-size: 10px;"></i>
+                                            Active
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="time-display">Jan 15, 2024</div>
+                                    </td>
+                                    <td>
+                                        <div class="time-display">Mar 10, 2024</div>
+                                    </td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="action-icon view" data-tooltip="View Profile">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="action-icon edit" data-tooltip="Edit Customer">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Inspections Section -->
+                <div class="content-section" id="inspections">
+                    <div class="data-table">
+                        <div class="table-header">
+                            <h3 class="table-title">Inspection Management</h3>
+                            <div class="table-controls">
+                                <div class="search-box">
+                                    <i class="fas fa-search search-icon"></i>
+                                    <input type="text" class="search-input" placeholder="Search inspections..." oninput="filterInspections(this.value)">
+                                </div>
+                                <select class="filter-select" id="inspectionStatusFilter" onchange="filterInspectionsByStatus(this.value)">
+                                    <option value="">All Status</option>
+                                    <option value="pending">Pending</option>
+                                    <option value="scheduled">Scheduled</option>
+                                    <option value="completed">Completed</option>
+                                </select>
+                                <button class="action-icon add" data-tooltip="Schedule Inspection" onclick="openAddInspectionModal()">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <table id="inspectionsTable">
+                            <thead>
+                                <tr>
+                                    <th>Inspection ID</th>
+                                    <th>Customer</th>
+                                    <th>Vehicle</th>
+                                    <th>Location</th>
+                                    <th>Date/Time</th>
+                                    <th>Status</th>
+                                    <th>Inspector</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="inspectionsTableBody">
+                                
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Inspection Centers Section -->
+                <div class="content-section" id="centers">
+                    <div class="data-table">
+                        <div class="table-header">
+                            <h3 class="table-title">Service Centers</h3>
+                            <div class="table-controls">
+                                <button class="action-icon add" data-tooltip="Add Service Center" onclick="openAddCenterModal()">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <table id="centersTable">
+                            <thead>
+                                <tr>
+                                    <th>Center Name</th>
+                                    <th>Location</th>
+                                    <th>Operating Hours</th>
+                                    <th>Contact</th>
+                                    <th>Capacity</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div style="display: flex; align-items: center; gap: 12px;">
+                                            <div class="stat-icon blue" style="width: 35px; height: 35px; font-size: 14px;">
+                                                <i class="fas fa-building"></i>
+                                            </div>
+                                            <div>
+                                                <div style="font-weight: 600; color: #0f172a;">Downtown Service Center</div>
+                                                <div style="font-size: 12px; color: #64748b;">Main Location</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>123 Main Street, Downtown</td>
+                                    <td>
+                                        <div class="time-display">8:00 AM - 6:00 PM</div>
+                                    </td>
+                                    <td>+1 (555) 123-4567</td>
+                                    <td>
+                                        <div style="display: flex; align-items: center; gap: 8px;">
+                                            <div style="width: 60px; height: 8px; background: #e2e8f0; border-radius: 4px; overflow: hidden;">
+                                                <div style="width: 75%; height: 100%; background: linear-gradient(90deg, #22c55e, #16a34a);"></div>
+                                            </div>
+                                            <span style="font-size: 12px; font-weight: 600;">15/20</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="status-badge status-active">
+                                            <i class="fas fa-check-circle" style="font-size: 10px;"></i>
+                                            Operational
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="action-icon view" data-tooltip="View Details">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="action-icon edit" data-tooltip="Edit Center">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Vehicle Listings Section -->
+                <div class="content-section" id="vehicles">
+                    <div class="vehicle-grid" id="vehicle-container">
+                        <div class="vehicle-card">
+                            <div class="vehicle-header">
+                                <div class="vehicle-info">
+                                    <div>
+                                        <div class="vehicle-title">2022 Honda Civic</div>
+                                        <div class="vehicle-id">VIN: 1HGBH41JXMN109186</div>
+                                    </div>
+                                    <span class="status-badge status-pending">
+                                        <i class="fas fa-clock" style="font-size: 10px;"></i>
+                                        Pending
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="vehicle-body">
+                                <div class="vehicle-details">
+                                    <div class="detail-row">
+                                        <span class="detail-label">Owner</span>
+                                        <span class="detail-value">Michael Johnson</span>
+                                    </div>
+                                    <div class="detail-row">
+                                        <span class="detail-label">License Plate</span>
+                                        <span class="detail-value">ABC-1234</span>
+                                    </div>
+                                    <div class="detail-row">
+                                        <span class="detail-label">Year</span>
+                                        <span class="detail-value">2022</span>
+                                    </div>
+                                    <div class="detail-row">
+                                        <span class="detail-label">Inspection Type</span>
+                                        <span class="type-badge type-annual">Annual Safety</span>
+                                    </div>
+                                    <div class="detail-row">
+                                        <span class="detail-label">Requested Date</span>
+                                        <span class="time-display">Mar 15, 2024</span>
+                                    </div>
+                                </div>
+                                <div class="action-buttons" style="justify-content: center; padding-top: 15px; border-top: 1px solid #f1f5f9;">
+                                    <button class="action-icon view" data-tooltip="View Details">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="action-icon assign" data-tooltip="Assign Inspector">
+                                        <i class="fas fa-user-check"></i>
+                                    </button>
+                                    <button class="action-icon edit" data-tooltip="Edit Details">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="vehicle-card">
+                            <div class="vehicle-header">
+                                <div class="vehicle-info">
+                                    <div>
+                                        <div class="vehicle-title">2020 Toyota Camry</div>
+                                        <div class="vehicle-id">VIN: 4T1BF1FK5CU500001</div>
+                                    </div>
+                                    <span class="status-badge status-scheduled">
+                                        <i class="fas fa-calendar-alt" style="font-size: 10px;"></i>
+                                        Scheduled
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="vehicle-body">
+                                <div class="vehicle-details">
+                                    <div class="detail-row">
+                                        <span class="detail-label">Owner</span>
+                                        <span class="detail-value">Sarah Williams</span>
+                                    </div>
+                                    <div class="detail-row">
+                                        <span class="detail-label">License Plate</span>
+                                        <span class="detail-value">XYZ-5678</span>
+                                    </div>
+                                    <div class="detail-row">
+                                        <span class="detail-label">Year</span>
+                                        <span class="detail-value">2020</span>
+                                    </div>
+                                    <div class="detail-row">
+                                        <span class="detail-label">Inspection Type</span>
+                                        <span class="type-badge type-emissions">Emissions</span>
+                                    </div>
+                                    <div class="detail-row">
+                                        <span class="detail-label">Scheduled</span>
+                                        <span class="time-display">Mar 16, 2:30 PM</span>
+                                    </div>
+                                </div>
+                                <div class="action-buttons" style="justify-content: center; padding-top: 15px; border-top: 1px solid #f1f5f9;">
+                                    <button class="action-icon view" data-tooltip="View Details">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="action-icon complete" data-tooltip="Mark Complete">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                    <button class="action-icon edit" data-tooltip="Reschedule">
+                                        <i class="fas fa-calendar-alt"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reports Section -->
+                <div class="content-section" id="reports">
+                    <div style="padding: 60px; text-align: center; color: #64748b;">
+                        <div class="stat-icon teal" style="margin: 0 auto 30px auto;">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h3 style="font-size: 24px; font-weight: 700; color: #0f172a; margin-bottom: 15px;">Analytics & Reporting</h3>
+                        <p style="font-size: 16px;">Comprehensive insights and performance metrics for your inspection operations.</p>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Add Inspector Modal -->
+<div class="modal-overlay" id="addInspectorModal" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Add New Inspector</h3>
+            <button class="close-btn" onclick="closeModal('addInspectorModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="addInspectorForm">
+                <div class="form-group">
+                    <label for="firstName">First Name</label>
+                    <input type="text" id="firstName" required>
+                </div>
+                <div class="form-group">
+                    <label for="lastName">Last Name</label>
+                    <input type="text" id="lastName" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone</label>
+                    <input type="tel" id="phone" required>
+                </div>
+                <div class="form-group">
+                    <label for="inspectionCenter">Service Center</label>
+                    <select id="inspectionCenter" required>
+                        <option value="">Select a center</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Specializations</label>
+                    <div class="specializations-grid">
+                        <div class="specialization-card" data-value="safety" onclick="toggleSpecialization(this, 'safety')">
+                            <div class="specialization-checkbox">
+                                <i class="fas fa-check" style="display: none;"></i>
+                            </div>
+                            <span>Safety</span>
+                        </div>
+                        <div class="specialization-card" data-value="emissions" onclick="toggleSpecialization(this, 'emissions')">
+                            <div class="specialization-checkbox">
+                                <i class="fas fa-check" style="display: none;"></i>
+                            </div>
+                            <span>Emissions</span>
+                        </div>
+                        <div class="specialization-card" data-value="brakes" onclick="toggleSpecialization(this, 'brakes')">
+                            <div class="specialization-checkbox">
+                                <i class="fas fa-check" style="display: none;"></i>
+                            </div>
+                            <span>Brakes</span>
+                        </div>
+                        <div class="specialization-card" data-value="engine" onclick="toggleSpecialization(this, 'engine')">
+                            <div class="specialization-checkbox">
+                                <i class="fas fa-check" style="display: none;"></i>
+                            </div>
+                            <span>Engine</span>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeModal('addInspectorModal')">Cancel</button>
+            <button class="btn btn-primary" onclick="saveInspector()">Save Inspector</button>
+        </div>
+    </div>
+</div>
+
+<!-- Add Center Modal -->
+<div class="modal-overlay" id="addCenterModal" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Add New Service Center</h3>
+            <button class="close-btn" onclick="closeModal('addCenterModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="addCenterForm">
+                <div class="form-group">
+                    <label for="centerName">Center Name</label>
+                    <input type="text" id="centerName" required>
+                </div>
+                <div class="form-group">
+                    <label for="centerAddress">Address</label>
+                    <textarea id="centerAddress" rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="centerContact">Contact Number</label>
+                    <input type="tel" id="centerContact" required>
+                </div>
+                <div class="form-group">
+                    <label>Operating Hours</label>
+                    <div class="time-inputs">
+                        <div>
+                            <label for="openTime">Open</label>
+                            <input type="time" id="openTime" required>
+                        </div>
+                        <div>
+                            <label for="closeTime">Close</label>
+                            <input type="time" id="closeTime" required>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeModal('addCenterModal')">Cancel</button>
+            <button class="btn btn-primary" onclick="saveCenter()">Save Center</button>
+        </div>
+    </div>
+</div>
+
+<!-- Assign Inspector Modal -->
+<div class="modal-overlay" id="assignInspectorModal" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Assign Inspector</h3>
+            <button class="close-btn" onclick="closeModal('assignInspectorModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="search-box" style="margin-bottom: 20px;">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" class="search-input" placeholder="Search inspectors..." oninput="filterInspectors(this.value)">
+            </div>
+            <div id="inspectorCardsContainer"></div>
+            <div id="noInspectorsMessage" style="display: none; text-align: center; padding: 20px; color: #64748b;">
+                <i class="fas fa-user-times" style="font-size: 48px; margin-bottom: 15px;"></i>
+                <h3>No inspectors available</h3>
+                <p>All inspectors are fully booked for this date</p>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeModal('assignInspectorModal')">Cancel</button>
+            <button class="btn btn-primary" onclick="assignInspector()">Assign Inspector</button>
+        </div>
+    </div>
+</div>
+
+    <script src="/Frontend/js/testing.js"></script>
+    
+</body>
+</html>

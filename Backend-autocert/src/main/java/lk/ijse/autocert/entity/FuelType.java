@@ -1,4 +1,8 @@
 package lk.ijse.autocert.entity;
 
-public class FuelType {
+public enum FuelType {
+    PETROL,
+    DIESEL,
+    ELECTRIC,
+    HYBRID
 }

@@ -1,4 +1,8 @@
 package lk.ijse.autocert.entity;
 
-public class InspectionLocation {
+public enum InspectionLocation {
+    COLOMBO,
+    KANDY,
+    GALLE,
+    MOBILE
 }

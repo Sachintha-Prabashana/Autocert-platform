@@ -4,13 +4,14 @@ import lombok.Getter;
 
 @Getter
 public enum InspectionType {
-    BASIC(5000.00),
-    COMPREHENSIVE(10000.00),
-    PRE_PURCHASE(7500.00);
+    SAFETY(5000),
+    COMPREHENSIVE(10000),
+    PRE_PURCHASE(7500),
+    DIAGNOSTIC(6000);
 
-    private final double price;
+    private final int price;
 
-    InspectionType(double price) {
+    InspectionType(int price) {
         this.price = price;
     }
 

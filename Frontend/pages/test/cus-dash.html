@@ -1,0 +1,1920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoCert - Customer Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #1e40af;
+            --primary-dark: #1e3a8a;
+            --primary-light: #3b82f6;
+            --accent: #10b981;
+            --accent-dark: #059669;
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-400: #94a3b8;
+            --gray-500: #64748b;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
+            --gray-900: #0f172a;
+            --white: #ffffff;
+            --danger: #dc2626;
+            --warning: #f59e0b;
+            --success: #059669;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--gray-50);
+            color: var(--gray-900);
+            line-height: 1.6;
+        }
+
+        /* Header Styles */
+        .header {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 800;
+        }
+
+        .logo i {
+            color: var(--accent);
+            font-size: 2rem;
+        }
+
+        .nav-bar {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .nav-links li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.75rem 1.25rem;
+            border-radius: 0.75rem;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-links li a:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .nav-links li a.active {
+            background: rgba(16, 185, 129, 0.25);
+            border: 1px solid rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-list-vehicle {
+            background: linear-gradient(135deg, var(--accent-dark), var(--accent)) !important;
+            font-weight: 600 !important;
+        }
+
+        .btn-chat {
+            background: linear-gradient(135deg, #7c3aed, #a855f7) !important;
+            position: relative;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: var(--danger);
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .profile-dropdown {
+            position: relative;
+        }
+
+        .profile-trigger {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            transition: all 0.2s ease;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .profile-trigger:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .profile-avatar {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            background: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: white;
+            overflow: hidden;
+        }
+
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .profile-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .profile-role {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+
+        .profile-menu {
+            display: none;
+            position: absolute;
+            top: calc(100% + 0.5rem);
+            right: 0;
+            background: white;
+            border-radius: 1rem;
+            box-shadow: var(--shadow-xl);
+            padding: 0.75rem;
+            min-width: 220px;
+            z-index: 1000;
+            border: 1px solid var(--gray-200);
+            animation: fadeInDown 0.2s ease;
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .profile-menu.show {
+            display: block;
+        }
+
+        .profile-menu a {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            text-decoration: none;
+            color: var(--gray-700);
+            border-radius: 0.5rem;
+            transition: all 0.2s ease;
+            font-weight: 500;
+        }
+
+        .profile-menu a:hover {
+            background: var(--gray-100);
+            transform: translateX(4px);
+        }
+
+        .profile-menu hr {
+            margin: 0.5rem 0;
+            border: none;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .profile-menu a.logout {
+            color: var(--danger);
+        }
+
+        .profile-menu a.logout:hover {
+            background: #fef2f2;
+        }
+
+        .mobile-menu-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .mobile-menu-toggle span {
+            width: 24px;
+            height: 2px;
+            background: white;
+            margin: 2px 0;
+            transition: 0.3s;
+            border-radius: 2px;
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        /* Filter Section */
+        .filter-section {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 6rem;
+            border: 1px solid var(--gray-200);
+            height: fit-content;
+        }
+
+        .filter-title {
+            font-size: 1.125rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--gray-200);
+            color: var(--gray-800);
+        }
+
+        .filter-title i {
+            color: var(--primary);
+        }
+
+        .filter-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .filter-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--gray-700);
+            font-size: 0.875rem;
+        }
+
+        .filter-group select,
+        .filter-group input[type="text"],
+        .filter-group input[type="number"] {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--gray-200);
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+            background: var(--gray-50);
+            color: var(--gray-700);
+        }
+
+        .filter-group select:focus,
+        .filter-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
+        }
+
+        .price-slider {
+            width: 100%;
+            margin: 1rem 0;
+            accent-color: var(--primary);
+            height: 6px;
+        }
+
+        .price-values {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: var(--gray-500);
+            font-weight: 600;
+        }
+
+        .filter-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .btn-filter {
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            color: white;
+            border: none;
+            padding: 0.875rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);
+        }
+
+        .btn-filter:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(30, 64, 175, 0.4);
+        }
+
+        .btn-reset {
+            background: white;
+            color: var(--gray-600);
+            border: 2px solid var(--gray-200);
+            box-shadow: none;
+        }
+
+        .btn-reset:hover {
+            background: var(--gray-50);
+            border-color: var(--gray-300);
+        }
+
+        /* Vehicles Section */
+        .vehicles-section {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--gray-200);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--gray-200);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--gray-800);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-title i {
+            color: var(--primary);
+        }
+
+        .view-toggle {
+            display: flex;
+            background: var(--gray-100);
+            border-radius: 0.5rem;
+            padding: 0.25rem;
+        }
+
+        .view-btn {
+            padding: 0.5rem 0.75rem;
+            border: none;
+            background: transparent;
+            color: var(--gray-600);
+            border-radius: 0.25rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .view-btn.active {
+            background: white;
+            color: var(--primary);
+            box-shadow: var(--shadow);
+        }
+
+        .vehicle-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .vehicle-list {
+            display: none;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        /* Vehicle Cards */
+        .vehicle-card {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid var(--gray-200);
+            position: relative;
+        }
+
+        .vehicle-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .vehicle-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--accent);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            z-index: 10;
+        }
+
+        .vehicle-image {
+            height: 200px;
+            background: linear-gradient(135deg, var(--gray-100), var(--gray-200));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray-400);
+            font-size: 3rem;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .vehicle-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 30%, rgba(16, 185, 129, 0.05) 50%, transparent 70%);
+        }
+
+        .vehicle-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .vehicle-card:hover .vehicle-image img {
+            transform: scale(1.05);
+        }
+
+        .vehicle-info {
+            padding: 1.25rem;
+        }
+
+        .vehicle-title {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: var(--gray-800);
+            margin-bottom: 0.5rem;
+        }
+
+        .vehicle-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+            color: var(--gray-600);
+        }
+
+        .vehicle-detail {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .vehicle-detail i {
+            color: var(--gray-400);
+            width: 14px;
+        }
+
+        .vehicle-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .vehicle-price {
+            font-size: 1.375rem;
+            font-weight: 800;
+            color: var(--accent);
+        }
+
+        .vehicle-seller {
+            font-size: 0.8rem;
+            color: var(--gray-500);
+        }
+
+        .vehicle-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .btn-view {
+            flex: 1;
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            color: white;
+            border: none;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 12px rgba(30, 64, 175, 0.25);
+        }
+
+        .btn-view:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(30, 64, 175, 0.35);
+            text-decoration: none;
+            color: white;
+        }
+
+        .btn-chat-vehicle {
+            background: #7c3aed;
+            color: white;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-chat-vehicle:hover {
+            background: #6d28d9;
+            transform: translateY(-1px);
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            background: white;
+            margin: 2% auto;
+            padding: 0;
+            border-radius: 1rem;
+            width: 90%;
+            max-width: 800px;
+            box-shadow: var(--shadow-xl);
+            overflow: hidden;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .close {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            transition: all 0.2s ease;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: scale(1.1);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        /* Inspection Centers */
+        .inspection-centers {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .inspection-center {
+            border: 2px solid var(--gray-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .inspection-center:hover {
+            border-color: var(--primary);
+            box-shadow: var(--shadow);
+        }
+
+        .inspection-center.selected {
+            border-color: var(--accent);
+            background: #f0fdf4;
+        }
+
+        .center-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+        }
+
+        .center-name {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: var(--gray-800);
+            margin-bottom: 0.25rem;
+        }
+
+        .center-availability {
+            color: var(--gray-500);
+            font-size: 0.875rem;
+        }
+
+        .center-rating {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            color: var(--warning);
+        }
+
+        .center-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .center-detail {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--gray-600);
+        }
+
+        .center-detail i {
+            color: var(--primary);
+            width: 16px;
+        }
+
+        .center-services {
+            margin-bottom: 1rem;
+        }
+
+        .services-title {
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .service-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .service-tag {
+            background: var(--gray-100);
+            color: var(--gray-700);
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .center-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .btn-book {
+            flex: 1;
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-book:hover {
+            background: var(--accent-dark);
+            transform: translateY(-1px);
+        }
+
+        .btn-contact {
+            background: white;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-contact:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Profile Modal */
+        .profile-picture-section {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .profile-pic {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem auto;
+            font-size: 2rem;
+            color: white;
+            overflow: hidden;
+        }
+
+        .profile-pic img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .upload-btn {
+            background: var(--gray-100);
+            border: 2px dashed var(--gray-300);
+            color: var(--gray-600);
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .upload-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: #dbeafe;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--gray-700);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--gray-200);
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+            background: var(--gray-50);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
+        }
+
+        .form-input:read-only {
+            background: var(--gray-100);
+            color: var(--gray-500);
+        }
+
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            background: var(--gray-50);
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+
+        .btn-secondary {
+            background: var(--gray-500);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-secondary:hover {
+            background: var(--gray-600);
+        }
+
+        .btn-save {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-save:hover {
+            background: var(--primary-dark);
+        }
+
+        /* States */
+        .loading-state,
+        .error-state,
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: var(--gray-500);
+            grid-column: 1 / -1;
+        }
+
+        .loading-state i,
+        .error-state i,
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .loading-state i {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .error-state {
+            color: var(--danger);
+        }
+
+        .error-state i {
+            color: #fca5a5;
+        }
+
+        .empty-state h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+            color: var(--gray-700);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+                padding: 1rem;
+            }
+
+            .filter-section {
+                position: static;
+            }
+
+            .vehicle-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-content {
+                width: 95%;
+                margin: 5% auto;
+            }
+
+            .center-details {
+                grid-template-columns: 1fr;
+            }
+
+            .center-actions {
+                flex-direction: column;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .profile-trigger .profile-info {
+                display: none;
+            }
+
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-content {
+                padding: 0.75rem;
+            }
+
+            .logo {
+                font-size: 1.25rem;
+            }
+
+            .vehicle-actions {
+                flex-direction: column;
+            }
+
+            .modal-body {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <i class="fas fa-car"></i>
+                <span>AutoCert</span>
+            </div>
+            
+            <div class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+
+            <nav class="nav-bar">
+                <ul class="nav-links" id="navLinks">
+                    <li><a href="#" class="active"><i class="fas fa-home"></i> Dashboard</a></li>
+                    <li><a href="#" onclick="openInspectionModal()"><i class="fas fa-clipboard-check"></i> Inspections</a></li>
+                    <li><a href="#" onclick="viewListings()"><i class="fas fa-list"></i> My Listings</a></li>
+                    <li><a href="add-listing.html" class="btn-list-vehicle"><i class="fas fa-plus-circle"></i> List Vehicle</a></li>
+                    <li><a href="/Frontend/pages/chat.html" class="btn-chat"><i class="fas fa-comments"></i> Chat <span class="notification-badge">3</span></a></li>
+                </ul>
+            </nav>
+
+            <div class="user-info">
+                <div class="profile-dropdown">
+                    <div class="profile-trigger" onclick="toggleProfileMenu()">
+                        <div class="profile-avatar" id="profileAvatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="profile-info">
+                            <div class="profile-name" id="profileName">Loading...</div>
+                            <div class="profile-role">Premium Member</div>
+                        </div>
+                        <i class="fas fa-chevron-down" style="font-size: 0.8rem; opacity: 0.8;"></i>
+                    </div>
+                    <div id="profileMenu" class="profile-menu">
+                        <a href="#" onclick="viewProfile()">
+                            <i class="fas fa-user"></i>
+                            <span>View Profile</span>
+                        </a>
+                        <a href="#" onclick="viewProfile()">
+                            <i class="fas fa-edit"></i>
+                            <span>Update Profile</span>
+                        </a>
+                        <a href="#" onclick="viewSettings()">
+                            <i class="fas fa-cog"></i>
+                            <span>Settings</span>
+                        </a>
+                        <hr>
+                        <a href="#" class="logout" onclick="logout()">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Logout</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-content">
+        <div class="filter-section">
+            <h3 class="filter-title">
+                <i class="fas fa-filter"></i>
+                Filter Vehicles
+            </h3>
+            
+            <div class="filter-group">
+                <label for="vehicle-type">Vehicle Type</label>
+                <select id="vehicle-type">
+                    <option value="">All Types</option>
+                    <option value="car">Car</option>
+                    <option value="suv">SUV</option>
+                    <option value="truck">Truck</option>
+                    <option value="motorcycle">Motorcycle</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label for="price-range">Price Range (LKR)</label>
+                <input type="range" min="0" max="10000000" value="5000000" class="price-slider" id="price-range" oninput="updatePriceDisplay(this.value)">
+                <div class="price-values">
+                    <span>Rs. 0</span>
+                    <span id="currentPrice">Rs. 5,000,000</span>
+                    <span>Rs. 10,000,000</span>
+                </div>
+            </div>
+            
+            <div class="filter-group">
+                <label for="make">Make</label>
+                <select id="make">
+                    <option value="">All Makes</option>
+                    <option value="toyota">Toyota</option>
+                    <option value="honda">Honda</option>
+                    <option value="nissan">Nissan</option>
+                    <option value="suzuki">Suzuki</option>
+                    <option value="bmw">BMW</option>
+                    <option value="mercedes">Mercedes-Benz</option>
+                    <option value="audi">Audi</option>
+                    <option value="hyundai">Hyundai</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label for="year">Year</label>
+                <select id="year">
+                    <option value="">All Years</option>
+                    <option value="2024">2024</option>
+                    <option value="2023">2023</option>
+                    <option value="2022">2022</option>
+                    <option value="2021">2021</option>
+                    <option value="2020">2020</option>
+                    <option value="2019">2019</option>
+                    <option value="2018">2018</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label for="mileage">Max Mileage</label>
+                <select id="mileage">
+                    <option value="">Any Mileage</option>
+                    <option value="10000">Under 10,000 km</option>
+                    <option value="50000">Under 50,000 km</option>
+                    <option value="100000">Under 100,000 km</option>
+                    <option value="200000">Under 200,000 km</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label for="location">Location</label>
+                <select id="location">
+                    <option value="">All Locations</option>
+                    <option value="colombo">Colombo</option>
+                    <option value="kandy">Kandy</option>
+                    <option value="galle">Galle</option>
+                    <option value="jaffna">Jaffna</option>
+                    <option value="negombo">Negombo</option>
+                </select>
+            </div>
+            
+            <div class="filter-buttons">
+                <button class="btn-filter" onclick="applyFilters()">
+                    <i class="fas fa-search"></i>
+                    Apply Filters
+                </button>
+                <button class="btn-filter btn-reset" onclick="resetFilters()">
+                    <i class="fas fa-undo"></i>
+                    Reset Filters
+                </button>
+            </div>
+        </div>
+
+        <div class="vehicles-section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-car"></i>
+                    Available Vehicles
+                </h2>
+                <div class="view-toggle">
+                    <button class="view-btn active" onclick="switchView('grid')">
+                        <i class="fas fa-th-large"></i>
+                    </button>
+                    <button class="view-btn" onclick="switchView('list')">
+                        <i class="fas fa-list"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div id="vehicleGrid" class="vehicle-grid">
+                <div class="loading-state">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <h3>Loading Vehicles</h3>
+                    <p>Please wait while we fetch the latest vehicle listings...</p>
+                </div>
+            </div>
+
+            <div id="vehicleList" class="vehicle-list">
+                <!-- List view will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Inspection Centers Modal -->
+    <div id="inspectionModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">
+                    <i class="fas fa-clipboard-check"></i>
+                    Inspection Centers
+                </h2>
+                <span class="close" onclick="closeInspectionModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="inspection-centers" id="inspectionCenters">
+                    <!-- Inspection centers will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Update Modal -->
+    <div id="profileModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">
+                    <i class="fas fa-user-edit"></i>
+                    Update Profile
+                </h2>
+                <span class="close" onclick="closeProfileModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="profile-picture-section">
+                    <div class="profile-pic" id="profileImage">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <input type="file" id="profilePicInput" accept="image/*" style="display: none;" onchange="previewImage(this)">
+                    <button class="upload-btn" onclick="document.getElementById('profilePicInput').click()">
+                        <i class="fas fa-camera"></i> Change Picture
+                    </button>
+                </div>
+
+                <form id="profileForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="firstName" class="form-label">First Name</label>
+                            <input type="text" id="firstName" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName" class="form-label">Last Name</label>
+                            <input type="text" id="lastName" class="form-input" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email" class="form-label">Email Address</label>
+                        <input type="email" id="email" class="form-input" readonly>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="phoneNumber" class="form-label">Phone Number</label>
+                        <input type="tel" id="phoneNumber" class="form-input" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="closeProfileModal()">Cancel</button>
+                <button type="button" class="btn-save" onclick="saveProfile()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ================== CONSTANTS ==================
+        const API_BASE_USERS = "http://localhost:8080/api/users";
+        const API_BASE_VEHICLES = "http://localhost:8080/api/vehicles";
+
+        let currentView = 'grid';
+        let allVehicles = [];
+        let filteredVehicles = [];
+
+        // ================== TOKEN HELPERS ==================
+        function getToken() {
+            return localStorage.getItem("token");
+        }
+
+        function saveToken(token) {
+            localStorage.setItem("token", token);
+        }
+
+        function clearToken() {
+            localStorage.removeItem("token");
+        }
+
+        // ================== UI HELPERS ==================
+        function updatePriceDisplay(value) {
+            const formatter = new Intl.NumberFormat('en-LK');
+            document.getElementById('currentPrice').textContent = `Rs. ${formatter.format(value)}`;
+        }
+
+        function switchView(view) {
+            currentView = view;
+            const gridView = document.getElementById('vehicleGrid');
+            const listView = document.getElementById('vehicleList');
+            const buttons = document.querySelectorAll('.view-btn');
+
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            if (view === 'grid') {
+                gridView.style.display = 'grid';
+                listView.style.display = 'none';
+                buttons[0].classList.add('active');
+            } else {
+                gridView.style.display = 'none';
+                listView.style.display = 'flex';
+                buttons[1].classList.add('active');
+                renderListView();
+            }
+        }
+
+        // ================== PROFILE MANAGEMENT ==================
+        async function loadUserProfile() {
+            const token = getToken();
+            if (!token) return;
+
+            try {
+                const res = await fetch(`${API_BASE_USERS}/me`, {
+                    method: "GET",
+                    headers: { "Authorization": "Bearer " + token }
+                });
+                
+                if (!res.ok) throw new Error("Failed to fetch user info");
+                const user = await res.json();
+
+                // Update header display
+                const profileName = document.getElementById('profileName');
+                const profileAvatar = document.getElementById('profileAvatar');
+                
+                if (profileName) {
+                    profileName.textContent = `${user.firstName} ${user.lastName}`;
+                }
+                
+                if (profileAvatar && user.firstName && user.lastName) {
+                    profileAvatar.innerHTML = `${user.firstName[0]}${user.lastName[0]}`;
+                }
+
+                // Update form fields
+                const fields = ['firstName', 'lastName', 'email', 'phoneNumber'];
+                fields.forEach(field => {
+                    const element = document.getElementById(field);
+                    if (element) element.value = user[field] || '';
+                });
+
+                // Update profile image
+                if (user.profileImageUrl) {
+                    profileAvatar.innerHTML = `<img src="${user.profileImageUrl}" alt="Profile">`;
+                    document.getElementById('profileImage').innerHTML = `<img src="${user.profileImageUrl}" alt="Profile">`;
+                }
+
+            } catch (err) {
+                console.error('Profile loading error:', err);
+            }
+        }
+
+        function viewProfile() {
+            document.getElementById('profileModal').style.display = 'block';
+            toggleProfileMenu();
+        }
+
+        function closeProfileModal() {
+            document.getElementById('profileModal').style.display = 'none';
+        }
+
+        function previewImage(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const profileImage = document.getElementById('profileImage');
+                    const profileAvatar = document.getElementById('profileAvatar');
+                    
+                    if (profileImage) {
+                        profileImage.innerHTML = `<img src="${e.target.result}" alt="Profile">`;
+                    }
+                    if (profileAvatar) {
+                        profileAvatar.innerHTML = `<img src="${e.target.result}" alt="Profile">`;
+                    }
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        async function saveProfile() {
+            const token = getToken();
+            if (!token) {
+                alert("Please login first!");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append("firstName", document.getElementById("firstName").value);
+            formData.append("lastName", document.getElementById("lastName").value);
+            formData.append("phone", document.getElementById("phoneNumber").value);
+
+            const imageFile = document.getElementById("profilePicInput")?.files[0];
+            if (imageFile) formData.append("image", imageFile);
+
+            try {
+                const res = await fetch(`${API_BASE_USERS}/update`, {
+                    method: "PUT",
+                    headers: { "Authorization": "Bearer " + token },
+                    body: formData
+                });
+
+                if (!res.ok) throw new Error("Profile update failed");
+                
+                alert("Profile updated successfully!");
+                loadUserProfile();
+                closeProfileModal();
+                
+            } catch (err) {
+                console.error('Profile update error:', err);
+                alert("Could not update profile");
+            }
+        }
+
+        function viewSettings() {
+            alert("Settings page coming soon!");
+        }
+
+        function logout() {
+            if (confirm("Are you sure you want to logout?")) {
+                clearToken();
+                window.location.href = "/Frontend/index.html";
+            }
+        }
+
+        // ================== NAVIGATION ==================
+        function viewListings() {
+            window.location.href = '/Frontend/pages/my-listings.html';
+        }
+
+        // ================== VEHICLES MANAGEMENT ==================
+        async function loadApprovedVehicles() {
+            const grid = document.getElementById("vehicleGrid");
+            if (!grid) return;
+
+            const token = getToken();
+            if (!token) {
+                showError("Please login to view vehicles.");
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_BASE_VEHICLES}/approved`, {
+                    method: "GET",
+                    headers: {
+                        "Authorization": "Bearer " + token,
+                        "Content-Type": "application/json"
+                    }
+                });
+                
+                if (!res.ok) throw new Error("Failed to fetch approved vehicles");
+                
+                allVehicles = await res.json();
+                filteredVehicles = [...allVehicles];
+                renderVehicles();
+
+            } catch (err) {
+                console.error("Error loading vehicles:", err);
+                showError("Failed to load vehicles. Please try again later.");
+            }
+        }
+
+        function renderVehicles() {
+            const grid = document.getElementById("vehicleGrid");
+            
+            if (!filteredVehicles || filteredVehicles.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-car"></i>
+                        <h3>No vehicles found</h3>
+                        <p>Try adjusting your filters to see more results.</p>
+                        <button class="btn-filter" onclick="resetFilters()" style="margin-top: 1rem;">
+                            <i class="fas fa-undo"></i> Reset Filters
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = filteredVehicles.map(vehicle => `
+                <div class="vehicle-card">
+                    <div class="vehicle-badge">Certified</div>
+                    <div class="vehicle-image">
+                        ${vehicle.photos && vehicle.photos.length > 0 
+                            ? `<img src="${vehicle.photos[0]}" alt="${vehicle.make} ${vehicle.model}">`
+                            : `<i class="fas fa-car"></i>`}
+                    </div>
+                    <div class="vehicle-info">
+                        <h3 class="vehicle-title">${vehicle.year} ${vehicle.make} ${vehicle.model}</h3>
+                        
+                        <div class="vehicle-details">
+                            <div class="vehicle-detail">
+                                <i class="fas fa-calendar"></i>
+                                <span>${vehicle.year}</span>
+                            </div>
+                            <div class="vehicle-detail">
+                                <i class="fas fa-tachometer-alt"></i>
+                                <span>${formatMileage(vehicle.mileage)} km</span>
+                            </div>
+                            <div class="vehicle-detail">
+                                <i class="fas fa-gas-pump"></i>
+                                <span>${vehicle.fuelType || 'Petrol'}</span>
+                            </div>
+                            <div class="vehicle-detail">
+                                <i class="fas fa-cog"></i>
+                                <span>${vehicle.transmission || 'Manual'}</span>
+                            </div>
+                        </div>
+
+                        <div class="vehicle-footer">
+                            <div class="vehicle-price">${formatPrice(vehicle.price)}</div>
+                            <div class="vehicle-seller">by ${vehicle.postedBy || 'AutoCert User'}</div>
+                        </div>
+
+                        <div class="vehicle-actions">
+                            <a href="vehicle-details.html?id=${vehicle.id}" class="btn-view">
+                                <i class="fas fa-eye"></i> View Details
+                            </a>
+                            <button class="btn-chat-vehicle" onclick="openChat(${vehicle.sellerId || 1}, '${vehicle.postedBy || 'Seller'}', '', ${vehicle.id}, '${vehicle.year} ${vehicle.make} ${vehicle.model}')">
+                                <i class="fas fa-comments"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderListView() {
+            const list = document.getElementById("vehicleList");
+            
+            if (!filteredVehicles || filteredVehicles.length === 0) {
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-car"></i>
+                        <h3>No vehicles found</h3>
+                        <p>Try adjusting your filters to see more results.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            list.innerHTML = filteredVehicles.map(vehicle => `
+                <div class="vehicle-card" style="display: flex; padding: 1rem; gap: 1rem; align-items: center;">
+                    <div class="vehicle-image" style="width: 200px; height: 120px; flex-shrink: 0;">
+                        ${vehicle.photos && vehicle.photos.length > 0 
+                            ? `<img src="${vehicle.photos[0]}" alt="${vehicle.make} ${vehicle.model}">`
+                            : `<i class="fas fa-car"></i>`}
+                    </div>
+                    <div class="vehicle-info" style="flex: 1; padding: 0;">
+                        <h3 class="vehicle-title">${vehicle.year} ${vehicle.make} ${vehicle.model}</h3>
+                        <div class="vehicle-details" style="grid-template-columns: repeat(4, 1fr); margin: 0.5rem 0;">
+                            <div class="vehicle-detail">
+                                <i class="fas fa-calendar"></i>
+                                <span>${vehicle.year}</span>
+                            </div>
+                            <div class="vehicle-detail">
+                                <i class="fas fa-tachometer-alt"></i>
+                                <span>${formatMileage(vehicle.mileage)} km</span>
+                            </div>
+                            <div class="vehicle-detail">
+                                <i class="fas fa-gas-pump"></i>
+                                <span>${vehicle.fuelType || 'Petrol'}</span>
+                            </div>
+                            <div class="vehicle-detail">
+                                <i class="fas fa-cog"></i>
+                                <span>${vehicle.transmission || 'Manual'}</span>
+                            </div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin: 1rem 0;">
+                            <div class="vehicle-price">${formatPrice(vehicle.price)}</div>
+                            <div class="vehicle-seller">by ${vehicle.postedBy || 'AutoCert User'}</div>
+                        </div>
+                        <div class="vehicle-actions">
+                            <a href="vehicle-details.html?id=${vehicle.id}" class="btn-view">
+                                <i class="fas fa-eye"></i> View Details
+                            </a>
+                            <button class="btn-chat-vehicle" onclick="openChat(${vehicle.sellerId || 1}, '${vehicle.postedBy || 'Seller'}', '', ${vehicle.id}, '${vehicle.year} ${vehicle.make} ${vehicle.model}')">
+                                <i class="fas fa-comments"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openChat(sellerId, sellerName, sellerAvatar, vehicleId, vehicleTitle) {
+            const params = new URLSearchParams({
+                sellerId: sellerId,
+                sellerName: sellerName,
+                sellerAvatar: sellerAvatar || '',
+                vehicleId: vehicleId,
+                vehicleTitle: vehicleTitle
+            });
+            window.location.href = `chat.html?${params.toString()}`;
+        }
+
+        function showError(message) {
+            document.getElementById("vehicleGrid").innerHTML = `
+                <div class="error-state">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h3>Error</h3>
+                    <p>${message}</p>
+                    <button class="btn-view" onclick="loadApprovedVehicles()" style="margin-top: 1rem;">
+                        <i class="fas fa-refresh"></i> Try Again
+                    </button>
+                </div>
+            `;
+        }
+
+        // ================== FILTERS ==================
+        function applyFilters() {
+            const filters = {
+                type: document.getElementById('vehicle-type').value,
+                maxPrice: parseInt(document.getElementById('price-range').value),
+                make: document.getElementById('make').value,
+                year: document.getElementById('year').value,
+                maxMileage: parseInt(document.getElementById('mileage').value),
+                location: document.getElementById('location').value
+            };
+
+            filteredVehicles = allVehicles.filter(vehicle => {
+                return (!filters.type || vehicle.type?.toLowerCase() === filters.type) &&
+                       (!filters.maxPrice || vehicle.price <= filters.maxPrice) &&
+                       (!filters.make || vehicle.make?.toLowerCase() === filters.make) &&
+                       (!filters.year || vehicle.year == filters.year) &&
+                       (!filters.maxMileage || vehicle.mileage <= filters.maxMileage) &&
+                       (!filters.location || vehicle.location?.toLowerCase() === filters.location);
+            });
+
+            if (currentView === 'grid') {
+                renderVehicles();
+            } else {
+                renderListView();
+            }
+        }
+
+        function resetFilters() {
+            document.getElementById('vehicle-type').value = '';
+            document.getElementById('price-range').value = '5000000';
+            updatePriceDisplay('5000000');
+            document.getElementById('make').value = '';
+            document.getElementById('year').value = '';
+            document.getElementById('mileage').value = '';
+            document.getElementById('location').value = '';
+            
+            filteredVehicles = [...allVehicles];
+            if (currentView === 'grid') {
+                renderVehicles();
+            } else {
+                renderListView();
+            }
+        }
+
+        // ================== INSPECTION CENTERS ==================
+        function openInspectionModal() {
+            document.getElementById('inspectionModal').style.display = 'block';
+            loadInspectionCenters();
+        }
+
+        function closeInspectionModal() {
+            document.getElementById('inspectionModal').style.display = 'none';
+        }
+
+        function loadInspectionCenters() {
+            const container = document.getElementById('inspectionCenters');
+            
+            // Mock data for inspection centers
+            const centers = [
+                {
+                    id: 1,
+                    name: "AutoCert Colombo Center",
+                    rating: 4.8,
+                    reviews: 245,
+                    address: "123 Galle Road, Colombo 03",
+                    phone: "+94 11 234 5678",
+                    hours: "8:00 AM - 6:00 PM",
+                    price: "Rs. 15,000",
+                    services: ["Full Inspection", "Engine Check", "Brake Test", "Emission Test", "Safety Check"],
+                    availability: "Available Today"
+                },
+                {
+                    id: 2,
+                    name: "Quality Auto Inspection",
+                    rating: 4.6,
+                    reviews: 189,
+                    address: "456 Kandy Road, Kadawatha",
+                    phone: "+94 11 345 6789",
+                    hours: "7:30 AM - 7:00 PM",
+                    price: "Rs. 12,500",
+                    services: ["Basic Inspection", "Engine Check", "Brake Test", "Body Check"],
+                    availability: "Available Tomorrow"
+                },
+                {
+                    id: 3,
+                    name: "Premium Vehicle Check",
+                    rating: 4.9,
+                    reviews: 312,
+                    address: "789 High Level Road, Nugegoda",
+                    phone: "+94 11 456 7890",
+                    hours: "9:00 AM - 5:00 PM",
+                    price: "Rs. 18,000",
+                    services: ["Premium Inspection", "Engine Check", "Brake Test", "Emission Test", "Safety Check", "Paint Check"],
+                    availability: "Book in Advance"
+                }
+            ];
+
+            container.innerHTML = centers.map(center => `
+                <div class="inspection-center" onclick="selectCenter(${center.id})">
+                    <div class="center-header">
+                        <div>
+                            <div class="center-name">${center.name}</div>
+                            <div class="center-availability">${center.availability}</div>
+                        </div>
+                        <div class="center-rating">
+                            <i class="fas fa-star"></i>
+                            <span>${center.rating}</span>
+                            <span style="color: var(--gray-500);">(${center.reviews})</span>
+                        </div>
+                    </div>
+
+                    <div class="center-services">
+                        <div class="services-title">Services Included:</div>
+                        <div class="service-tags">
+                            ${center.services.map(service => `<span class="service-tag">${service}</span>`).join('')}
+                        </div>
+                    </div>
+
+                    <div class="center-actions">
+                        <button class="btn-book" onclick="event.stopPropagation(); bookInspection(${center.id})">
+                            <i class="fas fa-calendar-check"></i>
+                            Book Now
+                        </button>
+                        <button class="btn-contact" onclick="event.stopPropagation(); contactCenter(${center.id})">
+                            <i class="fas fa-phone"></i>
+                            Contact
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function selectCenter(centerId) {
+            document.querySelectorAll('.inspection-center').forEach(center => {
+                center.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+        }
+
+        function bookInspection(centerId) {
+            alert(`Booking inspection at center ${centerId}. This will redirect to booking page.`);
+            // Here you would implement actual booking logic
+            // window.location.href = `booking.html?centerId=${centerId}`;
+        }
+
+        function contactCenter(centerId) {
+            alert(`Contacting center ${centerId}. This will open contact options.`);
+            // Here you would implement contact logic
+        }
+
+        // ================== UTILITY FUNCTIONS ==================
+        function formatPrice(price) {
+            if (!price) return "Price not available";
+            return new Intl.NumberFormat('en-LK', { 
+                style: 'currency', 
+                currency: 'LKR',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(price);
+        }
+
+        function formatMileage(mileage) {
+            if (!mileage) return "0";
+            return new Intl.NumberFormat('en-LK').format(mileage);
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return "Date not available";
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+
+        // ================== MENU FUNCTIONS ==================
+        function toggleProfileMenu() {
+            const menu = document.getElementById('profileMenu');
+            menu.classList.toggle('show');
+        }
+
+        function toggleMobileMenu() {
+            const navLinks = document.getElementById('navLinks');
+            navLinks.classList.toggle('active');
+        }
+
+        // ================== EVENT LISTENERS ==================
+        document.addEventListener('click', function(event) {
+            const profileDropdown = document.querySelector('.profile-dropdown');
+            const profileMenu = document.getElementById('profileMenu');
+            
+            if (!profileDropdown.contains(event.target)) {
+                profileMenu.classList.remove('show');
+            }
+        });
+
+        // Close modals when clicking outside
+        window.onclick = function(event) {
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        }
+
+        // Close mobile menu when clicking on a link
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                document.getElementById('navLinks').classList.remove('active');
+            });
+        });
+
+        // ================== INITIALIZATION ==================
+        document.addEventListener("DOMContentLoaded", () => {
+            // Check if user is logged in
+            if (!getToken()) {
+                window.location.href = '/Frontend/index.html';
+                return;
+            }
+
+            loadUserProfile();
+            loadApprovedVehicles();
+        });
+
+        // ================== KEYBOARD SHORTCUTS ==================
+        document.addEventListener('keydown', function(event) {
+            // ESC key to close modals
+            if (event.key === 'Escape') {
+                const modals = document.querySelectorAll('.modal');
+                modals.forEach(modal => {
+                    if (modal.style.display === 'block') {
+                        modal.style.display = 'none';
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
+       

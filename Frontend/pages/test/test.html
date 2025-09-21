@@ -1,0 +1,3149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoCert Inspector Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            color: #333;
+        }
+
+        .dashboard {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            color: white;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 1000;
+        }
+
+        .sidebar.collapsed {
+            width: 70px;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .sidebar-title {
+            font-size: 18px;
+            font-weight: bold;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar.collapsed .sidebar-title {
+            opacity: 0;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 20px 0;
+        }
+
+        .nav-item {
+            margin: 5px 0;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 20px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-left-color: #34d399;
+        }
+
+        .nav-link i {
+            width: 20px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .nav-text {
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar.collapsed .nav-text {
+            opacity: 0;
+        }
+
+        .logout-section {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            padding: 0 20px;
+        }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            width: 100%;
+            padding: 15px 20px;
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: #ef4444;
+            color: #fecaca;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            background: white;
+            padding: 20px 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 999;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .toggle-btn {
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: #6b7280;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-btn:hover {
+            background: #f3f4f6;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .notification-bell {
+            position: relative;
+            background: none;
+            border: none;
+            font-size: 18px;
+            color: #6b7280;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .notification-bell:hover {
+            background: #f3f4f6;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #ef4444;
+            color: white;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            min-width: 18px;
+            text-align: center;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        /* Content Area */
+        .content {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        /* Password Change Warning */
+        .password-warning {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            border: 2px solid #f59e0b;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            animation: pulse 2s infinite;
+        }
+
+        .password-warning.hidden {
+            display: none;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        .warning-icon {
+            font-size: 24px;
+            color: #d97706;
+        }
+
+        .warning-content h3 {
+            color: #92400e;
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .warning-content p {
+            color: #78350f;
+            margin-bottom: 10px;
+        }
+
+        .change-password-btn {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .change-password-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+        }
+
+        .stat-icon.green { background: linear-gradient(135deg, #10b981, #059669); }
+        .stat-icon.blue { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+        .stat-icon.yellow { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .stat-icon.purple { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+
+        .stat-info h3 {
+            font-size: 28px;
+            font-weight: bold;
+            color: #1f2937;
+            margin-bottom: 5px;
+        }
+
+        .stat-info p {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        /* Data Tables */
+        .data-table {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        .table-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 15px 25px;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        th {
+            background: #f9fafb;
+            font-weight: 600;
+            color: #374151;
+            font-size: 13px;
+            text-transform: uppercase;
+        }
+
+        td {
+            color: #6b7280;
+        }
+
+        tr:hover {
+            background: #f9fafb;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-scheduled { background: #dbeafe; color: #1d4ed8; }
+        .status-in-progress { background: #e0f2fe; color: #0284c7; }
+        .status-completed { background: #dcfce7; color: #166534; }
+        .status-pending { background: #fef3c7; color: #92400e; }
+
+        /* Priority styles */
+        .priority-high { background: #fee2e2; color: #dc2626; }
+        .priority-medium { background: #fef3c7; color: #92400e; }
+        .priority-low { background: #dcfce7; color: #166534; }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn.start { background: #dbeafe; color: #1d4ed8; }
+        .action-btn.complete { background: #dcfce7; color: #166534; }
+        .action-btn.view { background: #f3f4f6; color: #6b7280; }
+
+        .action-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* Inspection Form Styles */
+        .inspection-form {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
+        }
+
+        .form-header {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 25px 30px;
+            border-radius: 15px 15px 0 0;
+        }
+
+        .form-content {
+            padding: 30px;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+        }
+
+        .form-section h4 {
+            color: #1f2937;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #10b981;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .checkbox-item:hover {
+            background: #f9fafb;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #10b981;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: modalSlideIn 0.4s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 25px 30px;
+            border-radius: 20px 20px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .modal-close {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #374151;
+            font-size: 14px;
+        }
+
+        .form-input, .form-textarea {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: #f9fafb;
+        }
+
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-input:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #10b981;
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+            background: white;
+        }
+
+        .password-requirements {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .password-requirements h4 {
+            color: #475569;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .requirement {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 3px 0;
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        .requirement.valid {
+            color: #059669;
+        }
+
+        .requirement.invalid {
+            color: #dc2626;
+        }
+
+        .modal-footer {
+            padding: 25px 30px;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            background: #f9fafb;
+            border-radius: 0 0 20px 20px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-primary:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Notification styles */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 10px;
+            color: white;
+            font-weight: 500;
+            z-index: 10000;
+            animation: slideInRight 0.3s ease;
+            max-width: 350px;
+        }
+
+        .notification.success { background: #10b981; }
+        .notification.error { background: #ef4444; }
+        .notification.info { background: #3b82f6; }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes slideOutRight {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 70px;
+            }
+            
+            .sidebar-title,
+            .nav-text {
+                display: none;
+            }
+            
+            .header {
+                padding: 15px 20px;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Animation Classes */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Loading Overlay */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 3000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #10b981;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* /////////////// */
+
+        .inspection {
+        background-color: #f8d7da; /* light red */
+        color: #721c24;
+        font-weight: bold;
+        text-align: center;
+        border-radius: 4px;
+        padding: 4px 8px;
+    }
+
+    /* ////////////// */
+ 
+/* Pagination container */
+.pagination {
+    display: flex;
+    justify-content: center; /* Center buttons */
+    margin-top: 10px;
+    gap: 5px;
+}
+
+/* Page buttons */
+.pagination button {
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.pagination button:hover {
+    background-color: #e0e0e0;
+}
+
+.pagination button.active {
+    background-color: #2e86c1;
+    color: white;
+    border-color: #2e86c1;
+}
+
+
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-user-tie"></i>
+                </div>
+                <h1 class="sidebar-title">Inspector Portal</h1>
+            </div>
+            
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link active" data-section="dashboard">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span class="nav-text">Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-section="assignments">
+                            <i class="fas fa-clipboard-list"></i>
+                            <span class="nav-text">My Assignments</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-section="inspections">
+                            <i class="fas fa-clipboard-check"></i>
+                            <span class="nav-text">Inspections</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-section="reports">
+                            <i class="fas fa-file-alt"></i>
+                            <span class="nav-text">My Reports</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-section="profile">
+                            <i class="fas fa-user-cog"></i>
+                            <span class="nav-text">Profile</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            
+            <div class="logout-section">
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span class="nav-text">Logout</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <button class="toggle-btn" onclick="toggleSidebar()">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h2 class="page-title" id="pageTitle">Inspector Dashboard</h2>
+                </div>
+                <div class="header-right">
+                    <button class="notification-bell">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">2</span>
+                    </button>
+                    <div class="user-info">
+                        <div class="user-avatar">
+                            <i class="fas fa-user-tie"></i>
+                        </div>
+                        <span id="inspectorName">Mike Wilson</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <main class="content">
+                <!-- Password Change Warning -->
+                <div class="password-warning" id="passwordWarning">
+                    <div class="warning-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="warning-content">
+                        <h3>Security Notice: Change Your Password</h3>
+                        <p>You are currently using a temporary password. For security reasons, please change your password immediately.</p>
+                        <button class="change-password-btn" onclick="openPasswordChangeModal()">
+                            <i class="fas fa-key"></i>
+                            Change Password Now
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Dashboard Section -->
+                <div class="content-section active fade-in" id="dashboard">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon green">
+                                <i class="fas fa-clipboard-list"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>5</h3>
+                                <p>Pending Assignments</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon blue">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>3</h3>
+                                <p>Today's Schedule</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon yellow">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>24</h3>
+                                <p>Completed This Week</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon purple">
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>4.8</h3>
+                                <p>Average Rating</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Today's Schedule -->
+                    <div class="data-table">
+                        <div class="table-header">
+                            <h3 class="table-title">Today's Schedule</h3>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>Booking ID</th>
+                                    <th>Customer</th>
+                                    <th>Vehicle</th>
+                                    <th>Inspection Type</th>
+                                    <th>Service Type</th>
+                                    <th>Location</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="todaysScheduleBody">
+                                <!-- Data will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Assignments Section -->
+                <div class="content-section" id="assignments">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon green">
+                                <i class="fas fa-calendar-check"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>8</h3>
+                                <p>This Week</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon blue">
+                                <i class="fas fa-car"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>12</h3>
+                                <p>Total Assigned</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon yellow">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>3</h3>
+                                <p>High Priority</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon purple">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>2.5h</h3>
+                                <p>Avg. Per Inspection</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="data-table">
+                        <div class="table-header">
+                            <h3 class="table-title">My Inspection Assignments</h3>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Booking ID</th>
+                                    <th>Customer</th>
+                                    <th>Vehicle</th>
+                                    <th>Inspection Type</th>
+                                    <th>Scheduled Date</th>
+                                    <th>Time Slot</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="assignmentsBody">
+                                <!-- Data will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                        
+                    </div>
+                    <!-- For Assignments -->
+                        <div id="assignmentsPagination" class="pagination"></div>
+                </div>
+
+                <!-- Inspections Section -->
+                <div class="content-section" id="inspections">
+                    <div class="data-table">
+                        <div class="table-header">
+                            <h3 class="table-title">Inspection History</h3>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Inspection ID</th>
+                                    <th>Customer</th>
+                                    <th>Vehicle</th>
+                                    <th>Type</th>
+                                    <th>Date Completed</th>
+                                    <th>Result</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                               
+                            </tbody>
+                        </table>
+                        
+                    </div>
+                    <!-- For Inspections -->
+                        <div id="inspectionsPagination" class="pagination"></div>
+                </div>
+
+                <!-- Reports Section -->
+                <div class="content-section" id="reports">
+                    <div class="data-table">
+                        <div class="table-header">
+                            <h3 class="table-title">My Reports</h3>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Report ID</th>
+                                    <th>Booking ID</th>
+                                    <th>Customer</th>
+                                    <th>Type</th>
+                                    <th>Generated</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>RPT-001</td>
+                                    <td>BK-2024-100</td>
+                                    <td>David Miller</td>
+                                    <td>Annual Safety</td>
+                                    <td>Dec 10, 2024</td>
+                                    <td><span class="status-badge status-completed">Sent</span></td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="action-btn view" title="Download PDF" onclick="downloadReport('RPT-001')">
+                                                <i class="fas fa-download"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Profile Section -->
+                <div class="content-section" id="profile">
+                    <div class="data-table">
+                        <div class="table-header">
+                            <h3 class="table-title">My Profile</h3>
+                        </div>
+                        <div class="modal-body" style="padding: 40px;">
+                            <div class="form-group">
+                                <label class="form-label">Full Name</label>
+                                <input type="text" class="form-input" id="profileName" value="Mike Wilson" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Email Address</label>
+                                <input type="email" class="form-input" id="profileEmail" value="mike.wilson@autocert.com" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Phone Number</label>
+                                <input type="tel" class="form-input" id="profilePhone" value="+1 (555) 123-4567">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Inspection Center</label>
+                                <input type="text" class="form-input" value="Downtown Center" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Specializations</label>
+                                <input type="text" class="form-input" value="Engine, Brakes, Emissions" readonly>
+                            </div>
+                            <div style="display: flex; gap: 15px; margin-top: 30px;">
+                                <button class="btn btn-primary" onclick="openPasswordChangeModal()">
+                                    <i class="fas fa-key"></i>
+                                    Change Password
+                                </button>
+                                <button class="btn btn-secondary" onclick="updateProfile()">
+                                    <i class="fas fa-save"></i>
+                                    Update Profile
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Password Change Modal -->
+    <div class="modal-overlay" id="passwordChangeModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">
+                    <i class="fas fa-key"></i>
+                    Change Password
+                </h3>
+                <button class="modal-close" onclick="closeModal('passwordChangeModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <form id="passwordChangeForm">
+                    <div class="form-group">
+                        <label class="form-label">Current Password</label>
+                        <input type="password" class="form-input" id="currentPassword" required placeholder="Enter your current password">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">New Password</label>
+                        <input type="password" class="form-input" id="newPassword" required placeholder="Enter your new password" oninput="validatePassword()">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Confirm New Password</label>
+                        <input type="password" class="form-input" id="confirmPassword" required placeholder="Confirm your new password" oninput="validatePassword()">
+                    </div>
+                    
+                    <div class="password-requirements">
+                        <h4>Password Requirements:</h4>
+                        <div class="requirement" id="lengthReq">
+                            <i class="fas fa-times"></i>
+                            At least 8 characters long
+                        </div>
+                        <div class="requirement" id="uppercaseReq">
+                            <i class="fas fa-times"></i>
+                            At least one uppercase letter
+                        </div>
+                        <div class="requirement" id="lowercaseReq">
+                            <i class="fas fa-times"></i>
+                            At least one lowercase letter
+                        </div>
+                        <div class="requirement" id="numberReq">
+                            <i class="fas fa-times"></i>
+                            At least one number
+                        </div>
+                        <div class="requirement" id="matchReq">
+                            <i class="fas fa-times"></i>
+                            Passwords match
+                        </div>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('passwordChangeModal')">
+                    <i class="fas fa-times"></i>
+                    Cancel
+                </button>
+                <button class="btn btn-primary" id="changePasswordBtn" onclick="changePassword()" disabled>
+                    <i class="fas fa-key"></i>
+                    Change Password
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Inspection Form Modal -->
+    <div class="modal-overlay" id="inspectionModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="inspectionModalTitle">
+                    <i class="fas fa-clipboard-check"></i>
+                    Vehicle Inspection Form
+                </h3>
+                <button class="modal-close" onclick="closeModal('inspectionModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <div id="inspectionFormContent">
+                    <!-- Dynamic content will be loaded here -->
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('inspectionModal')">
+                    <i class="fas fa-times"></i>
+                    Cancel
+                </button>
+                <button class="btn btn-secondary" onclick="saveInspectionDraft()">
+                    <i class="fas fa-save"></i>
+                    Save Draft
+                </button>
+                <button class="btn btn-primary" onclick="submitInspection()">
+                    <i class="fas fa-check-circle"></i>
+                    Complete Inspection
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <script>
+        // Global variables
+let sidebarCollapsed = false;
+let isTemporaryPassword = false;
+let passwordRequirementsMet = {
+    length: false,
+    uppercase: false,
+    lowercase: false,
+    number: false,
+    match: false
+};
+let currentInspection = null;
+let currentBookingData = null;
+
+// Initialize dashboard
+document.addEventListener('DOMContentLoaded', function() {
+    // Add event listeners for navigation
+    const navLinks = document.querySelectorAll('.nav-link');
+    navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const section = this.getAttribute('data-section');
+            showSection(section);
+            
+            navLinks.forEach(l => l.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+
+    // Check password status
+    checkPasswordStatus();
+    
+    // Load today's schedule
+    loadTodaySchedule();
+});
+
+function checkPasswordStatus() {
+    // Check if user has a temporary password flag from server
+    const hasTemporaryPassword = localStorage.getItem('hasTemporaryPassword') === 'true';
+    
+    if (hasTemporaryPassword) {
+        isTemporaryPassword = true;
+        document.getElementById('passwordWarning').classList.remove('hidden');
+        setTimeout(() => {
+            openPasswordChangeModal();
+        }, 2000);
+    } else {
+        isTemporaryPassword = false;
+        document.getElementById('passwordWarning').classList.add('hidden');
+    }
+}
+
+// Toggle sidebar
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    sidebarCollapsed = !sidebarCollapsed;
+    
+    if (sidebarCollapsed) {
+        sidebar.classList.add('collapsed');
+    } else {
+        sidebar.classList.remove('collapsed');
+    }
+}
+
+// Show specific section
+function showSection(sectionName) {
+    const sections = document.querySelectorAll('.content-section');
+    sections.forEach(section => {
+        section.classList.remove('active');
+    });
+    
+    const targetSection = document.getElementById(sectionName);
+    if (targetSection) {
+        targetSection.classList.add('active');
+        targetSection.classList.add('fade-in');
+    }
+    
+    const pageTitle = document.getElementById('pageTitle');
+    const titles = {
+        'dashboard': 'Inspector Dashboard',
+        'assignments': 'My Assignments',
+        'inspections': 'Inspection History',
+        'reports': 'My Reports',
+        'profile': 'My Profile'
+    };
+    pageTitle.textContent = titles[sectionName] || 'Dashboard';
+}
+
+// Password change functionality
+function openPasswordChangeModal() {
+    document.getElementById('passwordChangeModal').style.display = 'flex';
+    document.getElementById('passwordChangeForm').reset();
+    resetPasswordRequirements();
+}
+
+function closeModal(modalId) {
+    document.getElementById(modalId).style.display = 'none';
+}
+
+function validatePassword() {
+    const newPassword = document.getElementById('newPassword').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+
+    // Check length
+    passwordRequirementsMet.length = newPassword.length >= 8;
+    updateRequirement('lengthReq', passwordRequirementsMet.length);
+
+    // Check uppercase
+    passwordRequirementsMet.uppercase = /[A-Z]/.test(newPassword);
+    updateRequirement('uppercaseReq', passwordRequirementsMet.uppercase);
+
+    // Check lowercase
+    passwordRequirementsMet.lowercase = /[a-z]/.test(newPassword);
+    updateRequirement('lowercaseReq', passwordRequirementsMet.lowercase);
+
+    // Check number
+    passwordRequirementsMet.number = /[0-9]/.test(newPassword);
+    updateRequirement('numberReq', passwordRequirementsMet.number);
+
+    // Check match
+    passwordRequirementsMet.match = newPassword === confirmPassword && newPassword.length > 0;
+    updateRequirement('matchReq', passwordRequirementsMet.match);
+
+    // Enable/disable submit button
+    const allMet = Object.values(passwordRequirementsMet).every(req => req);
+    document.getElementById('changePasswordBtn').disabled = !allMet;
+}
+
+function updateRequirement(reqId, met) {
+    const requirement = document.getElementById(reqId);
+    const icon = requirement.querySelector('i');
+    
+    if (met) {
+        requirement.classList.add('valid');
+        requirement.classList.remove('invalid');
+        icon.className = 'fas fa-check';
+    } else {
+        requirement.classList.add('invalid');
+        requirement.classList.remove('valid');
+        icon.className = 'fas fa-times';
+    }
+}
+
+function resetPasswordRequirements() {
+    passwordRequirementsMet = {
+        length: false,
+        uppercase: false,
+        lowercase: false,
+        number: false,
+        match: false
+    };
+
+    Object.keys(passwordRequirementsMet).forEach(key => {
+        updateRequirement(key + 'Req', false);
+    });
+
+    document.getElementById('changePasswordBtn').disabled = true;
+}
+
+async function changePassword() {
+    const currentPassword = document.getElementById('currentPassword').value;
+    const newPassword = document.getElementById('newPassword').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+
+    // Validation
+    if (!currentPassword || !newPassword || !confirmPassword) {
+        showNotification('Please fill in all password fields', 'error');
+        return;
+    }
+
+    if (!Object.values(passwordRequirementsMet).every(req => req)) {
+        showNotification('Please meet all password requirements', 'error');
+        return;
+    }
+
+    // Show loading state
+    const changeBtn = document.getElementById('changePasswordBtn');
+    const originalContent = changeBtn.innerHTML;
+    changeBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Changing Password...';
+    changeBtn.disabled = true;
+
+    try {
+        const token = localStorage.getItem("token");
+
+        const response = await fetch("http://localhost:8080/api/users/change-password", {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                currentPassword: currentPassword,
+                newPassword: newPassword
+            })
+        });
+
+        const result = await response.json();
+
+        if (result.code === 200) {
+            isTemporaryPassword = false;
+            localStorage.removeItem('hasTemporaryPassword');
+            document.getElementById('passwordWarning').classList.add('hidden');
+
+            showNotification(result.message, 'success');
+            closeModal('passwordChangeModal');
+        } else {
+            showNotification(result.message || 'Failed to change password', 'error');
+        }
+    } catch (error) {
+        console.error("Password change error:", error);
+        showNotification('Server error. Please try again later.', 'error');
+    } finally {
+        // Reset button
+        changeBtn.innerHTML = originalContent;
+        changeBtn.disabled = false;
+    }
+}
+
+// Load today's schedule from backend
+async function loadTodaySchedule() {
+    try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            showNotification("Not authenticated. Please login again.", "error");
+            return;
+        }
+
+        const response = await fetch("http://localhost:8080/api/inspector/schedule/today", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to fetch schedule data");
+        }
+
+        const schedule = await response.json();
+        const tbody = document.querySelector("#todaysScheduleBody");
+        tbody.innerHTML = ""; // clear old rows
+
+        if (schedule.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 20px;">No inspections scheduled for today</td></tr>';
+            return;
+        }
+
+        schedule.forEach(item => {
+            const statusClass = item.status.toLowerCase().replace('_', '-');
+            const row = `
+<tr>
+    <td>${formatTime(item.time)}</td>
+    <td>${item.bookingId}</td>
+    <td>${item.customerName}</td>
+    <td>${item.vehicle}</td>   <!-- ✅ Use vehicle directly -->
+    <td>${formatInspectionType(item.inspectionType)} </td>
+    <td>${item.serviceType || 'Standard'}</td>
+    <td>${item.location || 'Main Center'}</td>
+    <td><span class="status-badge status-${statusClass}">${item.status}</span></td>
+    <td>
+        <div class="action-buttons">
+            ${item.status === "SCHEDULED" 
+                ? `<button class="action-btn start" title="Start Inspection" onclick="startInspection('${item.bookingId}', '${item.inspectionType}', '${btoa(JSON.stringify(item))}')">
+                        <i class="fas fa-play"></i>
+                   </button>`
+                : item.status === "IN_PROGRESS"
+                    ? `<button class="action-btn complete" title="Continue Inspection" onclick="continueInspection('${item.bookingId}', '${item.inspectionType}', '${btoa(JSON.stringify(item))}')">
+                            <i class="fas fa-edit"></i>
+                       </button>`
+                    : ''
+            }
+            <button class="action-btn view" title="View Details" onclick="viewDetails('${item.bookingId}')">
+                <i class="fas fa-eye"></i>
+            </button>
+        </div>
+    </td>
+</tr>`;
+
+            tbody.innerHTML += row;
+        });
+    } catch (error) {
+        console.error("Error loading schedule:", error);
+        // Fallback to mock data if API fails
+        loadMockSchedule();
+    }
+}
+
+// Convert "09:00:00" or "09:00" -> "09:00 AM"
+function formatTime(timeString) {
+    if (!timeString) return 'N/A';
+
+    // Handle case "09:00:00" -> "09:00"
+    const parts = timeString.split(':');
+    const hours = parseInt(parts[0], 10);
+    const minutes = parts[1];
+
+    const period = hours >= 12 ? 'PM' : 'AM';
+    const formattedHour = hours % 12 || 12;
+
+    return `${formattedHour}:${minutes} ${period}`;
+}
+
+
+// Format inspection type for display
+function formatInspectionType(type) {
+    const typeMap = {
+        'SAFETY': 'Safety Inspection',
+        'COMPREHENSIVE': 'Comprehensive Inspection',
+        'PRE_PURCHASE': 'Pre-Purchase Inspection',
+        'DIAGNOSTIC': 'Diagnostic Inspection'
+    };
+    
+    return typeMap[type] || type;
+}
+
+// / Fallback to mock data if API fails
+function loadMockSchedule() {
+    const mockSchedule = [
+        {
+            timeSlot: "09:00",
+            bookingId: "BK-2024-101",
+            customerName: "John Smith",
+            vehicleModel: "Toyota Camry",
+            vehicleYear: "2020",
+            inspectionType: "SAFETY",
+            serviceType: "Standard",
+            location: "Downtown Center",
+            status: "SCHEDULED"
+        },
+        {
+            timeSlot: "11:30",
+            bookingId: "BK-2024-102",
+            customerName: "Sarah Johnson",
+            vehicleModel: "Honda Civic",
+            vehicleYear: "2018",
+            inspectionType: "COMPREHENSIVE",
+            serviceType: "Express",
+            location: "Westside Center",
+            status: "SCHEDULED"
+        },
+        {
+            timeSlot: "14:15",
+            bookingId: "BK-2024-103",
+            customerName: "Robert Brown",
+            vehicleModel: "Ford F-150",
+            vehicleYear: "2022",
+            inspectionType: "PRE_PURCHASE",
+            serviceType: "Premium",
+            location: "Downtown Center",
+            status: "SCHEDULED"
+        },
+        {
+            timeSlot: "16:00",
+            bookingId: "BK-2024-104",
+            customerName: "Maria Garcia",
+            vehicleModel: "Hyundai Elantra",
+            vehicleYear: "2019",
+            inspectionType: "DIAGNOSTIC",
+            serviceType: "Standard",
+            location: "Main Center",
+            status: "SCHEDULED"
+        }
+    ];
+
+    const tbody = document.querySelector("#todaysScheduleBody");
+    tbody.innerHTML = ""; // clear old rows
+
+    mockSchedule.forEach(item => {
+        const statusClass = item.status.toLowerCase().replace('_', '-');
+        const row = `
+            <tr>
+                <td>${formatTime(item.timeSlot)}</td>
+                <td>${item.bookingId}</td>
+                <td>${item.customerName}</td>
+                <td>${item.vehicleModel} (${item.vehicleYear})</td>
+                <td>${formatInspectionType(item.inspectionType)}</td>
+                <td>${item.serviceType}</td>
+                <td>${item.location}</td>
+                <td><span class="status-badge status-${statusClass}">${item.status}</span></td>
+                <td>
+                    <div class="action-buttons">
+                        ${item.status === "SCHEDULED" 
+                            ? `<button class="action-btn start" title="Start Inspection" onclick="startInspection('${item.bookingId}', '${item.inspectionType}', '${JSON.stringify(item).replace(/'/g, "\\'")}')">
+                                    <i class="fas fa-play"></i>
+                                </button>`
+                            : item.status === "IN_PROGRESS"
+                                ? `<button class="action-btn complete" title="Continue Inspection" onclick="continueInspection('${item.bookingId}', '${item.inspectionType}', '${JSON.stringify(item).replace(/'/g, "\\'")}')">
+                                        <i class="fas fa-edit"></i>
+                                    </button>`
+                                : ''
+                        }
+                        <button class="action-btn view" title="View Details" onclick="viewDetails('${item.bookingId}')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `;
+        tbody.innerHTML += row;
+    });
+}
+
+function startInspection(bookingId, inspectionType, bookingDataEncoded) {
+    currentInspection = { bookingId, inspectionType };
+    // decode base64 → parse JSON → object
+    currentBookingData = JSON.parse(atob(bookingDataEncoded));
+    loadInspectionForm(inspectionType, currentBookingData);
+    document.getElementById('inspectionModal').style.display = 'flex';
+}
+
+function continueInspection(bookingId, inspectionType, bookingDataEncoded) {
+    currentInspection = { bookingId, inspectionType };
+    currentBookingData = JSON.parse(atob(bookingDataEncoded));
+    loadInspectionForm(inspectionType, currentBookingData, true);
+    document.getElementById('inspectionModal').style.display = 'flex';
+}
+
+
+// Load inspection form based on type
+function loadInspectionForm(inspectionType, bookingData, isResume = false) {
+    const modalTitle = document.getElementById('inspectionModalTitle');
+    const formContent = document.getElementById('inspectionFormContent');
+    
+    modalTitle.innerHTML = `<i class="fas fa-clipboard-check"></i> ${formatInspectionType(inspectionType)} - ${bookingData.bookingId}`;
+    
+    let formHtml = '';
+    
+    // Generate form based on inspection type
+    switch (inspectionType) {
+        case 'SAFETY':
+            formHtml = generateSafetyInspectionForm(bookingData);
+            break;
+        case 'COMPREHENSIVE':
+            formHtml = generateComprehensiveInspectionForm(bookingData);
+            break;
+        case 'PRE_PURCHASE':
+            formHtml = generatePrePurchaseInspectionForm(bookingData);
+            break;
+        case 'DIAGNOSTIC':
+            formHtml = generateDiagnosticInspectionForm(bookingData);
+            break;
+        default:
+            formHtml = generateGeneralInspectionForm(bookingData);
+    }
+    
+    formContent.innerHTML = formHtml;
+    
+    // Load draft data if resuming
+    if (isResume) {
+        loadDraftData(bookingData.bookingId);
+    }
+}
+
+// Generate Safety Inspection Form
+function generateSafetyInspectionForm(bookingData) {
+    return `
+        <div class="form-section">
+            <h4>Booking Information</h4>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Booking ID</label>
+                    <input type="text" class="form-input" value="${bookingData.bookingId}" readonly>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Customer</label>
+                    <input type="text" class="form-input" value="${bookingData.customerName}" readonly>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Vehicle</label>
+                    <input type="text" class="form-input" value="${bookingData.vehicle}" readonly>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Service Type</label>
+                    <input type="text" class="form-input" value="${bookingData.serviceType || 'Standard'}" readonly>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h4>Vehicle Information</h4>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">VIN Number</label>
+                    <input type="text" class="form-input" id="vin" placeholder="Enter VIN" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Odometer Reading</label>
+                    <input type="number" class="form-input" id="odometer" placeholder="Miles" required>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h4>Safety Inspection Checklist</h4>
+            <div class="checkbox-group">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="brakes">
+                    <label for="brakes">Brakes functioning properly</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="lights">
+                    <label for="lights">All lights functioning</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="tires">
+                    <label for="tires">Tire condition and pressure acceptable</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="steering">
+                    <label for="steering">Steering responsive</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="suspension">
+                    <label for="suspension">Suspension working</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="seatbelts">
+                    <label for="seatbelts">All seatbelts functional</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="windshield">
+                    <label for="windshield">Windshield and wipers in good condition</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="mirrors">
+                    <label for="mirrors">All mirrors present and functional</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h4>Final Assessment</h4>
+            <div class="form-group">
+                <label class="form-label">Inspection Result</label>
+                <select class="form-input" id="inspectionResult" required>
+                    <option value="">Select result</option>
+                    <option value="PASS">Pass</option>
+                    <option value="FAIL">Fail</option>
+                    <option value="CONDITIONAL">Conditional Pass</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Inspector Notes</label>
+                <textarea class="form-textarea" id="inspectorNotes" placeholder="Enter any additional observations or concerns..." required></textarea>
+            </div>
+        </div>
+    `;
+}
+
+// Generate Comprehensive Inspection Form
+function generateComprehensiveInspectionForm(bookingData) {
+    return `
+        <div class="form-section">
+            <h4>Booking Information</h4>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Booking ID</label>
+                    <input type="text" class="form-input" value="${bookingData.bookingId}" readonly>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Customer</label>
+                    <input type="text" class="form-input" value="${bookingData.customerName}" readonly>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Vehicle</label>
+                    <input type="text" class="form-input" value="${bookingData.vehicle}" readonly>
+
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Service Type</label>
+                    <input type="text" class="form-input" value="${bookingData.serviceType || 'Standard'}" readonly>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h4>Vehicle Information</h4>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">VIN Number</label>
+                    <input type="text" class="form-input" id="vin" placeholder="Enter VIN" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Odometer Reading</label>
+                    <input type="number" class="form-input" id="odometer" placeholder="Miles" required>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h4>Exterior Inspection</h4>
+            <div class="checkbox-group">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="body">
+                    <label for="body">Body condition and paint</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="windows">
+                    <label for="windows">Windows and glass condition</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="lights_ext">
+                    <label for="lights_ext">Exterior lights functioning</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="tires_ext">
+                    <label for="tires_ext">Tire condition and wear</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h4>Interior Inspection</h4>
+            <div class="checkbox-group">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="dashboard">
+                    <label for="dashboard">Dashboard and controls</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="seats">
+                    <label for="seats">Seat condition and functionality</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="ac">
+                    <label for="ac">AC and heating system</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="electronics">
+                    <label for="electronics">Electronic systems</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h4>Mechanical Inspection</h4>
+            <div class="checkbox-group">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="engine">
+                    <label for="engine">Engine performance</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="transmission">
+                    <label for="transmission">Transmission operation</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="brakes_mech">
+                    <label for="brakes_mech">Brake system</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="suspension_mech">
+                    <label for="suspension_mech">Suspension and steering</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h4>Final Assessment</h4>
+            <div class="form-group">
+                <label class="form-label">Inspection Result</label>
+                <select class="form-input" id="inspectionResult" required>
+                    <option value="">Select result</option>
+                    <option value="PASS">Pass</option>
+                    <option value="FAIL">Fail</option>
+                    <option value="CONDITIONAL">Conditional Pass</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Inspector Notes</label>
+                <textarea class="form-textarea" id="inspectorNotes" placeholder="Enter comprehensive inspection details..." required></textarea>
+            </div>
+        </div>
+    `;
+}
+
+// Generate Pre-Purchase Inspection Form
+function generatePrePurchaseInspectionForm(bookingData) {
+    return `
+        <div class="form-section">
+            <h4>Booking Information</h4>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Booking ID</label>
+                    <input type="text" class="form-input" value="${bookingData.bookingId}" readonly>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Customer</label>
+                    <input type="text" class="form-input" value="${bookingData.customerName}" readonly>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Vehicle</label>
+                    <input type="text" class="form-input" value="${bookingData.vehicle}" readonly>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Service Type</label>
+                    <input type="text" class="form-input" value="${bookingData.serviceType || 'Standard'}" readonly>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h4>Vehicle Information</h4>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">VIN Number</label>
+                    <input type="text" class="form-input" id="vin" placeholder="Enter VIN" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Odometer Reading</label>
+                    <input type="number" class="form-input" id="odometer" placeholder="Miles" required>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h4>Vehicle History</h4>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Previous Owners</label>
+                    <input type="number" class="form-input" id="previousOwners" placeholder="Number of previous owners">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Accident History</label>
+                    <select class="form-input" id="accidentHistory">
+                        <option value="">Select option</option>
+                        <option value="none">No accidents</option>
+                        <option value="minor">Minor accidents</option>
+                        <option value="major">Major accidents</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h4>Vehicle Condition Assessment</h4>
+            <div class="checkbox-group">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="body_pp">
+                    <label for="body_pp">Body and paint condition</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="interior_pp">
+                    <label for="interior_pp">Interior condition</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="mechanical_pp">
+                    <label for="mechanical_pp">Mechanical condition</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="electrical_pp">
+                    <label for="electrical_pp">Electrical systems</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="rust">
+                    <label for="rust">Rust or corrosion</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="modifications">
+                    <label for="modifications">Aftermarket modifications</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h4>Test Drive Evaluation</h4>
+            <div class="checkbox-group">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="engine_performance">
+                    <label for="engine_performance">Engine performance</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="transmission_shift">
+                    <label for="transmission_shift">Transmission shifting</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="braking">
+                    <label for="braking">Braking performance</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="steering_pp">
+                    <label for="steering_pp">Steering response</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="suspension_pp">
+                    <label for="suspension_pp">Suspension comfort</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h4>Final Assessment</h4>
+            <div class="form-group">
+                <label class="form-label">Overall Condition Rating</label>
+                <select class="form-input" id="conditionRating">
+                    <option value="">Select rating</option>
+                    <option value="excellent">Excellent</option>
+                    <option value="good">Good</option>
+                    <option value="fair">Fair</option>
+                    <option value="poor">Poor</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Estimated Market Value</label>
+                <input type="text" class="form-input" id="marketValue" placeholder="Enter estimated value">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Purchase Recommendation</label>
+                <select class="form-input" id="recommendation">
+                    <option value="">Select recommendation</option>
+                    <option value="recommended">Recommended</option>
+                    <option value="conditional">Recommended with conditions</option>
+                    <option value="not-recommended">Not recommended</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Inspector Notes</label>
+                <textarea class="form-textarea" id="inspectorNotes" placeholder="Detailed assessment and recommendations..." required></textarea>
+            </div>
+        </div>
+    `;
+}
+
+// Generate Diagnostic Inspection Form
+function generateDiagnosticInspectionForm(bookingData) {
+    return `
+        <div class="form-section">
+            <h4>Booking Information</h4>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Booking ID</label>
+                    <input type="text" class="form-input" value="${bookingData.bookingId}" readonly>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Customer</label>
+                    <input type="text" class="form-input" value="${bookingData.customerName}" readonly>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Vehicle</label>
+                    <input type="text" class="form-input" value="${bookingData.vehicle}" readonly>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Service Type</label>
+                    <input type="text" class="form-input" value="${bookingData.serviceType || 'Standard'}" readonly>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h4>Vehicle Information</h4>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">VIN Number</label>
+                    <input type="text" class="form-input" id="vin" placeholder="Enter VIN" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Odometer Reading</label>
+                    <input type="number" class="form-input" id="odometer" placeholder="Miles" required>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h4>Customer Concerns</h4>
+            <div class="form-group">
+                <label class="form-label">Reported Issues</label>
+                <textarea class="form-textarea" id="reportedIssues" placeholder="Describe the issues reported by the customer..." rows="3"></textarea>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h4>Diagnostic Tests</h4>
+            <div class="checkbox-group">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="engine_scan">
+                    <label for="engine_scan">Engine computer scan</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="battery_test">
+                    <label for="battery_test">Battery and charging system</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="compression_test">
+                    <label for="compression_test">Engine compression test</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="emissions_test">
+                    <label for="emissions_test">Emissions testing</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="brake_test">
+                    <label for="brake_test">Brake system diagnostic</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="suspension_test">
+                    <label for="suspension_test">Suspension analysis</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h4>Diagnostic Results</h4>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Error Codes Found</label>
+                    <input type="text" class="form-input" id="errorCodes" placeholder="List any error codes found">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Primary Issue</label>
+                    <input type="text" class="form-input" id="primaryIssue" placeholder="Main issue identified">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Recommended Repairs</label>
+                <textarea class="form-textarea" id="recommendedRepairs" placeholder="List recommended repairs..." rows="3"></textarea>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Estimated Repair Cost</label>
+                    <input type="text" class="form-input" id="repairCost" placeholder="Estimated cost of repairs">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Repair Urgency</label>
+                    <select class="form-input" id="repairUrgency">
+                        <option value="">Select urgency</option>
+                        <option value="immediate">Immediate</option>
+                        <option value="soon">Soon</option>
+                        <option value="when-convenient">When convenient</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h4>Final Assessment</h4>
+            <div class="form-group">
+                <label class="form-label">Inspection Result</label>
+                <select class="form-input" id="inspectionResult" required>
+                    <option value="">Select result</option>
+                    <option value="PASS">Pass</option>
+                    <option value="FAIL">Fail</option>
+                    <option value="CONDITIONAL">Conditional Pass</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Inspector Notes</label>
+                <textarea class="form-textarea" id="inspectorNotes" placeholder="Detailed diagnostic findings and recommendations..." required></textarea>
+            </div>
+        </div>
+    `;
+}
+
+// Generate General Inspection Form (fallback)
+function generateGeneralInspectionForm(bookingData) {
+    return `
+        <div class="form-section">
+            <h4>Booking Information</h4>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Booking ID</label>
+                    <input type="text" class="form-input" value="${bookingData.bookingId}" readonly>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Customer</label>
+                    <input type="text" class="form-input" value="${bookingData.customerName}" readonly>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Vehicle</label>
+                    <input type="text" class="form-input" value="${bookingData.vehicle}" readonly>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Service Type</label>
+                    <input type="text" class="form-input" value="${bookingData.serviceType || 'Standard'}" readonly>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h4>Vehicle Information</h4>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">VIN Number</label>
+                    <input type="text" class="form-input" id="vin" placeholder="Enter VIN" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Odometer Reading</label>
+                    <input type="number" class="form-input" id="odometer" placeholder="Miles" required>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h4>General Inspection</h4>
+            <div class="form-group">
+                <label class="form-label">Inspection Type</label>
+                <input type="text" class="form-input" value="${formatInspectionType(bookingData.inspectionType)}" readonly>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Inspection Result</label>
+                <select class="form-input" id="inspectionResult" required>
+                    <option value="">Select result</option>
+                    <option value="PASS">Pass</option>
+                    <option value="FAIL">Fail</option>
+                    <option value="CONDITIONAL">Conditional Pass</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Inspector Notes</label>
+                <textarea class="form-textarea" id="inspectorNotes" placeholder="Enter inspection details..." required></textarea>
+            </div>
+        </div>
+    `;
+}
+
+// Load draft data from localStorage
+function loadDraftData(bookingId) {
+    const draftKey = `inspection_draft_${bookingId}`;
+    const draftData = localStorage.getItem(draftKey);
+    
+    if (draftData) {
+        const data = JSON.parse(draftData);
+        const formData = data.formData;
+        
+        // Populate form fields with draft data
+        for (const [key, value] of Object.entries(formData)) {
+            const element = document.getElementById(key);
+            if (element) {
+                if (element.type === 'checkbox') {
+                    element.checked = value;
+                } else {
+                    element.value = value;
+                }
+            }
+        }
+        
+        showNotification('Draft data loaded successfully', 'info');
+    }
+}
+
+// Save inspection draft
+function saveInspectionDraft() {
+    if (!currentInspection) return;
+    
+    // Collect form data
+    const formData = collectInspectionData();
+    
+    // Save to localStorage as draft
+    const draftKey = `inspection_draft_${currentInspection.bookingId}`;
+    localStorage.setItem(draftKey, JSON.stringify({
+        ...currentInspection,
+        formData: formData,
+        savedAt: new Date().toISOString()
+    }));
+    
+    showNotification('Inspection draft saved successfully', 'success');
+}
+
+// Collect inspection data from form
+function collectInspectionData() {
+    const formData = {};
+    const modal = document.getElementById('inspectionModal');
+    
+    // Collect all input values
+    const inputs = modal.querySelectorAll('input, select, textarea');
+    inputs.forEach(input => {
+        if (input.id && !input.readOnly) {
+            if (input.type === 'checkbox') {
+                formData[input.id] = input.checked;
+            } else {
+                formData[input.id] = input.value;
+            }
+        }
+    });
+    
+    return formData;
+}
+
+// Validate inspection form
+function validateInspectionForm(formData) {
+    // Check required fields
+    if (!formData.vin || !formData.vin.trim()) {
+        showNotification('VIN number is required', 'error');
+        return false;
+    }
+    
+    if (!formData.inspectionResult) {
+        showNotification('Inspection result is required', 'error');
+        return false;
+    }
+    
+    if (!formData.inspectorNotes || !formData.inspectorNotes.trim()) {
+        showNotification('Inspector notes are required', 'error');
+        return false;
+    }
+    
+    return true;
+}
+// =========================
+// Submit Inspection
+// =========================
+async function submitInspection() {
+    // if (!currentInspection || !currentBookingData || !currentBookingData.bookingVehicleId) {
+    //     console.warn("Missing current inspection or booking vehicle ID.");
+    //     showNotification("Booking vehicle information missing.", "error");
+    //     return;
+    // }
+
+    // Collect form data
+    const formData = collectInspectionData();
+    console.log("Collected form data:", formData);
+
+    // Validate form
+    if (!validateInspectionForm(formData)) {
+        console.warn("Inspection form validation failed:", formData);
+        showNotification("Please fill all required fields.", "error");
+        return;
+    }
+
+    try {
+        document.getElementById('loadingOverlay').style.display = 'flex';
+
+        // 1️⃣ Generate PDF
+        const pdfUrl = await generatePDFReport(formData);
+        console.log("PDF uploaded URL:", pdfUrl);
+
+        // 2️⃣ Prepare DTO
+        const inspectionDTO = {
+            bookingId: currentInspection.bookingId,
+            vehicle: currentInspection.vehicle,
+            type: currentInspection.inspectionType,
+            result: formData.inspectionResult === "PASS" ? "PASSED" : "FAILED",
+            reportUrl: pdfUrl
+        };
+        console.log("Inspection DTO:", inspectionDTO);
+
+        // 3️⃣ Send to backend
+        const token = localStorage.getItem("token");
+        const response = await fetch("http://localhost:8080/api/inspections/save", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify(inspectionDTO)
+        });
+
+        const result = await response.json();
+        console.log("Backend response:", result);
+
+        if (result.code === 200) {
+            showNotification("Inspection completed and report sent to customer.", "success");
+            closeModal('inspectionModal');
+            localStorage.removeItem(`inspection_draft_${currentInspection.bookingId}`);
+            setTimeout(loadTodaySchedule, 2000);
+        } else {
+            console.error("Backend returned error:", result);
+            showNotification(result.message || "Failed to submit inspection.", "error");
+        }
+
+    } catch (err) {
+        console.error("Inspection submission error:", err);
+        showNotification("Server error. Please try again later.", "error");
+    } finally {
+        document.getElementById('loadingOverlay').style.display = 'none';
+    }
+}
+
+// =========================
+// Industry Grade PDF Report Generator
+// =========================
+async function generatePDFReport(formData) {
+    try {
+        const { jsPDF } = window.jspdf;
+        if (!jsPDF) throw new Error("jsPDF not loaded");
+
+        const doc = new jsPDF();
+        let y = 20;
+
+        // ============================
+        // Professional Header with Company Branding
+        // ============================
+        
+        // Company Logo Area (placeholder - you can add actual logo)
+        doc.setFillColor(30, 64, 175); // AutoCert brand blue
+        doc.rect(15, 15, 25, 15, "F");
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(12);
+        doc.setFont("helvetica", "bold");
+        doc.text("AC", 27.5, 25, { align: "center" });
+
+        // Company Header
+        doc.setTextColor(30, 64, 175);
+        doc.setFontSize(20);
+        doc.setFont("helvetica", "bold");
+        doc.text("AutoCert Professional Services", 45, 22);
+        
+        doc.setTextColor(100, 116, 139);
+        doc.setFontSize(10);
+        doc.setFont("helvetica", "normal");
+        doc.text("Certified Vehicle Inspection & Compliance Solutions", 45, 28);
+
+        // Report Title with accent
+        y = 45;
+        doc.setFillColor(248, 250, 252);
+        doc.rect(15, y - 5, 180, 20, "F");
+        doc.setDrawColor(30, 64, 175);
+        doc.setLineWidth(2);
+        doc.line(15, y - 5, 15, y + 15);
+
+        doc.setTextColor(15, 23, 42);
+        doc.setFontSize(16);
+        doc.setFont("helvetica", "bold");
+        doc.text("VEHICLE INSPECTION COMPLIANCE REPORT", 25, y + 5);
+
+        // Report metadata in header
+        doc.setTextColor(100, 116, 139);
+        doc.setFontSize(9);
+        doc.setFont("helvetica", "normal");
+        const reportNumber = `RPT-${currentInspection.bookingId}-${Date.now().toString().slice(-6)}`;
+        doc.text(`Report Number: ${reportNumber}`, 150, y + 2);
+        doc.text(`Generated: ${new Date().toLocaleString()}`, 150, y + 7);
+        doc.text(`Status: OFFICIAL DOCUMENT`, 150, y + 12);
+
+        y += 30;
+
+        // ============================
+        // Document Classification & Compliance
+        // ============================
+        doc.setDrawColor(220, 38, 38);
+        doc.setLineWidth(0.5);
+        doc.rect(15, y, 180, 12);
+        doc.setTextColor(220, 38, 38);
+        doc.setFontSize(8);
+        doc.setFont("helvetica", "bold");
+        doc.text("CONFIDENTIAL - VEHICLE SAFETY COMPLIANCE DOCUMENT", 105, y + 8, { align: "center" });
+        y += 20;
+
+        // ============================
+        // Inspection Summary Card
+        // ============================
+        doc.setDrawColor(226, 232, 240);
+        doc.setFillColor(248, 250, 252);
+        doc.rect(15, y, 180, 35, "FD");
+
+        // Left side - Primary Info
+        doc.setTextColor(30, 64, 175);
+        doc.setFontSize(11);
+        doc.setFont("helvetica", "bold");
+        doc.text("INSPECTION DETAILS", 20, y + 8);
+
+        doc.setTextColor(15, 23, 42);
+        doc.setFontSize(9);
+        doc.setFont("helvetica", "normal");
+        doc.text(`Booking ID: ${currentInspection.bookingId}`, 20, y + 16);
+        doc.text(`Inspector: ${document.getElementById('inspectorName').textContent}`, 20, y + 22);
+        doc.text(`Date: ${new Date().toLocaleDateString('en-US', { 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+        })}`, 20, y + 28);
+
+        // Right side - Classification
+        doc.setTextColor(30, 64, 175);
+        doc.setFontSize(11);
+        doc.setFont("helvetica", "bold");
+        doc.text("INSPECTION TYPE", 120, y + 8);
+
+        doc.setTextColor(15, 23, 42);
+        doc.setFontSize(9);
+        doc.setFont("helvetica", "normal");
+        doc.text(`Type: ${formatInspectionType(currentInspection.inspectionType)}`, 120, y + 16);
+        doc.text(`Compliance Standard: DOT/FMCSA`, 120, y + 22);
+        doc.text(`Certification Level: Professional`, 120, y + 28);
+
+        y += 45;
+
+        // ============================
+        // Vehicle & Customer Information
+        // ============================
+        doc.setDrawColor(30, 64, 175);
+        doc.setFillColor(30, 64, 175);
+        doc.rect(15, y, 180, 8, "F");
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(10);
+        doc.setFont("helvetica", "bold");
+        doc.text("VEHICLE & CUSTOMER INFORMATION", 105, y + 5, { align: "center" });
+
+        y += 12;
+
+        // Customer section
+        doc.setDrawColor(226, 232, 240);
+        doc.rect(15, y, 87, 25, "S");
+        doc.setTextColor(30, 64, 175);
+        doc.setFontSize(9);
+        doc.setFont("helvetica", "bold");
+        doc.text("CUSTOMER DETAILS", 18, y + 6);
+
+        doc.setTextColor(15, 23, 42);
+        doc.setFontSize(8);
+        doc.setFont("helvetica", "normal");
+        doc.text(`Name: ${currentBookingData.customerName}`, 18, y + 12);
+        doc.text(`Contact: ${currentBookingData.customerContact || 'Not provided'}`, 18, y + 17);
+        doc.text(`Service Type: ${currentBookingData.serviceType || 'Standard Inspection'}`, 18, y + 22);
+
+        // Vehicle section
+        doc.rect(108, y, 87, 25, "S");
+        doc.setTextColor(30, 64, 175);
+        doc.setFontSize(9);
+        doc.setFont("helvetica", "bold");
+        doc.text("VEHICLE DETAILS", 111, y + 6);
+
+        doc.setTextColor(15, 23, 42);
+        doc.setFontSize(8);
+        doc.setFont("helvetica", "normal");
+        doc.text(`Vehicle: ${currentBookingData.vehicleBrand} ${currentBookingData.vehicleModel}`, 111, y + 12);
+        doc.text(`Year: ${currentBookingData.vehicleYear} | VIN: ${currentBookingData.vin || 'N/A'}`, 111, y + 17);
+        doc.text(`License: ${currentBookingData.licensePlate || 'Not provided'}`, 111, y + 22);
+
+        y += 35;
+
+        // ============================
+        // Professional Inspection Results Table
+        // ============================
+        doc.setTextColor(30, 64, 175);
+        doc.setFontSize(11);
+        doc.setFont("helvetica", "bold");
+        doc.text("DETAILED INSPECTION RESULTS", 15, y);
+        y += 8;
+
+        // Table headers
+        const colWidths = [45, 25, 30, 80];
+        const colPositions = [15, 60, 85, 115];
+        
+        doc.setFillColor(51, 65, 85);
+        doc.rect(15, y, 180, 8, "F");
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(8);
+        doc.setFont("helvetica", "bold");
+        doc.text("INSPECTION ITEM", 17, y + 5);
+        doc.text("STATUS", 62, y + 5);
+        doc.text("CONDITION", 87, y + 5);
+        doc.text("NOTES/OBSERVATIONS", 117, y + 5);
+
+        y += 8;
+
+        // Table rows with alternating colors
+        let rowIndex = 0;
+        doc.setTextColor(15, 23, 42);
+        doc.setFontSize(7);
+        doc.setFont("helvetica", "normal");
+
+        for (const [key, value] of Object.entries(formData)) {
+            if (value && key !== "inspectorNotes") {
+                const label = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+                
+                // Alternating row colors
+                if (rowIndex % 2 === 0) {
+                    doc.setFillColor(248, 250, 252);
+                    doc.rect(15, y, 180, 7, "F");
+                }
+
+                // Status color coding
+                let statusColor = [22, 163, 74]; // Green for Pass
+                if (value.toString().toLowerCase().includes('fail') || 
+                    value.toString().toLowerCase().includes('defect')) {
+                    statusColor = [220, 38, 38]; // Red for Fail
+                } else if (value.toString().toLowerCase().includes('warn') || 
+                          value.toString().toLowerCase().includes('attention')) {
+                    statusColor = [245, 158, 11]; // Yellow for Warning
+                }
+
+                // Item name
+                doc.setTextColor(15, 23, 42);
+                doc.text(label.substring(0, 25), 17, y + 4);
+
+                // Status with color
+                doc.setTextColor(...statusColor);
+                doc.setFont("helvetica", "bold");
+                doc.text(value.toString().substring(0, 12), 62, y + 4);
+
+                // Condition assessment
+                doc.setTextColor(100, 116, 139);
+                doc.setFont("helvetica", "normal");
+                const condition = getConditionFromValue(value);
+                doc.text(condition, 87, y + 4);
+
+                // Notes (if any)
+                doc.setTextColor(75, 85, 99);
+                const notes = getNotesFromValue(key, value);
+                const wrappedNotes = doc.splitTextToSize(notes, 75);
+                doc.text(wrappedNotes[0] || '', 117, y + 4);
+
+                y += 7;
+                rowIndex++;
+
+                // Page break if needed
+                if (y > 250) {
+                    addPageBreak(doc);
+                    y = 20;
+                }
+            }
+        }
+
+        // ============================
+        // Inspector Professional Notes
+        // ============================
+        if (formData.inspectorNotes) {
+            if (y > 230) {
+                addPageBreak(doc);
+                y = 20;
+            }
+
+            y += 10;
+            doc.setDrawColor(30, 64, 175);
+            doc.setFillColor(30, 64, 175);
+            doc.rect(15, y, 180, 8, "F");
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(10);
+            doc.setFont("helvetica", "bold");
+            doc.text("INSPECTOR PROFESSIONAL ASSESSMENT", 105, y + 5, { align: "center" });
+
+            y += 12;
+            doc.setDrawColor(226, 232, 240);
+            doc.setFillColor(248, 250, 252);
+            doc.rect(15, y, 180, 25, "FD");
+
+            doc.setTextColor(15, 23, 42);
+            doc.setFontSize(9);
+            doc.setFont("helvetica", "normal");
+            const splitText = doc.splitTextToSize(formData.inspectorNotes, 170);
+            doc.text(splitText, 18, y + 8);
+
+            y += 35;
+        }
+
+        // ============================
+        // Compliance Certification Footer
+        // ============================
+        if (y > 240) {
+            addPageBreak(doc);
+            y = 20;
+        }
+
+        y += 10;
+        doc.setDrawColor(226, 232, 240);
+        doc.rect(15, y, 180, 30, "S");
+        
+        doc.setTextColor(30, 64, 175);
+        doc.setFontSize(10);
+        doc.setFont("helvetica", "bold");
+        doc.text("CERTIFICATION & COMPLIANCE", 105, y + 8, { align: "center" });
+
+        doc.setTextColor(15, 23, 42);
+        doc.setFontSize(8);
+        doc.setFont("helvetica", "normal");
+        doc.text("This inspection was conducted in accordance with applicable safety standards and regulations.", 105, y + 16, { align: "center" });
+        doc.text(`Inspector Certification: ${document.getElementById('inspectorName').textContent}`, 105, y + 22, { align: "center" });
+        doc.text(`Digital Signature Applied | Report Verification Code: ${reportNumber}`, 105, y + 26, { align: "center" });
+
+        // ============================
+        // Professional Footer on All Pages
+        // ============================
+        addProfessionalFooter(doc);
+
+        // Convert to Blob
+        const pdfBlob = doc.output('blob');
+
+        // Upload to cloud storage
+        const pdfUrl = await uploadToCloudStorage(pdfBlob, `inspection_report_${currentInspection.bookingId}.pdf`);
+        return pdfUrl;
+
+    } catch (err) {
+        console.error("PDF generation error:", err);
+        throw new Error("Failed to generate PDF report: " + err.message);
+    }
+}
+
+// ============================
+// Helper Functions for Professional PDF
+// ============================
+
+function addPageBreak(doc) {
+    doc.addPage();
+    
+    // Add header to new page
+    doc.setFillColor(30, 64, 175);
+    doc.rect(15, 15, 180, 8, "F");
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "bold");
+    doc.text("AutoCert Vehicle Inspection Report (Continued)", 105, 20, { align: "center" });
+}
+
+function addProfessionalFooter(doc) {
+    const pageCount = doc.getNumberOfPages();
+    
+    for (let i = 1; i <= pageCount; i++) {
+        doc.setPage(i);
+        
+        // Footer background
+        doc.setFillColor(248, 250, 252);
+        doc.rect(0, 275, 220, 25, "F");
+        
+        // Footer line
+        doc.setDrawColor(226, 232, 240);
+        doc.setLineWidth(0.5);
+        doc.line(15, 278, 195, 278);
+        
+        // Footer content
+        doc.setTextColor(100, 116, 139);
+        doc.setFontSize(7);
+        doc.setFont("helvetica", "normal");
+        
+        // Left side
+        doc.text("AutoCert Professional Services", 15, 283);
+        doc.text("Certified Vehicle Inspection Solutions", 15, 287);
+        doc.text("compliance@autocert.com | +1-800-AUTO-CERT", 15, 291);
+        
+        // Center
+        doc.text(`Page ${i} of ${pageCount}`, 105, 285, { align: "center" });
+        doc.text("CONFIDENTIAL DOCUMENT", 105, 289, { align: "center" });
+        
+        // Right side
+        doc.text(`Report Date: ${new Date().toLocaleDateString()}`, 195, 283, { align: "right" });
+        doc.text("ISO 9001:2015 Certified", 195, 287, { align: "right" });
+        doc.text("DOT Compliance Verified", 195, 291, { align: "right" });
+    }
+}
+
+function getConditionFromValue(value) {
+    const val = value.toString().toLowerCase();
+    if (val.includes('pass') || val.includes('good') || val === 'ok') return 'ACCEPTABLE';
+    if (val.includes('fail') || val.includes('defect')) return 'REQUIRES ATTENTION';
+    if (val.includes('warn') || val.includes('caution')) return 'MONITOR';
+    return 'INSPECTED';
+}
+
+function getNotesFromValue(key, value) {
+    // You can customize this based on your specific inspection items
+    const standardNotes = {
+        'brakes': 'Brake system functionality verified',
+        'lights': 'All lighting systems tested',
+        'engine': 'Engine performance assessment completed',
+        'tires': 'Tire condition and tread depth measured',
+        'suspension': 'Suspension components inspected',
+        'steering': 'Steering system responsiveness checked'
+    };
+    
+    const keyLower = key.toLowerCase();
+    for (const [noteKey, note] of Object.entries(standardNotes)) {
+        if (keyLower.includes(noteKey)) return note;
+    }
+    
+    return 'Standard inspection protocols applied';
+}
+
+function formatInspectionType(type) {
+    const typeMapping = {
+        'safety': 'DOT Safety Inspection',
+        'emissions': 'EPA Emissions Testing',
+        'annual': 'Annual Safety Compliance',
+        'pre-purchase': 'Pre-Purchase Assessment',
+        'general': 'General Vehicle Inspection'
+    };
+    
+    return typeMapping[type?.toLowerCase()] || 'Standard Vehicle Inspection';
+}
+// =========================
+// Upload PDF to Cloudinary backend
+// =========================
+async function uploadToCloudStorage(blob, fileName) {
+    const formData = new FormData();
+    const file = new File([blob], fileName, { type: "application/pdf" });
+    formData.append("file", file);
+
+    const token = localStorage.getItem("token");
+
+    const response = await fetch("http://localhost:8080/api/upload-pdf", {
+        method: "POST",
+        headers: { "Authorization": `Bearer ${token}` },
+        body: formData
+    });
+
+    if (!response.ok) {
+        const errorText = await response.text();
+        console.error("File upload failed:", errorText);
+        throw new Error("Failed to upload PDF");
+    }
+
+    const result = await response.json();
+    console.log("Uploaded PDF URL:", result.url);
+    return result.url;
+}
+
+
+// View details
+function viewDetails(bookingId) {
+    showNotification(`Viewing details for ${bookingId}`, 'info');
+}
+
+function viewReport(bookingId) {
+    showNotification(`Opening report for ${bookingId}`, 'info');
+}
+
+function downloadReport(reportId) {
+    showNotification(`Downloading report ${reportId}`, 'info');
+}
+
+function updateProfile() {
+    const phone = document.getElementById('profilePhone').value;
+    
+    if (!phone) {
+        showNotification('Phone number is required', 'error');
+        return;
+    }
+
+    showNotification('Profile updated successfully!', 'success');
+}
+
+// Logout function
+function logout() {
+    if (confirm("Are you sure you want to logout?")) {
+        showNotification("Logging out... Session ended securely.", "info");
+        setTimeout(() => {
+            localStorage.removeItem('hasTemporaryPassword');
+            localStorage.removeItem('token');
+            window.location.href = "/Frontend/index.html";
+        }, 1000);
+    }
+}
+
+// Notification handling
+function showNotification(message, type = 'info') {
+    const existingNotifications = document.querySelectorAll('.notification');
+    existingNotifications.forEach(notif => notif.remove());
+
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    
+    const icons = {
+        'info': 'fa-info-circle',
+        'success': 'fa-check-circle',
+        'error': 'fa-exclamation-circle',
+        'warning': 'fa-exclamation-triangle'
+    };
+    
+    notification.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <i class="fas ${icons[type] || icons.info}"></i>
+            <span>${message}</span>
+        </div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.style.animation = 'slideOutRight 0.3s ease';
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 300);
+        }
+    }, 4000);
+}
+
+const ROWS_PER_PAGE = 5;
+
+// Generic function to paginate a table
+function paginateTable(tbodySelector, data, renderRow) {
+    const tbody = document.querySelector(tbodySelector);
+    const paginationContainer = tbodySelector.includes("assignments") 
+        ? document.getElementById("assignmentsPagination")
+        : document.getElementById("inspectionsPagination");
+
+    let currentPage = 1;
+    const totalPages = Math.ceil(data.length / ROWS_PER_PAGE);
+
+    function renderPage(page) {
+        tbody.innerHTML = "";
+        const start = (page - 1) * ROWS_PER_PAGE;
+        const end = start + ROWS_PER_PAGE;
+        const pageData = data.slice(start, end);
+        pageData.forEach(item => tbody.appendChild(renderRow(item)));
+    }
+
+    function createPaginationButtons() {
+        paginationContainer.innerHTML = "";
+        for (let i = 1; i <= totalPages; i++) {
+            const btn = document.createElement("button");
+            btn.textContent = i;
+            btn.className = i === currentPage ? "active" : "";
+            btn.onclick = () => {
+                currentPage = i;
+                renderPage(currentPage);
+                createPaginationButtons();
+            };
+            paginationContainer.appendChild(btn);
+        }
+    }
+
+    renderPage(currentPage);
+    createPaginationButtons();
+}
+
+// --------------------------
+// Load Assignments
+async function loadAssignments() {
+    try {
+        const token = localStorage.getItem("token");  
+        if (!token) return console.error("No auth token found");
+
+        const response = await fetch("http://localhost:8080/api/admin/inspectors/assignments", {
+            headers: { "Authorization": "Bearer " + token }
+        });
+        if (!response.ok) throw new Error("Failed to fetch assignments");
+
+        const data = await response.json();
+
+        paginateTable("#assignmentsBody", data, item => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td>${item.bookingId}</td>
+                <td>${item.customerName}</td>
+                <td>${item.vehicleBrand} ${item.vehicleModel} (${item.vehicleYear})</td>
+                <td>${item.inspectionType}</td>
+                <td>${item.scheduledDate}</td>
+                <td>${item.timeSlot}</td>
+                <td><span class="status ${item.status.toLowerCase()}">${item.status}</span></td>
+                <td>
+                    <div style="display:flex; gap:6px;">
+                        <button class="btn btn-sm btn-primary" title="View"><i class="fas fa-eye"></i></button>
+                        <button class="btn btn-sm btn-success" title="Complete"><i class="fas fa-check"></i></button>
+                    </div>
+                </td>
+            `;
+            return row;
+        });
+
+    } catch (err) { console.error(err); }
+}
+
+// --------------------------
+// Load Inspection History
+async function loadInspectionHistory() {
+    try {
+        const token = localStorage.getItem("token");
+        if (!token) return console.error("No auth token found");
+
+        const response = await fetch("http://localhost:8080/api/admin/inspections/history", {
+            headers: { "Authorization": "Bearer " + token }
+        });
+        if (!response.ok) throw new Error("Failed to fetch inspection history");
+
+        const data = await response.json();
+
+        paginateTable("#inspections table tbody", data, item => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td>${item.inspectionId}</td>
+                <td>${item.customerName}</td>
+                <td>${item.vehicleBrand} ${item.vehicleModel} (${item.vehicleYear})</td>
+                <td>${formatInspectionType(item.inspectionType)}</td>
+                <td>${formatDate(item.dateCompleted)}</td>
+                <td><span class="status ${item.result.toLowerCase()}">${item.result}</span></td>
+                <td>
+                    <button class="btn btn-info btn-sm" onclick="viewInspection(${item.inspectionId})">View</button>
+                </td>
+            `;
+            return row;
+        });
+
+    } catch (err) { console.error(err); }
+}
+
+// --------------------------
+// Helper to format date
+function formatDate(dateString) {
+    if (!dateString) return "N/A";
+    const date = new Date(dateString);
+    return date.toLocaleDateString() + " " + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+
+// Helper to format inspection type
+function formatInspectionType(type) {
+    switch (type) {
+        case "SAFETY": return "Safety";
+        case "COMPREHENSIVE": return "Comprehensive";
+        case "PRE_PURCHASE": return "Pre-Purchase";
+        case "DIAGNOSTIC": return "Diagnostic";
+        default: return type;
+    }
+}
+
+async function loadInspectorName() {
+    try {
+        const token = localStorage.getItem("token");
+        if (!token) return;
+
+        const response = await fetch("http://localhost:8080/api/users/my-name", {
+            headers: {
+                "Authorization": "Bearer " + token
+            }
+        });
+
+        if (!response.ok) throw new Error("Failed to fetch inspector info");
+
+        const data = await response.json();
+        const fullName = `${data.firstName} ${data.lastName}`;
+        document.getElementById("inspectorName").textContent = fullName;
+
+    } catch (err) {
+        console.error("Error loading inspector name:", err);
+    }
+}
+
+
+// --------------------------
+// Load both tables on page ready
+document.addEventListener("DOMContentLoaded", () => {
+    loadInspectorName();
+    loadInspectionHistory();
+    loadAssignments();
+});
+
+
+    </script>
+        
+</body>
+</html>

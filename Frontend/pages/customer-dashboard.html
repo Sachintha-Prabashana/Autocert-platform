@@ -14,21 +14,34 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f7fa;
-            color: #333;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            color: #334155;
+            line-height: 1.6;
         }
 
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #3b82f6 100%);
             color: white;
-            padding: 1rem 0;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 1.5rem 0;
+            box-shadow: 0 8px 32px rgba(30, 58, 138, 0.25);
+            position: relative;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.05) 50%, transparent 70%);
+            pointer-events: none;
         }
 
         .header-content {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 0 20px;
+            padding: 0 24px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -37,9 +50,58 @@
         .logo {
             display: flex;
             align-items: center;
+            gap: 12px;
+            font-size: 1.75rem;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .logo i {
+            color: #10b981;
+            font-size: 2rem;
+            filter: drop-shadow(0 2px 4px rgba(16, 185, 129, 0.3));
+        }
+
+        .nav-bar {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .nav-links li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 12px 20px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
             gap: 10px;
-            font-size: 1.5rem;
-            font-weight: bold;
+            position: relative;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .nav-links li a:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-links li a.active {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.3), rgba(5, 150, 105, 0.3));
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            color: #ffffff;
+            box-shadow: 0 4px 16px rgba(16, 185, 129, 0.25);
         }
 
         .user-info {
@@ -49,43 +111,67 @@
         }
 
         .btn {
-            padding: 10px 20px;
+            padding: 12px 24px;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             cursor: pointer;
             font-size: 1rem;
-            transition: all 0.3s;
+            font-weight: 600;
+            transition: all 0.3s ease;
             text-decoration: none;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            font-weight: 500;
+            gap: 10px;
+            position: relative;
+            overflow: hidden;
         }
 
         .btn-primary {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.15);
             color: white;
-            border: 2px solid rgba(255, 255, 255, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
         }
 
         .btn-primary:hover {
-            background: rgba(255, 255, 255, 0.3);
-            border-color: rgba(255, 255, 255, 0.5);
-            transform: translateY(-1px);
+            background: rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-list-vehicle {
+            background: linear-gradient(135deg, #059669 0%, #10b981 50%, #34d399 100%);
+            color: white;
+            border: none;
+            font-weight: 700;
+            box-shadow: 0 6px 20px rgba(5, 150, 105, 0.35);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-list-vehicle:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(5, 150, 105, 0.45);
+            background: linear-gradient(135deg, #10b981 0%, #34d399 50%, #6ee7b7 100%);
         }
 
         .profile-trigger {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             cursor: pointer;
-            padding: 8px 12px;
-            border-radius: 8px;
-            transition: background-color 0.3s;
+            padding: 10px 16px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
         }
 
         .profile-trigger:hover {
-            background-color: rgba(255,255,255,0.1);
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
         }
 
         .profile-dropdown {
@@ -98,113 +184,62 @@
             top: 100%;
             right: 0;
             background: white;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            padding: 10px;
-            min-width: 200px;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(30, 58, 138, 0.25);
+            padding: 12px;
+            min-width: 220px;
             z-index: 1000;
-            margin-top: 8px;
+            margin-top: 12px;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            backdrop-filter: blur(20px);
         }
 
         .profile-menu a {
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 12px;
+            gap: 14px;
+            padding: 14px 16px;
             text-decoration: none;
-            color: #333;
-            border-radius: 8px;
-            transition: background-color 0.3s;
+            color: #334155;
+            border-radius: 10px;
+            transition: all 0.3s ease;
             font-weight: 500;
         }
 
         .profile-menu a:hover {
-            background-color: #f8f9fa;
+            background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+            transform: translateX(4px);
         }
 
         .profile-menu hr {
-            margin: 8px 0;
+            margin: 12px 0;
             border: none;
-            border-top: 1px solid #eee;
+            border-top: 1px solid #e2e8f0;
         }
 
         .profile-menu a.logout {
-            color: #e74c3c;
+            color: #dc2626;
         }
 
         .profile-menu a.logout:hover {
-            background-color: #fee;
+            background: linear-gradient(135deg, #fef2f2, #fee2e2);
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 40px 20px;
-            text-align: center;
-        }
-
-        .welcome-section {
-            background: white;
-            border-radius: 16px;
-            padding: 60px 40px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-            margin-bottom: 40px;
-        }
-
-        .welcome-title {
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: #2c3e50;
-            margin-bottom: 15px;
-        }
-
-        .welcome-subtitle {
-            font-size: 1.2rem;
-            color: #7f8c8d;
-            margin-bottom: 40px;
-        }
-
-        .main-actions {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            flex-wrap: wrap;
-        }
-
-        .action-card {
-            background: white;
-            border-radius: 16px;
-            padding: 40px 30px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        /* Mobile menu toggle */
+        .mobile-menu-toggle {
+            display: none;
+            flex-direction: column;
             cursor: pointer;
-            transition: all 0.3s;
-            border: 2px solid transparent;
-            min-width: 280px;
+            padding: 8px;
         }
 
-        .action-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
-            border-color: #667eea;
-        }
-
-        .action-icon {
-            font-size: 3rem;
-            margin-bottom: 20px;
-            color: #667eea;
-        }
-
-        .action-title {
-            font-size: 1.4rem;
-            font-weight: 600;
-            color: #2c3e50;
-            margin-bottom: 10px;
-        }
-
-        .action-description {
-            color: #7f8c8d;
-            font-size: 1rem;
-            line-height: 1.5;
+        .mobile-menu-toggle span {
+            width: 25px;
+            height: 3px;
+            background: white;
+            margin: 3px 0;
+            transition: 0.3s;
+            border-radius: 2px;
         }
 
         /* Modal Styles */
@@ -216,183 +251,523 @@
             top: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0,0,0,0.5);
+            background: rgba(30, 58, 138, 0.4);
+            backdrop-filter: blur(8px);
         }
 
         .modal-content {
-            background-color: white;
+            background: white;
             margin: 5% auto;
             padding: 0;
-            border-radius: 16px;
+            border-radius: 24px;
             width: 90%;
-            max-width: 500px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 540px;
+            box-shadow: 0 25px 80px rgba(30, 58, 138, 0.4);
             overflow: hidden;
+            border: 1px solid rgba(59, 130, 246, 0.2);
         }
 
         .modal-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #3b82f6 100%);
             color: white;
-            padding: 20px;
+            padding: 28px;
             text-align: center;
             position: relative;
         }
 
         .modal-header h2 {
             margin: 0;
-            font-size: 1.5rem;
-            font-weight: 600;
+            font-size: 1.75rem;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
 
         .close {
             position: absolute;
-            right: 20px;
+            right: 24px;
             top: 50%;
             transform: translateY(-50%);
             color: white;
-            font-size: 24px;
+            font-size: 28px;
             font-weight: bold;
             cursor: pointer;
-            transition: opacity 0.3s;
+            transition: all 0.3s ease;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
         }
 
         .close:hover {
-            opacity: 0.7;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-50%) scale(1.1);
         }
 
         .modal-body {
-            padding: 30px;
+            padding: 36px;
         }
 
         .profile-picture-section {
             text-align: center;
-            margin-bottom: 25px;
+            margin-bottom: 32px;
         }
 
         .profile-pic {
-            width: 100px;
-            height: 100px;
+            width: 120px;
+            height: 120px;
             border-radius: 50%;
-            border: 4px solid #667eea;
+            border: 4px solid #3b82f6;
             object-fit: cover;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.25);
         }
 
         .upload-btn {
-            background: #f8f9fa;
-            border: 2px dashed #ddd;
-            color: #666;
-            padding: 8px 16px;
-            border-radius: 6px;
+            background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+            border: 2px dashed #cbd5e1;
+            color: #64748b;
+            padding: 12px 20px;
+            border-radius: 10px;
             cursor: pointer;
-            transition: all 0.3s;
-            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            font-weight: 600;
         }
 
         .upload-btn:hover {
-            border-color: #667eea;
-            color: #667eea;
-            background: #f0f4ff;
+            border-color: #3b82f6;
+            color: #1e40af;
+            background: linear-gradient(135def, #dbeafe, #bfdbfe);
+            transform: translateY(-1px);
         }
 
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 24px;
         }
 
         .form-label {
             display: block;
-            margin-bottom: 5px;
-            font-weight: 600;
-            color: #2c3e50;
+            margin-bottom: 8px;
+            font-weight: 700;
+            color: #1e293b;
+            font-size: 0.95rem;
         }
 
         .form-input {
             width: 100%;
-            padding: 12px;
-            border: 2px solid #e9ecef;
-            border-radius: 8px;
+            padding: 16px 18px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
             font-size: 1rem;
-            transition: border-color 0.3s;
+            transition: all 0.3s ease;
             outline: none;
+            background: #fafbfc;
         }
 
         .form-input:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+            background: white;
         }
 
         .form-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            gap: 20px;
         }
 
         .modal-footer {
-            padding: 20px 30px 30px;
+            padding: 24px 36px 36px;
             display: flex;
-            gap: 10px;
+            gap: 12px;
             justify-content: flex-end;
         }
 
         .btn-secondary {
-            background: #6c757d;
+            background: linear-gradient(135deg, #64748b, #475569);
             color: white;
-            padding: 10px 20px;
+            padding: 14px 24px;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             cursor: pointer;
             font-size: 1rem;
-            transition: background-color 0.3s;
+            font-weight: 600;
+            transition: all 0.3s ease;
         }
 
         .btn-secondary:hover {
-            background: #5a6268;
+            background: linear-gradient(135deg, #475569, #374151);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(100, 116, 139, 0.3);
         }
 
         .btn-save {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #3b82f6 100%);
             color: white;
-            padding: 10px 20px;
+            padding: 14px 24px;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             cursor: pointer;
             font-size: 1rem;
-            transition: all 0.3s;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 16px rgba(30, 64, 175, 0.3);
         }
 
         .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(30, 64, 175, 0.4);
+            background: linear-gradient(135deg, #3b82f6 0%, #1e40af 50%, #1e3a8a 100%);
+        }
+
+        /* Main Content Layout */
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px 24px;
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 40px;
+            align-items: start;
+        }
+
+        /* Filter Section */
+        .filter-section {
+            background: white;
+            border-radius: 20px;
+            padding: 28px;
+            box-shadow: 0 10px 40px rgba(30, 58, 138, 0.12);
+            position: sticky;
+            top: 32px;
+            border-left: 5px solid #10b981;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+        
+        .filter-title {
+            font-size: 1.25rem;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #e2e8f0;
+            color: #1e293b;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .filter-title i {
+            margin-right: 12px;
+            color: #1e40af;
+            font-size: 1.1rem;
+        }
+        
+        .filter-group {
+            margin-bottom: 20px;
+        }
+        
+        .filter-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 700;
+            color: #1e293b;
+            font-size: 0.9rem;
+        }
+        
+        .filter-group select, .filter-group input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            background: #fafbfc;
+            color: #334155;
+            font-weight: 500;
+        }
+
+        .filter-group select:focus, .filter-group input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+            background: white;
+        }
+        
+        .price-slider {
+            width: 100%;
+            margin: 16px 0;
+            accent-color: #1e40af;
+            height: 8px;
+        }
+        
+        .price-values {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: #64748b;
+            font-weight: 600;
+        }
+        
+        .btn-block {
+            width: 100%;
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #3b82f6 100%);
+            color: white;
+            border: none;
+            padding: 16px 24px;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            box-shadow: 0 6px 20px rgba(30, 64, 175, 0.3);
+        }
+
+        .btn-block:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(30, 64, 175, 0.4);
+            background: linear-gradient(135deg, #3b82f6 0%, #1e40af 50%, #1e3a8a 100%);
+        }
+
+        /* Vehicle Cards */
+        .vehicle-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 32px;
+        }
+
+        .vehicle-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(30, 58, 138, 0.12);
+            overflow: hidden;
+            transition: all 0.4s ease;
+            position: relative;
+            border-top: 4px solid #10b981;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        .vehicle-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 16px 48px rgba(30, 58, 138, 0.2);
+        }
+
+        .vehicle-image {
+            height: 220px;
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #94a3b8;
+            font-size: 56px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .vehicle-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 30%, rgba(16, 185, 129, 0.05) 50%, transparent 70%);
+        }
+
+        .vehicle-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 0;
+            transition: transform 0.4s ease;
+        }
+
+        .vehicle-card:hover .vehicle-image img {
+            transform: scale(1.05);
+        }
+
+        .vehicle-info {
+            padding: 28px;
+        }
+
+        .vehicle-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .vehicle-seller {
+            color: #64748b;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .vehicle-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-top: 16px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .vehicle-price {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #059669, #10b981);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .vehicle-date {
+            color: #64748b;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .vehicle-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-listing {
+            width: 100%;
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #3b82f6 100%);
+            color: white;
+            border: none;
+            padding: 16px 24px;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            text-align: center;
+            display: inline-block;
+            font-size: 1rem;
+            box-shadow: 0 6px 20px rgba(30, 64, 175, 0.25);
+        }
+
+        .btn-listing:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(30, 64, 175, 0.35);
+            text-decoration: none;
+            color: white;
+            background: linear-gradient(135deg, #3b82f6 0%, #1e40af 50%, #1e3a8a 100%);
+        }
+
+        /* Loading state */
+        .loading-message {
+            text-align: center;
+            padding: 60px;
+            color: #64748b;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .loading-message i {
+            color: #1e40af;
+            font-size: 2rem;
+            margin-bottom: 16px;
+        }
+
+        .error-message {
+            color: #dc2626;
+            text-align: center;
+            padding: 60px 32px;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .error-message i {
+            font-size: 3rem;
+            margin-bottom: 16px;
+            color: #fca5a5;
+        }
+
+        .no-vehicles {
+            text-align: center;
+            padding: 80px 32px;
+            color: #64748b;
+            grid-column: 1 / -1;
+        }
+
+        .no-vehicles i {
+            font-size: 4rem;
+            margin-bottom: 24px;
+            color: #cbd5e1;
+        }
+
+        .no-vehicles h3 {
+            font-size: 1.5rem;
+            margin-bottom: 12px;
+            color: #1e293b;
+        }
+
+        /* Reset button styling */
+        .filter-section .btn:last-child {
+            background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+            color: #475569;
+            border: 2px solid #e2e8f0;
+            box-shadow: 0 4px 12px rgba(100, 116, 139, 0.15);
+        }
+
+        .filter-section .btn:last-child:hover {
+            background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+            border-color: #cbd5e1;
             transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
         }
 
         @media (max-width: 768px) {
-            .header-content {
+            .mobile-menu-toggle {
+                display: flex;
+            }
+
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
                 flex-direction: column;
-                gap: 15px;
+                padding: 24px;
+                box-shadow: 0 8px 32px rgba(30, 58, 138, 0.25);
+                gap: 8px;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .nav-links li a {
+                padding: 16px 20px;
+                width: 100%;
+                justify-content: flex-start;
+                background: rgba(255, 255, 255, 0.1);
+            }
+
+            .header-content {
+                flex-wrap: wrap;
+                position: relative;
+                padding: 0 20px;
             }
 
             .user-info {
-                flex-direction: column;
-                gap: 10px;
-            }
-
-            .welcome-title {
-                font-size: 2rem;
-            }
-
-            .welcome-subtitle {
-                font-size: 1rem;
-            }
-
-            .main-actions {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .action-card {
-                min-width: auto;
+                order: 3;
                 width: 100%;
-                max-width: 300px;
+                justify-content: center;
+                margin-top: 24px;
             }
 
             .form-row {
@@ -405,7 +780,39 @@
             }
 
             .modal-body {
-                padding: 20px;
+                padding: 24px;
+            }
+
+            /* Mobile layout adjustments */
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 24px;
+                padding: 20px 16px;
+            }
+
+            .filter-section {
+                position: static;
+                padding: 24px;
+            }
+
+            .vehicle-grid {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+
+            .vehicle-card {
+                min-width: auto;
+            }
+
+            .vehicle-info {
+                padding: 24px;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 280px 1fr;
+                gap: 32px;
             }
         }
     </style>
@@ -417,25 +824,40 @@
                 <i class="fas fa-car"></i>
                 <span>AutoCert</span>
             </div>
+            
+            <div class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        
+            <nav class="nav-bar">
+                <ul class="nav-links" id="navLinks">
+                    <li><a href="#" class="active"><i class="fas fa-home"></i> Dashboard</a></li>
+                    <li><a href="#" onclick="scheduleInspection()"><i class="fas fa-clipboard-check"></i> Inspections</a></li>
+                    <li><a href="my-listings.html"><i class="fas fa-list"></i> My Listings</a></li>
+                    <li><a href="add-listning.html" class="btn btn-list-vehicle"><i class="fas fa-plus-circle"></i> List Vehicle</a></li>
+                    <!-- <li><a href="chat.html" class="btn btn-primary" style="text-decoration:none;"></a></li> -->
+
+                </ul>
+            </nav>
+
             <div class="user-info">
-                <a href="#" class="btn btn-primary" onclick="scheduleInspection()">
-                    <i class="fas fa-clipboard-check"></i> Get Inspection
-                </a>
                 <div class="profile-dropdown">
                     <div class="profile-trigger" onclick="toggleProfileMenu()">
-                        <i class="fas fa-user-circle" style="font-size: 2rem;"></i>
+                        <i class="fas fa-user-circle" style="font-size: 2.2rem;"></i>
                         <div>
-                            <div style="font-weight: 600;">John Smith</div>
-                            <div style="font-size: 0.8rem; opacity: 0.8;">Premium Member</div>
+                            <div style="font-weight: 700;">Loading...</div>
+                            <div style="font-size: 0.8rem; opacity: 0.9;">Premium Member</div>
                         </div>
-                        <i class="fas fa-chevron-down" style="font-size: 0.8rem; opacity: 0.7;"></i>
+                        <i class="fas fa-chevron-down" style="font-size: 0.8rem; opacity: 0.8;"></i>
                     </div>
                     <div id="profileMenu" class="profile-menu">
                         <a href="#" onclick="viewProfile()">
                             <i class="fas fa-user"></i>
                             <span>View Profile</span>
                         </a>
-                        <a href="#" onclick="updateProfile()">
+                        <a href="#" onclick="viewProfile()">
                             <i class="fas fa-edit"></i>
                             <span>Update Profile</span>
                         </a>
@@ -450,27 +872,76 @@
         </div>
     </header>
 
-    <div class="container">
-        <div class="welcome-section">
-            <h1 class="welcome-title">Welcome to AutoCert</h1>
-            <p class="welcome-subtitle">Your trusted partner for vehicle inspection, buying, and selling</p>
+    <div class="main-content">
+        <div class="filter-section">
+            <h3 class="filter-title"><i class="fas fa-filter"></i> Filter Vehicles</h3>
             
-            <div class="main-actions">
-                <div class="action-card" onclick="scheduleInspection()">
-                    <div class="action-icon">
-                        <i class="fas fa-clipboard-check"></i>
-                    </div>
-                    <h3 class="action-title">Schedule Inspection</h3>
-                    <p class="action-description">Get your vehicle professionally inspected with our certified experts</p>
+            <div class="filter-group">
+                <label for="vehicle-type">Vehicle Type</label>
+                <select id="vehicle-type" class="form-control">
+                    <option value="">All Types</option>
+                    <option value="car">Car</option>
+                    <option value="suv">SUV</option>
+                    <option value="truck">Truck</option>
+                    <option value="motorcycle">Motorcycle</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label for="price-range">Price Range</label>
+                <input type="range" min="0" max="100000" value="50000" class="price-slider" id="price-range">
+                <div class="price-values">
+                    <span>Rs. 0</span>
+                    <span>Rs. 10,000,000</span>
                 </div>
-                
-                <div class="action-card" onclick="viewProfile()">
-                    <div class="action-icon">
-                        <i class="fas fa-user-cog"></i>
-                    </div>
-                    <h3 class="action-title">Manage Profile</h3>
-                    <p class="action-description">View and update your personal information and preferences</p>
-                </div>
+            </div>
+            
+            <div class="filter-group">
+                <label for="make">Make</label>
+                <select id="make" class="form-control">
+                    <option value="">All Makes</option>
+                    <option value="toyota">Toyota</option>
+                    <option value="honda">Honda</option>
+                    <option value="nissan">Nissan</option>
+                    <option value="suzuki">Suzuki</option>
+                    <option value="bmw">BMW</option>
+                    <option value="mercedes">Mercedes</option>
+                </select>
+            </div>
+            
+            
+            <div class="filter-group">
+                <label for="year">Year</label>
+                <select id="year" class="form-control">
+                    <option value="">All Years</option>
+                    <option value="2024">2024</option>
+                    <option value="2023">2023</option>
+                    <option value="2022">2022</option>
+                    <option value="2021">2021</option>
+                    <option value="2020">2020</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label for="mileage">Max Mileage</label>
+                <select id="mileage" class="form-control">
+                    <option value="">Any Mileage</option>
+                    <option value="10000">Under 10,000 km</option>
+                    <option value="50000">Under 50,000 km</option>
+                    <option value="100000">Under 100,000 km</option>
+                    <option value="200000">Under 200,000 km</option>
+                </select>
+            </div>
+            
+            
+            <button class="btn btn-primary btn-block" onclick="applyFilters()">Apply Filters</button>
+            <button class="btn btn-block" style="margin-top: 10px; background-color: #f8fafc; color: #475569; border: 2px solid #e2e8f0;" onclick="resetFilters()">Reset Filters</button>
+        </div>
+
+        <div id="vehicleGrid" class="vehicle-grid">
+            <div class="loading-message">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>Loading vehicles...</p>
             </div>
         </div>
     </div>
@@ -484,7 +955,7 @@
             </div>
             <div class="modal-body">
                 <div class="profile-picture-section">
-                    <img src="https://via.placeholder.com/100x100/667eea/white?text=JS" alt="Profile Picture" class="profile-pic" id="profileImage">
+                    <img src="https://via.placeholder.com/100x100/1e40af/white?text=JS" alt="Profile Picture" class="profile-pic" id="profileImage">
                     <div>
                         <input type="file" id="profilePicInput" accept="image/*" style="display: none;" onchange="previewImage(this)">
                         <label for="profilePicInput" class="upload-btn">
@@ -497,22 +968,22 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label for="firstName" class="form-label">First Name</label>
-                            <input type="text" id="firstName" class="form-input" value="John" required>
+                            <input type="text" id="firstName" class="form-input" value="" required>
                         </div>
                         <div class="form-group">
                             <label for="lastName" class="form-label">Last Name</label>
-                            <input type="text" id="lastName" class="form-input" value="Smith" required>
+                            <input type="text" id="lastName" class="form-input" value="" required>
                         </div>
                     </div>
                     
                     <div class="form-group">
                         <label for="email" class="form-label">Email Address</label>
-                        <input type="email" id="email" class="form-input" value="john.smith@email.com" required>
+                        <input type="email" id="email" class="form-input" value="" readonly style="background-color: #f8fafc;">
                     </div>
                     
                     <div class="form-group">
                         <label for="phoneNumber" class="form-label">Phone Number</label>
-                        <input type="tel" id="phoneNumber" class="form-input" value="+1 (555) 123-4567" required>
+                        <input type="tel" id="phoneNumber" class="form-input" value="" required>
                     </div>
                 </form>
             </div>
@@ -524,79 +995,271 @@
     </div>
 
     <script>
-        function toggleProfileMenu() {
-            const menu = document.getElementById('profileMenu');
-            menu.style.display = menu.style.display === 'none' || menu.style.display === '' ? 'block' : 'none';
+        // ================== CONSTANTS ==================
+        const API_BASE_USERS = "http://localhost:8080/api/users";
+        const API_BASE_VEHICLES = "http://localhost:8080/api/vehicles";
+
+        // ================== TOKEN HELPERS ==================
+        function getToken() {
+            return localStorage.getItem("token");
+        }
+        function saveToken(token) {
+            localStorage.setItem("token", token);
+        }
+        function clearToken() {
+            localStorage.removeItem("token");
         }
 
+        // ================== PROFILE ==================
+        async function loadUserProfile() {
+            const token = getToken();
+            if (!token) return;
+
+            try {
+                const res = await fetch(`${API_BASE_USERS}/me`, {
+                    method: "GET",
+                    headers: { "Authorization": "Bearer " + token }
+                });
+                if (!res.ok) throw new Error("Failed to fetch user info");
+                const user = await res.json();
+
+                // Header display
+                const headerName = document.querySelector(".profile-trigger div div:first-child");
+                const headerEmail = document.querySelector(".profile-trigger div div:last-child");
+                if (headerName) headerName.textContent = `${user.firstName} ${user.lastName}`;
+                if (headerEmail) headerEmail.textContent = user.email;
+
+                // Modal form
+                const modalFields = ["firstName", "lastName", "email", "phoneNumber"];
+                modalFields.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.value = user[id] || "";
+                });
+
+                // Profile image
+                const profileImg = document.getElementById("profileImage");
+                if (profileImg) profileImg.src = user.profileImageUrl || "https://via.placeholder.com/100x100/1e40af/white?text=JS";
+            } catch (err) {
+                console.error(err);
+                alert("Could not load user profile");
+            }
+        }
+
+        // ================== PROFILE MODAL ==================
         function viewProfile() {
-            alert('Redirecting to view profile page...');
+            const modal = document.getElementById('updateProfileModal');
+            if (modal) modal.style.display = 'block';
             toggleProfileMenu();
         }
-
-        function updateProfile() {
-            document.getElementById('updateProfileModal').style.display = 'block';
-            toggleProfileMenu();
-        }
-
         function closeProfileModal() {
-            document.getElementById('updateProfileModal').style.display = 'none';
+            const modal = document.getElementById('updateProfileModal');
+            if (modal) modal.style.display = 'none';
+        }
+        window.onclick = function(event) {
+            const modal = document.getElementById('updateProfileModal');
+            if (event.target == modal) closeProfileModal();
         }
 
+        // ================== PROFILE IMAGE PREVIEW ==================
         function previewImage(input) {
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    document.getElementById('profileImage').src = e.target.result;
-                }
+                    const profileImg = document.getElementById('profileImage');
+                    if (profileImg) profileImg.src = e.target.result;
+                };
                 reader.readAsDataURL(input.files[0]);
             }
         }
 
-        function saveProfile() {
-            // Get form values
-            const firstName = document.getElementById('firstName').value;
-            const lastName = document.getElementById('lastName').value;
-            const email = document.getElementById('email').value;
-            const phoneNumber = document.getElementById('phoneNumber').value;
+        // ================== SAVE PROFILE ==================
+        async function saveProfile() {
+            const token = getToken();
+            if (!token) { alert("Please login first!"); return; }
 
-            // Validate form
-            if (!firstName || !lastName || !email || !phoneNumber) {
-                alert('Please fill in all required fields.');
+            const formData = new FormData();
+            formData.append("firstName", document.getElementById("firstName").value);
+            formData.append("lastName", document.getElementById("lastName").value);
+            formData.append("phone", document.getElementById("phoneNumber").value);
+
+            const imageFile = document.getElementById("profilePicInput")?.files[0];
+            if (imageFile) formData.append("image", imageFile);
+
+            try {
+                const res = await fetch(`${API_BASE_USERS}/update`, {
+                    method: "PUT",
+                    headers: { "Authorization": "Bearer " + token },
+                    body: formData
+                });
+
+                if (!res.ok) throw new Error("Profile update failed");
+                const updatedUser = await res.json();
+
+                alert("Profile updated successfully!");
+                const headerName = document.querySelector(".profile-trigger div div:first-child");
+                if (headerName) headerName.textContent = `${updatedUser.firstName} ${updatedUser.lastName}`;
+                const profileImg = document.getElementById("profileImage");
+                if (profileImg) profileImg.src = updatedUser.profileImageUrl || "https://via.placeholder.com/100x100/1e40af/white?text=JS";
+
+                closeProfileModal();
+            } catch(err) {
+                console.error(err);
+                alert("Could not update profile");
+            }
+        }
+
+        // ================== LOGOUT ==================
+        function logout() {
+            if (confirm("Are you sure you want to logout?")) {
+                clearToken();
+                window.location.href = "/Frontend/index.html";
+            }
+        }
+
+        // ================== NAVIGATION ==================
+        function scheduleInspection() {
+            window.location.href = '/Frontend/pages/test-ins.html';
+        }
+
+        // ================== LOAD APPROVED VEHICLES ==================
+        async function loadApprovedVehicles() {
+            const grid = document.getElementById("vehicleGrid");
+            if (!grid) return;
+
+            const token = getToken();
+            if (!token) {
+                grid.innerHTML = `
+                    <div class="error-message">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p>Please login to view vehicles.</p>
+                    </div>
+                `;
                 return;
             }
 
-            // Update header name display
-            const headerName = document.querySelector('.profile-trigger div div:first-child');
-            if (headerName) {
-                headerName.textContent = firstName + ' ' + lastName;
+            try {
+                const res = await fetch(`${API_BASE_VEHICLES}/approved`, {
+                    method: "GET",
+                    headers: {
+                        "Authorization": "Bearer " + token,
+                        "Content-Type": "application/json"
+                    }
+                });
+                if (!res.ok) throw new Error("Failed to fetch approved vehicles");
+                const vehicles = await res.json();
+
+                grid.innerHTML = "";
+                
+                if (!vehicles || vehicles.length === 0) {
+                    grid.innerHTML = `
+                        <div class="no-vehicles">
+                            <i class="fas fa-car"></i>
+                            <h3>No vehicles found</h3>
+                            <p>There are currently no approved vehicles available.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                vehicles.forEach(v => {
+                    const card = `
+                        <div class="vehicle-card">
+                            <div class="vehicle-image">
+                                ${v.photos && v.photos.length > 0 
+                                    ? `<img src="${v.photos[0]}" alt="${v.make} ${v.model}" style="width:100%; height:220px; object-fit:cover;">`
+                                    : `<i class="fas fa-car"></i>`}
+                            </div>
+                            <div class="vehicle-info">
+                                <h3 class="vehicle-title">${v.year} ${v.make} ${v.model}</h3>
+                                <p class="vehicle-seller">Listed by: ${v.contactName || 'AutoCert User'}</p>
+                                <div class="vehicle-footer">
+                                    <span class="vehicle-price">${formatPrice(v.price)}</span>
+                                    <span class="vehicle-date">${formatDate(v.createdAt)}</span>
+                                </div>
+                                <div class="vehicle-actions">
+                                    <a href="vehicle-details.html?id=${v.id}" class="btn-listing">
+                                        <i class="fas fa-eye"></i> View Details
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    grid.innerHTML += card;
+                });
+
+            } catch (err) {
+                console.error("Error loading approved vehicles:", err);
+                grid.innerHTML = `
+                    <div class="error-message">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p>Failed to load vehicles. Please try again later.</p>
+                        <button class="btn btn-primary" onclick="loadApprovedVehicles()" style="margin-top: 15px;">
+                            <i class="fas fa-refresh"></i> Retry
+                        </button>
+                    </div>
+                `;
             }
-
-            // Here you would typically send the data to your backend
-            alert('Profile updated successfully!');
-            closeProfileModal();
         }
 
-        // Close modal when clicking outside of it
-        window.onclick = function(event) {
-            const modal = document.getElementById('updateProfileModal');
-            if (event.target == modal) {
-                closeProfileModal();
-            }
+        // ================== UTILITY FUNCTIONS ==================
+        function formatPrice(price) {
+            if (!price) return "Price not available";
+            return new Intl.NumberFormat('en-LK', { 
+                style: 'currency', 
+                currency: 'LKR',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(price);
         }
 
-        function logout() {
-            if (confirm('Are you sure you want to logout?')) {
-                alert('Logging out...');
-            }
-            toggleProfileMenu();
+        function formatDate(dateString) {
+            if (!dateString) return "Date not available";
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
         }
 
-        function scheduleInspection() {
-            window.location.href = '/Frontend/pages/inspection.html';
+        // ================== FILTER FUNCTIONS ==================
+        function applyFilters() {
+            // Get filter values
+            const vehicleType = document.getElementById('vehicle-type').value;
+            const priceRange = document.getElementById('price-range').value;
+            const make = document.getElementById('make').value;
+            const year = document.getElementById('year').value;
+            const mileage = document.getElementById('mileage').value;
+
+            // Here you would implement filtering logic
+            // For now, just reload all vehicles
+            loadApprovedVehicles();
         }
 
-        // Close dropdown when clicking outside
+        function resetFilters() {
+            // Reset all filter inputs
+            document.getElementById('vehicle-type').value = '';
+            document.getElementById('price-range').value = '50000';
+            document.getElementById('make').value = '';
+            document.getElementById('year').value = '';
+            document.getElementById('mileage').value = '';
+            
+            // Reload vehicles
+            loadApprovedVehicles();
+        }
+
+        // ================== MENU FUNCTIONS ==================
+        function toggleProfileMenu() {
+            const menu = document.getElementById('profileMenu');
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function toggleMobileMenu() {
+            const navLinks = document.getElementById('navLinks');
+            navLinks.classList.toggle('active');
+        }
+
+        // Close profile menu when clicking outside
         document.addEventListener('click', function(event) {
             const profileDropdown = document.querySelector('.profile-dropdown');
             const profileMenu = document.getElementById('profileMenu');
@@ -605,7 +1268,19 @@
                 profileMenu.style.display = 'none';
             }
         });
+
+        // Close mobile menu when clicking on a link
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                document.getElementById('navLinks').classList.remove('active');
+            });
+        });
+
+        // ================== INIT ==================
+        document.addEventListener("DOMContentLoaded", () => {
+            loadUserProfile();
+            loadApprovedVehicles();
+        });
     </script>
-    <script src="/Frontend/js/update-profile.js"></script>
 </body>
 </html>

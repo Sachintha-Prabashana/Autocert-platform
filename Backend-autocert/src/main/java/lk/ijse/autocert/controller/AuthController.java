@@ -1,21 +1,15 @@
 package lk.ijse.autocert.controller;
 
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lk.ijse.autocert.dto.*;
-import lk.ijse.autocert.entity.Role;
 import lk.ijse.autocert.service.AuthService;
-import lk.ijse.autocert.service.EmailService;
+import lk.ijse.autocert.service.impl.AuthServiceImpl;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor

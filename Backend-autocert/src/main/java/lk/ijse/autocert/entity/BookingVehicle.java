@@ -19,10 +19,11 @@ public class BookingVehicle {
     private String model;
     private int year;
     private String description;
+    private Integer mileage; // <-- added from DTO
 
     @OneToOne(mappedBy = "bookingVehicle", cascade = CascadeType.ALL)
     private Booking booking;
 
-    @OneToOne(mappedBy = "bookingVehicle", cascade = CascadeType.ALL)
-    private Inspection inspection;   // <-- Link back
+
+
 }

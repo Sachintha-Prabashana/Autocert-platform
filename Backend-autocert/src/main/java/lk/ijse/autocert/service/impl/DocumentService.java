@@ -1,4 +1,4 @@
-package lk.ijse.autocert.service;
+package lk.ijse.autocert.service.impl;
 
 import lk.ijse.autocert.dto.DocumentDTO;
 import lk.ijse.autocert.entity.Document;

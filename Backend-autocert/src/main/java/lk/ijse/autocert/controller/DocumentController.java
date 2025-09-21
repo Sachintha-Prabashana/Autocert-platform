@@ -3,7 +3,7 @@ package lk.ijse.autocert.controller;
 import lk.ijse.autocert.dto.DocumentDTO;
 import lk.ijse.autocert.dto.ApiResponse;
 import lk.ijse.autocert.entity.DocumentType;
-import lk.ijse.autocert.service.DocumentService;
+import lk.ijse.autocert.service.impl.DocumentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;

@@ -1,0 +1,1687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Chat - AutoCert</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --secondary: #4f46e5;
+            --success: #059669;
+            --warning: #d97706;
+            --error: #dc2626;
+            --dark: #1e293b;
+            --darker: #0f172a;
+            --light: #f8fafc;
+            --gray-50: #f9fafb;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-400: #94a3b8;
+            --gray-500: #64748b;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
+            --gray-900: #0f172a;
+            --white: #ffffff;
+            --border: #e2e8f0;
+            --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --industrial-blue: #1e40af;
+            --industrial-dark: #1e293b;
+            --industrial-accent: #3b82f6;
+            --industrial-light: #dbeafe;
+            --whatsapp-green: #dcf8c6;
+            --whatsapp-bg: #e5ddd5;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--gray-100);
+            color: var(--gray-900);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 0;
+            margin: 0;
+        }
+
+        .header {
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 0;
+            box-shadow: var(--shadow);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--industrial-blue);
+            text-decoration: none;
+        }
+
+        .logo i {
+            font-size: 2rem;
+            color: var(--industrial-blue);
+        }
+
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--gray-600);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .back-btn:hover {
+            color: var(--industrial-blue);
+        }
+
+        /* Chat Container */
+        .chat-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            background: var(--white);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow-xl);
+            display: flex;
+            height: calc(100vh - 150px);
+        }
+
+        /* Conversation List */
+        .chat-conv-list {
+            width: 350px;
+            background-color: var(--gray-50);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-conv-header {
+            padding: 1.2rem;
+            background-color: var(--white);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            color: var(--gray-800);
+        }
+
+        .chat-conv-search {
+            padding: 0.8rem 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .chat-conv-search input {
+            width: 100%;
+            padding: 0.6rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            font-size: 0.9rem;
+            outline: none;
+        }
+
+        .chat-conv-search input:focus {
+            border-color: var(--industrial-blue);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .chat-conv-items {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .chat-conv-item {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .chat-conv-item:hover {
+            background-color: var(--gray-100);
+        }
+
+        .chat-conv-item.active {
+            background-color: var(--industrial-light);
+            border-left: 4px solid var(--industrial-blue);
+        }
+
+        .conv-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            overflow: hidden;
+            background: var(--industrial-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: var(--white);
+            flex-shrink: 0;
+            font-size: 0.9rem;
+        }
+
+        .conv-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .conv-details {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .conv-title {
+            font-weight: 600;
+            color: var(--gray-800);
+            margin-bottom: 0.3rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .conv-preview {
+            color: var(--gray-600);
+            font-size: 0.85rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 0.2rem;
+        }
+
+        .conv-time {
+            color: var(--gray-500);
+            font-size: 0.75rem;
+        }
+
+        .unread-badge {
+            background: var(--industrial-blue);
+            color: white;
+            border-radius: 10px;
+            padding: 0.2rem 0.5rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        /* Chat Panel */
+        .chat-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--whatsapp-bg);
+        }
+
+        .chat-panel-header {
+            padding: 1rem 1.5rem;
+            background-color: var(--white);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .chat-user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            overflow: hidden;
+            background: var(--industrial-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: var(--white);
+            font-size: 0.9rem;
+        }
+
+        .chat-user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .chat-user-details h4 {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--gray-800);
+        }
+
+        .chat-status {
+            margin: 0;
+            font-size: 0.85rem;
+            color: var(--gray-500);
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #10b981;
+        }
+
+        .status-dot.offline {
+            background: var(--gray-400);
+        }
+
+        .chat-header-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .chat-header-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--gray-100);
+            color: var(--gray-600);
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .chat-header-btn:hover {
+            background: var(--gray-200);
+            color: var(--gray-800);
+        }
+
+        /* Chat Messages */
+        .chat-messages {
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+            background: var(--whatsapp-bg);
+        }
+
+        .message-day-divider {
+            text-align: center;
+            margin: 1.5rem 0;
+        }
+
+        .message-day-divider span {
+            background-color: rgba(255, 255, 255, 0.9);
+            color: var(--gray-600);
+            padding: 0.4rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            box-shadow: var(--shadow);
+        }
+
+        .message-bubble {
+            max-width: 60%;
+            padding: 0.6rem 0.8rem 0.3rem 0.8rem;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            position: relative;
+            word-wrap: break-word;
+            animation: fadeIn 0.3s ease;
+            clear: both;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message-bubble.sent {
+            background: var(--whatsapp-green);
+            color: var(--gray-800);
+            border-bottom-right-radius: 3px;
+            float: right;
+            clear: both;
+        }
+
+        .message-bubble.received {
+            background: var(--white);
+            color: var(--gray-800);
+            border-bottom-left-radius: 3px;
+            box-shadow: var(--shadow);
+            float: left;
+            clear: both;
+        }
+
+        .message-content {
+            margin-bottom: 0.3rem;
+            line-height: 1.4;
+        }
+
+        .message-image {
+            max-width: 250px;
+            border-radius: 8px;
+            margin-top: 0.5rem;
+            cursor: pointer;
+            display: block;
+        }
+
+        .message-time {
+            font-size: 0.7rem;
+            color: var(--gray-500);
+            text-align: right;
+            margin-top: 0.2rem;
+        }
+
+        .message-status {
+            margin-left: 0.3rem;
+            color: var(--gray-500);
+        }
+
+        /* Clear floats after messages */
+        .messages-container::after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+
+        /* Chat Input */
+        .chat-input-bar {
+            padding: 1rem;
+            background-color: var(--white);
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .chat-input-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            color: var(--gray-600);
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .chat-input-btn:hover {
+            background: var(--gray-100);
+            color: var(--gray-800);
+        }
+
+        .chat-input {
+            flex: 1;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 0.8rem 1.2rem;
+            outline: none;
+            resize: none;
+            max-height: 120px;
+            font-family: inherit;
+        }
+
+        .chat-input:focus {
+            border-color: var(--industrial-blue);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .chat-send-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--industrial-blue);
+            color: var(--white);
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .chat-send-btn:hover {
+            background: var(--primary-hover);
+            transform: scale(1.05);
+        }
+
+        .chat-send-btn:disabled {
+            background: var(--gray-400);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Empty State */
+        .chat-empty {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: var(--gray-500);
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .chat-empty i {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .chat-empty h4 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: var(--gray-600);
+        }
+
+        .chat-empty p {
+            max-width: 300px;
+            line-height: 1.5;
+        }
+
+        /* Vehicle Info in Chat */
+        .vehicle-info-chat {
+            background: var(--white);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: var(--shadow);
+            border-left: 3px solid var(--industrial-blue);
+        }
+
+        .vehicle-info-chat h5 {
+            margin: 0 0 0.5rem 0;
+            color: var(--gray-800);
+            font-size: 1rem;
+        }
+
+        .vehicle-info-chat p {
+            margin: 0;
+            color: var(--gray-600);
+            font-size: 0.9rem;
+        }
+
+        /* Connection Status */
+        .connection-status {
+            padding: 0.5rem 1rem;
+            background: var(--warning);
+            color: white;
+            text-align: center;
+            font-size: 0.85rem;
+            display: none;
+        }
+
+        .connection-status.connected {
+            background: var(--success);
+        }
+
+        .connection-status.disconnected {
+            background: var(--error);
+        }
+
+        /* Error panel */
+        .error-panel {
+            background: #fee2e2;
+            border: 1px solid #fecaca;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem;
+        }
+
+        .error-title {
+            color: #b91c1c;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .error-details {
+            background: #fef2f2;
+            border-radius: 4px;
+            padding: 0.75rem;
+            font-family: monospace;
+            font-size: 0.8rem;
+            overflow-x: auto;
+            margin-top: 0.5rem;
+        }
+
+        /* Debug panel */
+        .debug-panel {
+            background: #fefce8;
+            border: 1px solid #fef08a;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem;
+            font-size: 0.85rem;
+        }
+
+        .debug-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+
+        .debug-content {
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .debug-content.show {
+            display: block;
+        }
+
+        .request-info {
+            background: #f1f5f9;
+            border-radius: 4px;
+            padding: 0.75rem;
+            font-family: monospace;
+            font-size: 0.8rem;
+            overflow-x: auto;
+            margin-top: 0.5rem;
+        }
+
+        /* Notification toast */
+        .notification-toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            max-width: 300px;
+            background: white;
+            border-left: 4px solid var(--error);
+            border-radius: 6px;
+            padding: 12px 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transform: translateX(100%);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .notification-toast.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .notification-toast.success {
+            border-left-color: var(--success);
+        }
+
+        .notification-toast i {
+            font-size: 18px;
+        }
+
+        .notification-toast.error i {
+            color: var(--error);
+        }
+
+        .notification-toast.success i {
+            color: var(--success);
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-content small {
+            display: block;
+            line-height: 1.4;
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .chat-container {
+                flex-direction: column;
+                height: auto;
+                min-height: calc(100vh - 150px);
+            }
+            
+            .chat-conv-list {
+                width: 100%;
+                height: 300px;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+            }
+            
+            .chat-panel {
+                min-height: 400px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .header {
+                padding: 1rem;
+            }
+            
+            .chat-container {
+                margin: 1rem;
+                border-radius: 8px;
+            }
+            
+            .chat-messages {
+                padding: 1rem;
+            }
+            
+            .message-bubble {
+                max-width: 85%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <a href="index.html" class="logo">
+                    <i class="fas fa-car"></i>
+                    <span>AutoCert</span>
+                </a>
+                <a href="vehicle-details.html" class="back-btn">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Vehicle
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Chat Container -->
+    <div class="container">
+        <div class="chat-container">
+            <!-- Conversation List -->
+            <div class="chat-conv-list">
+                <div class="chat-conv-header">
+                    <span><i class="fas fa-comments me-2"></i>Conversations</span>
+                    <button class="chat-header-btn" id="refreshConvsBtn" title="Refresh">
+                        <i class="fas fa-rotate"></i>
+                    </button>
+                </div>
+                <div class="chat-conv-search">
+                    <input type="text" placeholder="Search conversations..." id="convSearchInput">
+                </div>
+                <div class="chat-conv-items" id="chatConversations">
+                    <!-- Conversations will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Chat Panel -->
+            <div class="chat-panel">
+                <div class="chat-panel-header">
+                    <div class="chat-user-info">
+                        <div class="chat-user-avatar" id="chatUserAvatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div>
+                            <h4 id="chatActiveTitle">Select a conversation</h4>
+                            <p class="chat-status" id="chatStatus">
+                                <span class="status-dot offline"></span>
+                                <span>Click on a chat to start messaging</span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="chat-header-actions">
+                        <button class="chat-header-btn" title="View vehicle details" id="viewVehicleBtn">
+                            <i class="fas fa-car"></i>
+                        </button>
+                        <button class="chat-header-btn" title="More options">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="connection-status" id="connectionStatus"></div>
+                
+                <!-- Error Information Panel -->
+                <div class="error-panel" id="apiErrorPanel" style="display: none;">
+                    <div class="error-title">
+                        <i class="fas fa-exclamation-circle"></i>
+                        API Connection Error
+                    </div>
+                    <p>The chat feature is currently experiencing issues connecting to the server. Using demo mode.</p>
+                    <div class="error-details" id="errorDetails">
+                        Error details will appear here
+                    </div>
+                </div>
+                
+                <!-- Debug Panel -->
+                <div class="debug-panel">
+                    <div class="debug-toggle" id="debugToggle">
+                        <div class="debug-title">
+                            <i class="fas fa-bug"></i>
+                            Debug Information
+                        </div>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="debug-content" id="debugContent">
+                        <p><strong>Current Status:</strong> <span id="debugStatus">Initializing...</span></p>
+                        <p><strong>WebSocket Connection:</strong> <span id="websocketStatus">Not connected</span></p>
+                        <p><strong>Last Message Sent:</strong> <span id="lastMessageStatus">None</span></p>
+                        <div class="request-info" id="requestInfo">
+                            No requests yet
+                        </div>
+                        <button class="btn btn-sm btn-outline-primary mt-2" id="clearDebugBtn">
+                            <i class="fas fa-trash"></i> Clear Debug
+                        </button>
+                    </div>
+                </div>
+
+                <div class="chat-messages" id="chatMessages">
+                    <div class="chat-empty">
+                        <i class="fas fa-comments"></i>
+                        <h4>No conversation selected</h4>
+                        <p>Select a conversation from the list to start messaging or view your chat history</p>
+                    </div>
+                </div>
+
+                <div class="chat-input-bar" id="chatInputBar" style="display:none;">
+                    <label class="chat-input-btn" title="Attach image">
+                        <i class="fas fa-image"></i>
+                        <input type="file" id="chatImageInput" accept="image/*" style="display:none;" />
+                    </label>
+                    <div class="position-relative flex-grow-1">
+                        <textarea class="chat-input" id="chatInput" placeholder="Type a message..." maxlength="500" rows="1"></textarea>
+                        <div id="imagePreviewContainer" class="position-absolute bottom-100 mb-2"></div>
+                    </div>
+                    <button class="chat-send-btn" id="chatSendBtn" title="Send message" disabled>
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap & jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- SockJS and STOMP -->
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+
+    <script>
+        (function(){
+            if(window.VehicleChatInitialized) return;
+            window.VehicleChatInitialized = true;
+
+            const token = localStorage.getItem('token') || 'demo-token-12345';
+            if(!token) {
+                alert("Please login to access chat");
+                window.location.href = "login.html";
+                return;
+            }
+
+            const API_BASE = "http://localhost:8080/api";
+            const CHAT_API = `${API_BASE}/chat`;
+            const WS_URL = "http://localhost:8080/ws";
+
+            // Get URL parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            const sellerId = urlParams.get('sellerId');
+            const sellerName = urlParams.get('sellerName');
+            const sellerAvatar = urlParams.get('sellerAvatar');
+            const vehicleId = urlParams.get('vehicleId') || 1;
+            const vehicleTitle = urlParams.get('vehicleTitle') || "2020 Suzuki Swift";
+
+            console.log("URL Parameters:", { sellerId, sellerName, sellerAvatar, vehicleId, vehicleTitle });
+
+            const convsDiv = document.getElementById('chatConversations');
+            const msgsDiv = document.getElementById('chatMessages');
+            const chatInputBar = document.getElementById('chatInputBar');
+            const chatActiveTitle = document.getElementById('chatActiveTitle');
+            const chatStatus = document.getElementById('chatStatus');
+            const chatUserAvatar = document.getElementById('chatUserAvatar');
+            const chatInput = document.getElementById('chatInput');
+            const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+            const apiErrorPanel = document.getElementById('apiErrorPanel');
+            const errorDetails = document.getElementById('errorDetails');
+            const debugContent = document.getElementById('debugContent');
+            const chatSendBtn = document.getElementById('chatSendBtn');
+            const debugStatus = document.getElementById('debugStatus');
+            const websocketStatus = document.getElementById('websocketStatus');
+            const lastMessageStatus = document.getElementById('lastMessageStatus');
+            const requestInfo = document.getElementById('requestInfo');
+            const debugToggle = document.getElementById('debugToggle');
+            
+            let current = { vehicleId: null, sellerId: null, vehicleTitle: '', sellerName: '' };
+            let stompClient = null;
+            let chatSubscription = null;
+            let reconnectAttempts = 0;
+            const maxReconnectAttempts = 5;
+            let isWebSocketConnected = false;
+            let requestHistory = [];
+
+            const currentUserId = Number(localStorage.getItem('userId')) || 999;
+            const currentUserName = localStorage.getItem('userName') || 'You';
+
+            const mockConversations = [
+                {
+                    vehicleId: 1,
+                    otherUserId: 1,
+                    otherUserName: "Chamod Ananda",
+                    vehicleTitle: "2020 Suzuki Swift",
+                    lastMessage: "Hi, I'm interested in this vehicle. Is it still available?",
+                    lastTimestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+                    unreadCount: 3
+                },
+                {
+                    vehicleId: 2,
+                    otherUserId: 2,
+                    otherUserName: "Sarah Johnson",
+                    vehicleTitle: "2019 Toyota Camry",
+                    lastMessage: "What's the mileage on this car?",
+                    lastTimestamp: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
+                    unreadCount: 0
+                }
+            ];
+
+            const mockMessages = [
+                {
+                    id: 1,
+                    senderId: 1,
+                    content: "Hello, I'm interested in the Suzuki Swift. Is it still available?",
+                    timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+                    imageUrl: null
+                },
+                {
+                    id: 2,
+                    senderId: 999,
+                    content: "Yes, it's still available. Would you like to schedule a test drive?",
+                    timestamp: new Date(Date.now() - 1.5 * 60 * 60 * 1000).toISOString(),
+                    imageUrl: null
+                },
+                {
+                    id: 3,
+                    senderId: 1,
+                    content: "That would be great! How about this weekend?",
+                    timestamp: new Date(Date.now() - 60 * 60 * 1000).toISOString(),
+                    imageUrl: null
+                }
+            ];
+
+            function truncate(str, len) { 
+                return str && str.length > len ? str.slice(0, len - 1) + '…' : str || ''; 
+            }
+            
+            function showNotification(message, type = 'error') {
+                const toast = document.createElement('div');
+                toast.className = `notification-toast ${type}`;
+                toast.innerHTML = `
+                    <i class="fas fa-${type === 'error' ? 'exclamation-triangle' : 'check-circle'}"></i>
+                    <div class="notification-content">
+                        <small>${message}</small>
+                    </div>
+                    <button type="button" class="btn-close" onclick="this.parentElement.remove()"></button>
+                `;
+                
+                document.body.appendChild(toast);
+                setTimeout(() => toast.classList.add('show'), 10);
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                    setTimeout(() => toast.remove(), 300);
+                }, 5000);
+            }
+
+            function updateDebugStatus(message) {
+                debugStatus.textContent = message;
+                addToRequestHistory('STATUS', message);
+            }
+
+            function updateWebSocketStatus(message) {
+                websocketStatus.textContent = message;
+                addToRequestHistory('WEBSOCKET', message);
+            }
+
+            function updateLastMessageStatus(message) {
+                lastMessageStatus.textContent = message;
+            }
+
+            function addToRequestHistory(type, message) {
+                const timestamp = new Date().toLocaleTimeString();
+                requestHistory.push({ type, message, timestamp });
+                
+                if (requestHistory.length > 10) {
+                    requestHistory = requestHistory.slice(-10);
+                }
+                
+                updateRequestInfo();
+            }
+
+            function updateRequestInfo() {
+                requestInfo.innerHTML = requestHistory.map(item => 
+                    `<div><strong>[${item.timestamp}] ${item.type}:</strong> ${item.message}</div>`
+                ).join('');
+            }
+
+            async function apiCall(url, options = {}) {
+                const defaultOptions = {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                        ...options.headers
+                    }
+                };
+                
+                updateDebugStatus(`Calling API: ${url}`);
+                addToRequestHistory('API_REQUEST', `GET ${url}`);
+                
+                try {
+                    const response = await fetch(url, { ...defaultOptions, ...options });
+                    
+                    if (response.status === 401) {
+                        localStorage.removeItem('token');
+                        window.location.href = 'login.html';
+                        return;
+                    }
+                    
+                    if (!response.ok) {
+                        throw new Error(`API error: ${response.status}`);
+                    }
+                    
+                    const data = await response.json();
+                    addToRequestHistory('API_RESPONSE', `SUCCESS: ${JSON.stringify(data).substring(0, 100)}...`);
+                    return data;
+                } catch (error) {
+                    console.error('API call failed:', error);
+                    addToRequestHistory('API_ERROR', error.message);
+                    
+                    errorDetails.textContent = `${error.message}: ${url}`;
+                    apiErrorPanel.style.display = 'block';
+                    
+                    throw error;
+                }
+            }
+
+            function initWebSocket() {
+                if (stompClient && stompClient.connected) {
+                    return;
+                }
+
+                updateConnectionStatus('connecting');
+                updateWebSocketStatus('Connecting...');
+                
+                const socket = new SockJS(WS_URL);
+                stompClient = Stomp.over(socket);
+                
+                stompClient.debug = () => {};
+                
+                stompClient.connect({ 
+                    'Authorization': `Bearer ${token}`
+                }, function(frame) {
+                    console.log('Connected: ' + frame);
+                    reconnectAttempts = 0;
+                    isWebSocketConnected = true;
+                    updateConnectionStatus('connected');
+                    updateWebSocketStatus('Connected');
+                    chatSendBtn.disabled = false;
+                    
+                    chatSubscription = stompClient.subscribe(`/user/${currentUserId}/queue/messages`, function(message) {
+                        const receivedMessage = JSON.parse(message.body);
+                        addToRequestHistory('WEBSOCKET_MSG', `Received: ${JSON.stringify(receivedMessage)}`);
+                        
+                        if (current.vehicleId === receivedMessage.vehicleId && 
+                            (current.sellerId === receivedMessage.senderId || current.sellerId === receivedMessage.receiverId)) {
+                            displayMessage(receivedMessage);
+                            loadConversations();
+                        }
+                    });
+                    
+                    stompClient.subscribe(`/user/${currentUserId}/queue/errors`, function(error) {
+                        const errorData = JSON.parse(error.body);
+                        addToRequestHistory('WEBSOCKET_ERROR', `Error: ${JSON.stringify(errorData)}`);
+                        showNotification('Failed to send message: ' + errorData.message, 'error');
+                    });
+                    
+                    if (current.vehicleId && current.sellerId) {
+                        loadMessages();
+                    }
+                }, function(error) {
+                    console.error('STOMP error: ' + error);
+                    isWebSocketConnected = false;
+                    updateConnectionStatus('disconnected');
+                    updateWebSocketStatus('Disconnected');
+                    chatSendBtn.disabled = true;
+                    
+                    if (reconnectAttempts < maxReconnectAttempts) {
+                        const delay = Math.pow(2, reconnectAttempts) * 1000;
+                        reconnectAttempts++;
+                        setTimeout(initWebSocket, delay);
+                    } else {
+                        showNotification('Failed to connect to chat server. Please refresh the page.', 'error');
+                    }
+                });
+            }
+
+            function updateConnectionStatus(status) {
+                const statusEl = document.getElementById('connectionStatus');
+                const statusDot = document.querySelector('.status-dot');
+                
+                if (status === 'connected') {
+                    statusEl.style.display = 'none';
+                    statusDot.classList.remove('offline');
+                    statusDot.style.background = '#10b981';
+                    if (chatStatus.querySelector('span:last-child')) {
+                        chatStatus.querySelector('span:last-child').textContent = 'Online';
+                    }
+                } else {
+                    statusEl.style.display = 'block';
+                    statusEl.textContent = status === 'disconnected' ? 
+                        'Connection lost. Reconnecting...' : 'Connecting...';
+                    statusEl.className = 'connection-status ' + 
+                        (status === 'disconnected' ? 'disconnected' : '');
+                    statusDot.classList.add('offline');
+                    if (chatStatus.querySelector('span:last-child')) {
+                        chatStatus.querySelector('span:last-child').textContent = 'Offline';
+                    }
+                }
+            }
+
+            async function loadConversations() {
+                convsDiv.innerHTML = '<div class="p-3 text-center text-muted small">Loading conversations...</div>';
+                try {
+                    const conversations = await apiCall(`${CHAT_API}/conversations`);
+                    
+                    if (conversations.length === 0) {
+                        convsDiv.innerHTML = `
+                            <div class="p-4 text-center text-muted">
+                                <i class="fas fa-comments fa-3x mb-3 opacity-50"></i>
+                                <p class="mb-2">No conversations yet</p>
+                                <small>Start chatting with sellers from vehicle listings</small>
+                            </div>`;
+                        return;
+                    }
+                    
+                    const uniqueConversations = [];
+                    const seenUsers = new Set();
+                    
+                    conversations.forEach(c => {
+                        if (!seenUsers.has(c.otherUserId)) {
+                            seenUsers.add(c.otherUserId);
+                            uniqueConversations.push(c);
+                        }
+                    });
+                    
+                    renderConversations(uniqueConversations);
+                    
+                    // Check if we have URL parameters to open a specific conversation
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const urlSellerId = urlParams.get('sellerId');
+                    const urlSellerName = urlParams.get('sellerName');
+                    const urlVehicleId = urlParams.get('vehicleId');
+                    const urlVehicleTitle = urlParams.get('vehicleTitle');
+                    
+                    if (urlSellerId && urlSellerName && urlVehicleId) {
+                        // Use the URL parameters to open the conversation
+                        console.log("Opening conversation from URL params:", {urlSellerId, urlSellerName, urlVehicleId, urlVehicleTitle});
+                        openConversation(
+                            parseInt(urlVehicleId), 
+                            parseInt(urlSellerId), 
+                            urlVehicleTitle, 
+                            urlSellerName
+                        );
+                    }
+                } catch(e) {
+                    console.error('Failed to load conversations:', e);
+                    loadMockConversations();
+                }
+            }
+
+            function loadMockConversations() {
+                const uniqueConversations = [];
+                const seenUsers = new Set();
+                
+                mockConversations.forEach(c => {
+                    if (!seenUsers.has(c.otherUserId)) {
+                        seenUsers.add(c.otherUserId);
+                        uniqueConversations.push(c);
+                    }
+                });
+                
+                renderConversations(uniqueConversations);
+                
+                // Check if we have URL parameters to open a specific conversation
+                const urlParams = new URLSearchParams(window.location.search);
+                const urlSellerId = urlParams.get('sellerId');
+                const urlSellerName = urlParams.get('sellerName');
+                const urlVehicleId = urlParams.get('vehicleId');
+                const urlVehicleTitle = urlParams.get('vehicleTitle');
+                
+                if (urlSellerId && urlSellerName && urlVehicleId) {
+                    // Use the URL parameters to open the conversation
+                    console.log("Opening conversation from URL params:", {urlSellerId, urlSellerName, urlVehicleId, urlVehicleTitle});
+                    openConversation(
+                        parseInt(urlVehicleId), 
+                        parseInt(urlSellerId), 
+                        urlVehicleTitle, 
+                        urlSellerName
+                    );
+                }
+            }
+
+            function renderConversations(conversations) {
+                convsDiv.innerHTML = '';
+                
+                conversations.forEach((c, index) => {
+                    const item = document.createElement('div');
+                    item.className = 'chat-conv-item';
+                    if (current.sellerId === c.otherUserId) item.classList.add('active');
+                    
+                    const time = new Date(c.lastTimestamp).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+                    const isToday = new Date(c.lastTimestamp).toDateString() === new Date().toDateString();
+                    const displayTime = isToday ? time : new Date(c.lastTimestamp).toLocaleDateString();
+                    
+                    const initials = c.otherUserName.split(' ').map(n => n[0]).join('').toUpperCase();
+                    
+                    item.innerHTML = `
+                        <div class="conv-avatar">${initials}</div>
+                        <div class="conv-details">
+                            <div class="conv-title">${truncate(c.otherUserName, 20)}</div>
+                            <div class="conv-preview">${truncate(c.vehicleTitle, 25)}</div>
+                            <div class="conv-preview">${truncate(c.lastMessage, 35)}</div>
+                            <div class="conv-time">${displayTime}</div>
+                        </div>
+                        ${c.unreadCount > 0 ? `<span class="unread-badge">${c.unreadCount}</span>` : ''}
+                    `;
+                    
+                    item.onclick = () => openConversation(c.vehicleId, c.otherUserId, c.vehicleTitle, c.otherUserName);
+                    convsDiv.appendChild(item);
+                    
+                    setTimeout(() => item.style.opacity = '1', index * 50);
+                });
+            }
+
+            function formatDay(ts) { 
+                const d = new Date(ts); 
+                const today = new Date();
+                const yesterday = new Date(today);
+                yesterday.setDate(yesterday.getDate() - 1);
+                
+                if (d.toDateString() === today.toDateString()) return 'Today';
+                if (d.toDateString() === yesterday.toDateString()) return 'Yesterday';
+                return d.toLocaleDateString();
+            }
+
+            async function loadMessages() {
+                if (!current.vehicleId || !current.sellerId) return;
+                
+                try {
+                    updateDebugStatus(`Loading messages for vehicle ${current.vehicleId} and seller ${current.sellerId}`);
+                    const messages = await apiCall(`${CHAT_API}/messages/${current.vehicleId}/${current.sellerId}`);
+                    
+                    renderMessages(messages);
+                    updateChatStatus('Online', true);
+                } catch(e) {
+                    console.error('Failed to load messages:', e);
+                    renderMessages(mockMessages);
+                }
+            }
+
+            function renderMessages(messages) {
+                const myId = currentUserId;
+                msgsDiv.innerHTML = '';
+                
+                if (current.vehicleId !== 999) {
+                    const vehicleInfo = document.createElement('div');
+                    vehicleInfo.className = 'vehicle-info-chat';
+                    vehicleInfo.innerHTML = `
+                        <h5>${current.vehicleTitle}</h5>
+                        <p>Chat with ${current.sellerName} about this vehicle</p>
+                    `;
+                    msgsDiv.appendChild(vehicleInfo);
+                }
+                
+                if (messages.length === 0) {
+                    const emptyDiv = document.createElement('div');
+                    emptyDiv.className = 'chat-empty';
+                    emptyDiv.innerHTML = `
+                        <i class="fas fa-comments"></i>
+                        <p class="mb-0">No messages yet</p>
+                        <small class="text-muted">Say hello to start the conversation!</small>
+                    `;
+                    msgsDiv.appendChild(emptyDiv);
+                    return;
+                }
+                
+                let lastDay = '';
+                messages.forEach((m, index) => {
+                    const day = formatDay(m.timestamp);
+                    if (day !== lastDay) {
+                        const divDay = document.createElement('div');
+                        divDay.className = 'message-day-divider';
+                        divDay.innerHTML = `<span>${day}</span>`;
+                        msgsDiv.appendChild(divDay);
+                        lastDay = day;
+                    }
+                    
+                    const messageEl = createMessageElement(m, myId);
+                    messageEl.style.opacity = '0';
+                    
+                    msgsDiv.appendChild(messageEl);
+                    
+                    setTimeout(() => messageEl.style.opacity = '1', index * 20);
+                });
+                
+                // Clear floats
+                const clearDiv = document.createElement('div');
+                clearDiv.style.clear = 'both';
+                msgsDiv.appendChild(clearDiv);
+                
+                msgsDiv.scrollTop = msgsDiv.scrollHeight;
+            }
+
+            function createMessageElement(message, myId) {
+                const messageEl = document.createElement('div');
+                messageEl.className = 'message-bubble ' + (message.senderId === myId ? 'sent' : 'received');
+                
+                if (message.status === 'sending') {
+                    messageEl.classList.add('sending');
+                }
+                
+                const time = new Date(message.timestamp).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+                
+                let content = '';
+                if (message.content) {
+                    content += `<div class="message-content">${escapeHtml(message.content).replace(/\n/g,'<br>')}</div>`;
+                }
+                if (message.imageUrl) {
+                    content += `<img src="${message.imageUrl}" class="message-image" alt="Shared image" onclick="window.open('${message.imageUrl}', '_blank')"/>`;
+                }
+                
+                const status = message.senderId === myId ? 
+                    `<span class="message-status">${message.status === 'sending' ? '<i class="fas fa-clock"></i>' : '<i class="fas fa-check-double"></i>'}</span>` : '';
+                messageEl.innerHTML = `${content}<div class="message-time">${time} ${status}</div>`;
+                
+                return messageEl;
+            }
+            
+            function escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            function updateChatStatus(status, isOnline) {
+                const statusText = document.querySelector('#chatStatus span:last-child');
+                const statusDot = document.querySelector('#chatStatus .status-dot');
+                
+                if (statusText) statusText.textContent = status;
+                if (statusDot) {
+                    statusDot.style.background = isOnline ? '#10b981' : '#94a3b8';
+                }
+            }
+
+            function displayMessage(message) {
+                const myId = currentUserId;
+                
+                const emptyState = msgsDiv.querySelector('.chat-empty');
+                if (emptyState) emptyState.remove();
+                
+                const messages = msgsDiv.querySelectorAll('.message-bubble');
+                let addDayDivider = false;
+                
+                if (messages.length > 0) {
+                    const lastMessage = messages[messages.length - 1];
+                    const lastMessageTime = new Date(lastMessage.getAttribute('data-timestamp') || Date.now());
+                    const newMessageTime = new Date(message.timestamp);
+                    
+                    if (formatDay(lastMessageTime) !== formatDay(newMessageTime)) {
+                        addDayDivider = true;
+                    }
+                } else {
+                    addDayDivider = true;
+                }
+                
+                if (addDayDivider) {
+                    const divDay = document.createElement('div');
+                    divDay.className = 'message-day-divider';
+                    divDay.innerHTML = `<span>${formatDay(message.timestamp)}</span>`;
+                    
+                    // Remove clear div if it exists
+                    const clearDiv = msgsDiv.querySelector('[style*="clear: both"]');
+                    if (clearDiv) clearDiv.remove();
+                    
+                    msgsDiv.appendChild(divDay);
+                }
+                
+                const messageEl = createMessageElement(message, myId);
+                messageEl.setAttribute('data-timestamp', message.timestamp);
+                messageEl.style.opacity = '0';
+                
+                // Remove clear div if it exists
+                const clearDiv = msgsDiv.querySelector('[style*="clear: both"]');
+                if (clearDiv) clearDiv.remove();
+                
+                msgsDiv.appendChild(messageEl);
+                
+                // Add new clear div
+                const newClearDiv = document.createElement('div');
+                newClearDiv.style.clear = 'both';
+                msgsDiv.appendChild(newClearDiv);
+                
+                setTimeout(() => messageEl.style.opacity = '1', 10);
+                msgsDiv.scrollTop = msgsDiv.scrollHeight;
+                
+                updateLastMessageStatus(`Message displayed: ${message.content ? message.content.substring(0, 30) + '...' : 'Image message'}`);
+            }
+
+            async function sendMessage() {
+                const content = chatInput.value.trim();
+                const imageInput = document.getElementById('chatImageInput');
+                const imageFile = imageInput.files && imageInput.files[0];
+                
+                if (!content && !imageFile) {
+                    chatInput.focus();
+                    return;
+                }
+                if (!current.vehicleId) return;
+                
+                let tempMessage = null;
+                if (content || imageFile) {
+                    tempMessage = {
+                        senderId: currentUserId,
+                        content: content,
+                        imageUrl: imageFile ? URL.createObjectURL(imageFile) : null,
+                        timestamp: new Date().toISOString(),
+                        status: 'sending'
+                    };
+                    
+                    displayMessage(tempMessage);
+                    updateLastMessageStatus(`Temporary message displayed: ${content.substring(0, 30)}...`);
+                }
+                
+                chatInput.disabled = true;
+                chatSendBtn.disabled = true;
+                chatSendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                
+                try {
+                    if (imageFile) {
+                        const formData = new FormData();
+                        formData.append('vehicleId', current.vehicleId);
+                        formData.append('receiverId', current.sellerId);
+                        if (content) formData.append('content', content);
+                        formData.append('image', imageFile);
+                        
+                        updateDebugStatus(`Sending image message to ${CHAT_API}/send-image`);
+                        addToRequestHistory('SEND_IMAGE', `Vehicle: ${current.vehicleId}, Receiver: ${current.sellerId}`);
+                        
+                        const response = await fetch(`${CHAT_API}/send-image`, {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': `Bearer ${token}`
+                            },
+                            body: formData
+                        });
+                        
+                        if (!response.ok) {
+                            throw new Error('Image upload failed');
+                        }
+                        
+                        const responseData = await response.json();
+                        addToRequestHistory('SEND_SUCCESS', `Image message sent: ${JSON.stringify(responseData)}`);
+                        
+                        imageInput.value = '';
+                        clearImagePreview();
+                    } else {
+                        const messageData = {
+                            vehicleId: parseInt(current.vehicleId),
+                            senderId: currentUserId,
+                            receiverId: parseInt(current.sellerId),
+                            content: content
+                        };
+                        
+                        updateDebugStatus(`Sending via HTTP: ${content.substring(0, 30)}...`);
+                        addToRequestHistory('SEND_HTTP', JSON.stringify(messageData));
+                        
+                        const response = await fetch(`${CHAT_API}/send`, {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': `Bearer ${token}`,
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(messageData)
+                        });
+                        
+                        if (!response.ok) {
+                            const errorText = await response.text();
+                            throw new Error(`HTTP send failed: ${errorText}`);
+                        }
+                        
+                        const responseData = await response.json();
+                        addToRequestHistory('SEND_SUCCESS', `Message sent: ${JSON.stringify(responseData)}`);
+                        
+                        if (isWebSocketConnected && stompClient) {
+                            const wsMessageData = {
+                                vehicleId: parseInt(current.vehicleId),
+                                senderId: currentUserId,
+                                receiverId: parseInt(current.sellerId),
+                                content: content,
+                                timestamp: new Date().toISOString()
+                            };
+                            
+                            updateDebugStatus(`Also sending via WebSocket for real-time delivery`);
+                            addToRequestHistory('SEND_WS', JSON.stringify(wsMessageData));
+                                            stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(wsMessageData));
+                        }
+                    }
+                    
+                    chatInput.value = '';
+                    chatInput.style.height = 'auto';
+                    
+                    loadConversations();
+                    
+                } catch(e) {
+                    console.error('Send error:', e);
+                    showNotification('Failed to send message. Please try again.', 'error');
+                    addToRequestHistory('SEND_ERROR', e.message);
+                    
+                    if (tempMessage) {
+                        const messages = msgsDiv.querySelectorAll('.message-bubble');
+                        if (messages.length > 0) {
+                            messages[messages.length - 1].remove();
+                        }
+                    }
+                } finally {
+                    chatInput.disabled = false;
+                    chatSendBtn.disabled = !isWebSocketConnected;
+                    chatSendBtn.innerHTML = '<i class="fas fa-paper-plane"></i>';
+                    chatInput.focus();
+                }
+            }
+            
+            function clearImagePreview() {
+                imagePreviewContainer.innerHTML = '';
+            }
+            
+            function handleImageSelection(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+                
+                if (!file.type.match('image.*')) {
+                    showNotification('Please select an image file', 'error');
+                    return;
+                }
+                
+                if (file.size > 5 * 1024 * 1024) {
+                    showNotification('Image must be less than 5MB', 'error');
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagePreviewContainer.innerHTML = `
+                        <div class="image-preview">
+                            <img src="${e.target.result}" alt="Preview">
+                            <div class="image-preview-remove" onclick="clearImagePreview(); document.getElementById('chatImageInput').value='';">
+                                <i class="fas fa-times"></i>
+                            </div>
+                        </div>
+                    `;
+                };
+                reader.readAsDataURL(file);
+            }
+
+            function openConversation(vehicleId, sellerId, vehicleTitle, sellerName) {
+                // Validate parameters
+                if (!vehicleId || !sellerId || !sellerName) {
+                    console.error("Invalid parameters for openConversation:", {vehicleId, sellerId, sellerName});
+                    showNotification("Cannot open chat: Missing information", "error");
+                    return;
+                }
+                
+                current = { vehicleId, sellerId, vehicleTitle, sellerName };
+                chatActiveTitle.textContent = `${sellerName} • ${vehicleTitle}`;
+                
+                const initials = sellerName.split(' ').map(n => n[0]).join('').toUpperCase();
+                chatUserAvatar.innerHTML = initials;
+                
+                updateChatStatus('Online', true);
+                chatInputBar.style.display = 'flex';
+                
+                document.querySelectorAll('.chat-conv-item').forEach(i => i.classList.remove('active'));
+                
+                loadMessages();
+                chatInput.focus();
+                
+                if (!stompClient || !stompClient.connected) {
+                    initWebSocket();
+                }
+                
+                // Highlight the active conversation
+                setTimeout(() => {
+                    document.querySelectorAll('.chat-conv-item').forEach(i => {
+                        const title = i.querySelector('.conv-title').textContent;
+                        if (title.includes(sellerName)) {
+                            i.classList.add('active');
+                        }
+                    });
+                }, 200);
+                
+                // Update URL to reflect current conversation (without reloading)
+                const newParams = new URLSearchParams({
+                    sellerId: sellerId,
+                    sellerName: sellerName,
+                    vehicleId: vehicleId,
+                    vehicleTitle: vehicleTitle
+                });
+                window.history.replaceState({}, '', `${window.location.pathname}?${newParams}`);
+            }
+            
+            function filterConversations() {
+                const searchTerm = document.getElementById('convSearchInput').value.toLowerCase();
+                const items = document.querySelectorAll('.chat-conv-item');
+                
+                items.forEach(item => {
+                    const title = item.querySelector('.conv-title').textContent.toLowerCase();
+                    const preview = item.querySelector('.conv-preview').textContent.toLowerCase();
+                    
+                    if (title.includes(searchTerm) || preview.includes(searchTerm)) {
+                        item.style.display = 'flex';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            }
+
+            // Event Listeners
+            document.getElementById('refreshConvsBtn').addEventListener('click', loadConversations);
+            document.getElementById('chatSendBtn').addEventListener('click', sendMessage);
+            document.getElementById('chatImageInput').addEventListener('change', handleImageSelection);
+            document.getElementById('convSearchInput').addEventListener('input', filterConversations);
+            document.getElementById('viewVehicleBtn').addEventListener('click', function() {
+                if (current.vehicleId && current.vehicleId !== 999) {
+                    window.open(`vehicle-details.html?id=${current.vehicleId}`, '_blank');
+                }
+            });
+            document.getElementById('clearDebugBtn').addEventListener('click', function() {
+                requestHistory = [];
+                updateRequestInfo();
+            });
+            debugToggle.addEventListener('click', function() {
+                debugContent.classList.toggle('show');
+                const icon = debugToggle.querySelector('.fa-chevron-down');
+                icon.classList.toggle('fa-chevron-down');
+                icon.classList.toggle('fa-chevron-up');
+            });
+            
+            chatInput.addEventListener('keydown', e => { 
+                if (e.key === 'Enter' && !e.shiftKey) { 
+                    e.preventDefault(); 
+                    sendMessage(); 
+                }
+            });
+            
+            chatInput.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+            });
+
+            updateDebugStatus('Application initialized');
+            loadConversations();
+            initWebSocket();
+
+            window.addEventListener('beforeunload', () => {
+                if (stompClient) {
+                    if (chatSubscription) {
+                        chatSubscription.unsubscribe();
+                    }
+                    stompClient.disconnect();
+                }
+            });
+
+        })();
+
+        // This function should be available globally to be called from vehicle details page
+        function goToChat(sellerId, sellerName, sellerAvatar, vehicleId, vehicleTitle) {
+            // Validate parameters before navigation
+            if (!sellerId || !vehicleId) {
+                console.error("Missing required parameters for chat:", {sellerId, vehicleId});
+                alert("Cannot start chat: Missing information");
+                return;
+            }
+            
+            console.log("Navigating to chat with:", sellerId, sellerName, vehicleId, vehicleTitle, sellerAvatar);
+            
+            const params = new URLSearchParams({
+                sellerId: sellerId.toString(),
+                sellerName: sellerName || 'Seller',
+                vehicleId: vehicleId.toString(),
+                vehicleTitle: vehicleTitle || 'Vehicle'
+            });
+            
+            if (sellerAvatar) {
+                params.set('sellerAvatar', sellerAvatar);
+            }
+            
+            window.location.href = `chat.html?${params.toString()}`;
+        }
+    </script>
+</body>
+</html>

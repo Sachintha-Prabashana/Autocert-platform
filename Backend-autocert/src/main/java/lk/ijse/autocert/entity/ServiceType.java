@@ -1,4 +1,5 @@
 package lk.ijse.autocert.entity;
 
-public class ServiceType {
+public enum ServiceType {
+    MOBILE, FACILITY
 }

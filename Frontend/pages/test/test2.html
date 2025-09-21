@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoCert Inspector Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        /* ... (keep all your existing styles) ... */
+
+        /* Inspection Form Specific Styles */
+        .inspection-form-container {
+            padding: 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .inspection-header {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 20px;
+            border-radius: 12px 12px 0 0;
+            margin-bottom: 20px;
+        }
+
+        .inspection-details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .detail-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .detail-card h3 {
+            color: #1f2937;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #10b981;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .detail-value {
+            color: #6b7280;
+        }
+
+        .form-section {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .form-section h4 {
+            color: #1f2937;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .checkbox-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .checkbox-item:hover {
+            border-color: #10b981;
+            background: #f0fdf4;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: #10b981;
+        }
+
+        .checkbox-item label {
+            cursor: pointer;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        /* Loading overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            display: none;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f4f6;
+            border-top: 5px solid #10b981;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <!-- ... (keep your sidebar content) ... -->
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <!-- ... (keep your header content) ... -->
+            </header>
+
+            <!-- Content Area -->
+            <main class="content">
+                <!-- ... (keep your existing sections) ... -->
+
+                <!-- Today's Schedule Table (Updated with Start Button) -->
+                <div class="content-section active fade-in" id="dashboard">
+                    <div class="stats-grid">
+                        <!-- ... (keep your stats cards) ... -->
+                    </div>
+
+                    <!-- Today's Schedule -->
+                    <div class="data-table">
+                        <div class="table-header">
+                            <h3 class="table-title">Today's Schedule</h3>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>Booking ID</th>
+                                    <th>Customer</th>
+                                    <th>Vehicle</th>
+                                    <th>Inspection Type</th>
+                                    <th>Service Type</th>
+                                    <th>Location</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="todaysScheduleBody">
+                                <!-- Data will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Inspection Form Section (Hidden by default) -->
+                <div class="content-section" id="inspectionFormSection">
+                    <div class="inspection-form-container">
+                        <div class="inspection-header">
+                            <h2><i class="fas fa-clipboard-check"></i> Vehicle Inspection Form</h2>
+                            <p>Complete the inspection for <span id="inspectionCustomerName"></span>'s vehicle</p>
+                        </div>
+
+                        <!-- Customer and Vehicle Details -->
+                        <div class="inspection-details-grid">
+                            <div class="detail-card">
+                                <h3><i class="fas fa-user"></i> Customer Information</h3>
+                                <div class="detail-item">
+                                    <span class="detail-label">Name:</span>
+                                    <span class="detail-value" id="customerName"></span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Contact:</span>
+                                    <span class="detail-value" id="customerContact"></span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Email:</span>
+                                    <span class="detail-value" id="customerEmail"></span>
+                                </div>
+                            </div>
+
+                            <div class="detail-card">
+                                <h3><i class="fas fa-car"></i> Vehicle Information</h3>
+                                <div class="detail-item">
+                                    <span class="detail-label">Make & Model:</span>
+                                    <span class="detail-value" id="vehicleMakeModel"></span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Year:</span>
+                                    <span class="detail-value" id="vehicleYear"></span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">VIN:</span>
+                                    <span class="detail-value" id="vehicleVin"></span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Mileage:</span>
+                                    <span class="detail-value" id="vehicleMileage"></span>
+                                </div>
+                            </div>
+
+                            <div class="detail-card">
+                                <h3><i class="fas fa-info-circle"></i> Inspection Details</h3>
+                                <div class="detail-item">
+                                    <span class="detail-label">Booking ID:</span>
+                                    <span class="detail-value" id="bookingId"></span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Type:</span>
+                                    <span class="detail-value" id="inspectionType"></span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Scheduled:</span>
+                                    <span class="detail-value" id="inspectionDate"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Inspection Form (Dynamically loaded based on type) -->
+                        <form id="inspectionForm">
+                            <input type="hidden" id="bookingIdInput" name="bookingId">
+                            <input type="hidden" id="bookingVehicleIdInput" name="bookingVehicleId">
+                            <input type="hidden" id="inspectionTypeInput" name="type">
+                            
+                            <div id="inspectionFormContent">
+                                <!-- Form content will be loaded here based on inspection type -->
+                            </div>
+
+                            <!-- Result Selection -->
+                            <div class="form-section">
+                                <h4><i class="fas fa-check-circle"></i> Inspection Result</h4>
+                                <div class="checkbox-grid">
+                                    <div class="checkbox-item">
+                                        <input type="radio" id="resultPass" name="result" value="PASS" required>
+                                        <label for="resultPass">Pass</label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="radio" id="resultFail" name="result" value="FAIL">
+                                        <label for="resultFail">Fail</label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="radio" id="resultConditional" name="result" value="CONDITIONAL">
+                                        <label for="resultConditional">Conditional Pass</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Inspector Notes -->
+                            <div class="form-section">
+                                <h4><i class="fas fa-sticky-note"></i> Inspector Notes</h4>
+                                <div class="form-group">
+                                    <label class="form-label">Additional Comments</label>
+                                    <textarea class="form-textarea" id="inspectorNotes" name="inspectorNotes" rows="4" placeholder="Enter any additional observations or recommendations..."></textarea>
+                                </div>
+                            </div>
+
+                            <!-- Form Actions -->
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-secondary" onclick="goBackToDashboard()">
+                                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                                </button>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-paper-plane"></i> Submit Inspection
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentInspectionData = null;
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load today's schedule
+            loadTodaysSchedule();
+            
+            // Add event listener for form submission
+            document.getElementById('inspectionForm').addEventListener('submit', handleInspectionSubmit);
+        });
+
+        // Load today's schedule from API
+        async function loadTodaysSchedule() {
+            try {
+                const token = localStorage.getItem("token");
+                const response = await fetch("http://localhost:8080/api/inspector/today-schedule", {
+                    method: "GET",
+                    headers: { 
+                        "Authorization": `Bearer ${token}` 
+                    }
+                });
+
+                if (response.ok) {
+                    const scheduleData = await response.json();
+                    populateScheduleTable(scheduleData);
+                } else {
+                    showNotification("Failed to load today's schedule", 'error');
+                }
+            } catch (error) {
+                console.error("Error loading schedule:", error);
+                showNotification("Error loading schedule", 'error');
+            }
+        }
+
+        // Populate schedule table with data
+        function populateScheduleTable(scheduleData) {
+            const tbody = document.getElementById('todaysScheduleBody');
+            tbody.innerHTML = '';
+
+            if (scheduleData.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="9" class="empty-state">
+                            <i class="fas fa-calendar-day"></i>
+                            <h3>No inspections scheduled for today</h3>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            scheduleData.forEach(booking => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${formatTime(booking.appointmentTime)}</td>
+                    <td>${booking.bookingId}</td>
+                    <td>${booking.customerName}</td>
+                    <td>${booking.vehicleYear} ${booking.vehicleMake} ${booking.vehicleModel}</td>
+                    <td>${booking.inspectionType}</td>
+                    <td>${booking.serviceType}</td>
+                    <td>${booking.location}</td>
+                    <td><span class="status-badge status-scheduled">Scheduled</span></td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="action-btn start" title="Start Inspection" onclick="startInspection('${booking.bookingId}', '${booking.inspectionType}')">
+                                <i class="fas fa-play"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Format time for display
+        function formatTime(timeString) {
+            if (!timeString) return 'N/A';
+            return timeString.substring(0, 5); // Extract HH:MM from HH:MM:SS
+        }
+
+        // Start inspection - fetch booking details and show form
+        async function startInspection(bookingId, inspectionType) {
+            try {
+                showLoading(true);
+                const token = localStorage.getItem("token");
+                
+                // Fetch booking details
+                const response = await fetch(`http://localhost:8080/api/inspector/booking-details/${bookingId}`, {
+                    method: "GET",
+                    headers: { 
+                        "Authorization": `Bearer ${token}` 
+                    }
+                });
+
+                if (response.ok) {
+                    const bookingDetails = await response.json();
+                    currentInspectionData = bookingDetails;
+                    
+                    // Populate inspection form with booking details
+                    populateInspectionForm(bookingDetails, inspectionType);
+                    
+                    // Show inspection form section
+                    showSection('inspectionFormSection');
+                    
+                } else {
+                    showNotification("Failed to load booking details", 'error');
+                }
+            } catch (error) {
+                console.error("Error loading booking details:", error);
+                showNotification("Error loading booking details", 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Populate inspection form with booking details
+        function populateInspectionForm(bookingDetails, inspectionType) {
+            // Customer information
+            document.getElementById('customerName').textContent = bookingDetails.customerName;
+            document.getElementById('customerContact').textContent = bookingDetails.customerPhone || 'N/A';
+            document.getElementById('customerEmail').textContent = bookingDetails.customerEmail || 'N/A';
+            document.getElementById('inspectionCustomerName').textContent = bookingDetails.customerName;
+            
+            // Vehicle information
+            document.getElementById('vehicleMakeModel').textContent = 
+                `${bookingDetails.vehicleMake} ${bookingDetails.vehicleModel}`;
+            document.getElementById('vehicleYear').textContent = bookingDetails.vehicleYear;
+            document.getElementById('vehicleVin').textContent = bookingDetails.vehicleVin || 'N/A';
+            document.getElementById('vehicleMileage').textContent = 
+                bookingDetails.vehicleMileage ? `${bookingDetails.vehicleMileage} km` : 'N/A';
+            
+            // Inspection details
+            document.getElementById('bookingId').textContent = bookingDetails.bookingId;
+            document.getElementById('inspectionType').textContent = inspectionType;
+            document.getElementById('inspectionDate').textContent = 
+                `${formatDate(bookingDetails.appointmentDate)} at ${formatTime(bookingDetails.appointmentTime)}`;
+            
+            // Hidden form fields
+            document.getElementById('bookingIdInput').value = bookingDetails.bookingId;
+            document.getElementById('bookingVehicleIdInput').value = bookingDetails.bookingVehicleId;
+            document.getElementById('inspectionTypeInput').value = inspectionType;
+            
+            // Load the appropriate form based on inspection type
+            loadInspectionFormByType(inspectionType);
+        }
+
+        // Format date for display
+        function formatDate(dateString) {
+            if (!dateString) return 'N/A';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+        }
+
+        // Load inspection form based on type
+        function loadInspectionFormByType(inspectionType) {
+            const formContent = document.getElementById('inspectionFormContent');
+            
+            switch(inspectionType) {
+                case 'SAFETY':
+                    formContent.innerHTML = getSafetyInspectionForm();
+                    break;
+                case 'COMPREHENSIVE':
+                    formContent.innerHTML = getComprehensiveInspectionForm();
+                    break;
+                case 'PRE_PURCHASE':
+                    formContent.innerHTML = getPrePurchaseInspectionForm();
+                    break;
+                case 'DIAGNOSTIC':
+                    formContent.innerHTML = getDiagnosticInspectionForm();
+                    break;
+                default:
+                    formContent.innerHTML = getGeneralInspectionForm();
+            }
+        }
+
+        // Form templates for different inspection types
+        function getSafetyInspectionForm() {
+            return `
+                <div class="form-section">
+                    <h4><i class="fas fa-car-crash"></i> Safety Inspection</h4>
+                    <div class="checkbox-grid">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="lights" name="lights">
+                            <label for="lights">All lights functioning properly</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="brakes" name="brakes">
+                            <label for="brakes">Brakes in good condition</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="tires" name="tires">
+                            <label for="tires">Tires have sufficient tread</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="seatbelts" name="seatbelts">
+                            <label for="seatbelts">Seatbelts functional</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="windshield" name="windshield">
+                            <label for="windshield">Windshield without cracks</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="mirrors" name="mirrors">
+                            <label for="mirrors">All mirrors intact and adjustable</label>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getComprehensiveInspectionForm() {
+            return `
+                ${getSafetyInspectionForm()}
+                <div class="form-section">
+                    <h4><i class="fas fa-tachometer-alt"></i> Mechanical Systems</h4>
+                    <div class="checkbox-grid">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="engine" name="engine">
+                            <label for="engine">Engine runs smoothly</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="transmission" name="transmission">
+                            <label for="transmission">Transmission shifts properly</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="suspension" name="suspension">
+                            <label for="suspension">Suspension in good condition</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="exhaust" name="exhaust">
+                            <label for="exhaust">Exhaust system intact</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-section">
+                    <h4><i class="fas fa-bolt"></i> Electrical Systems</h4>
+                    <div class="checkbox-grid">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="battery" name="battery">
+                            <label for="battery">Battery holds charge</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="alternator" name="alternator">
+                            <label for="alternator">Alternator charging properly</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="ac" name="ac">
+                            <label for="ac">AC system working</label>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getPrePurchaseInspectionForm() {
+            return `
+                ${getComprehensiveInspectionForm()}
+                <div class="form-section">
+                    <h4><i class="fas fa-search-dollar"></i> Pre-Purchase Specific Checks</h4>
+                    <div class="checkbox-grid">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="accidentHistory" name="accidentHistory">
+                            <label for="accidentHistory">No signs of major accidents</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="rust" name="rust">
+                            <label for="rust">Minimal rust corrosion</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="paint" name="paint">
+                            <label for="paint">Paint consistency across panels</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="serviceHistory" name="serviceHistory">
+                            <label for="serviceHistory">Service history available</label>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getDiagnosticInspectionForm() {
+            return `
+                <div class="form-section">
+                    <h4><i class="fas fa-laptop-medical"></i> Diagnostic Checks</h4>
+                    <div class="form-group">
+                        <label class="form-label">OBD-II Error Codes</label>
+                        <input type="text" class="form-input" id="errorCodes" name="errorCodes" placeholder="Enter error codes if any">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Engine Performance</label>
+                        <select class="form-input" id="enginePerformance" name="enginePerformance">
+                            <option value="">Select performance level</option>
+                            <option value="EXCELLENT">Excellent</option>
+                            <option value="GOOD">Good</option>
+                            <option value="FAIR">Fair</option>
+                            <option value="POOR">Poor</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Emission Levels</label>
+                        <input type="text" class="form-input" id="emissionLevels" name="emissionLevels" placeholder="Enter emission test results">
+                    </div>
+                </div>
+            `;
+        }
+
+        function getGeneralInspectionForm() {
+            return `
+                <div class="form-section">
+                    <h4><i class="fas fa-clipboard-list"></i> General Inspection</h4>
+                    <div class="form-group">
+                        <label class="form-label">Overall Condition</label>
+                        <select class="form-input" id="overallCondition" name="overallCondition" required>
+                            <option value="">Select condition</option>
+                            <option value="EXCELLENT">Excellent</option>
+                            <option value="GOOD">Good</option>
+                            <option value="FAIR">Fair</option>
+                            <option value="POOR">Poor</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Issues Found</label>
+                        <textarea class="form-textarea" id="issuesFound" name="issuesFound" rows="3" placeholder="List any issues found during inspection..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Recommendations</label>
+                        <textarea class="form-textarea" id="recommendations" name="recommendations" rows="3" placeholder="Enter recommendations for the vehicle..."></textarea>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Handle form submission
+        async function handleInspectionSubmit(e) {
+            e.preventDefault();
+            
+            try {
+                showLoading(true);
+                
+                // Collect form data
+                const formData = new FormData(e.target);
+                const inspectionData = {
+                    bookingId: parseInt(formData.get('bookingId')),
+                    bookingVehicleId: parseInt(formData.get('bookingVehicleId')),
+                    type: formData.get('type'),
+                    result: formData.get('result'),
+                    // Add other form fields as needed
+                    inspectorNotes: formData.get('inspectorNotes')
+                };
+                
+                // Generate PDF report
+                const pdfUrl = await generatePDFReport(inspectionData);
+                inspectionData.reportUrl = pdfUrl;
+                
+                // Send to backend
+                const token = localStorage.getItem("token");
+                const response = await fetch("http://localhost:8080/api/inspections/save", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify(inspectionData)
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.success) {
+                        showNotification("Inspection completed and report sent successfully", 'success');
+                        // Return to dashboard
+                        setTimeout(() => {
+                            showSection('dashboard');
+                            loadTodaysSchedule(); // Refresh the schedule
+                        }, 2000);
+                    } else {
+                        showNotification(result.message || "Failed to save inspection", 'error');
+                    }
+                } else {
+                    showNotification("Failed to save inspection", 'error');
+                }
+            } catch (error) {
+                console.error("Error submitting inspection:", error);
+                showNotification("Error submitting inspection", 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Generate PDF report (simplified version)
+        async function generatePDFReport(inspectionData) {
+            return new Promise((resolve) => {
+                // In a real implementation, this would generate a PDF and upload to cloud storage
+                // For now, we'll simulate this process
+                setTimeout(() => {
+                    // Simulate cloud storage URL
+                    const reportUrl = `https://cloudstorage.autocert.com/reports/${inspectionData.bookingId}_${Date.now()}.pdf`;
+                    resolve(reportUrl);
+                }, 1500);
+            });
+        }
+
+        // Go back to dashboard
+        function goBackToDashboard() {
+            showSection('dashboard');
+        }
+
+        // Show loading overlay
+        function showLoading(show) {
+            document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none';
+        }
+
+        // Show specific section
+        function showSection(sectionName) {
+            const sections = document.querySelectorAll('.content-section');
+            sections.forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            const targetSection = document.getElementById(sectionName);
+            if (targetSection) {
+                targetSection.classList.add('active');
+            }
+            
+            // Update page title
+            const pageTitle = document.getElementById('pageTitle');
+            const titles = {
+                'dashboard': 'Inspector Dashboard',
+                'inspectionFormSection': 'Vehicle Inspection'
+            };
+            pageTitle.textContent = titles[sectionName] || 'Dashboard';
+        }
+
+        // ... (keep your existing notification and other helper functions) ...
+    </script>
+</body>
+</html>

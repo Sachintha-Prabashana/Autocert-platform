@@ -1,4 +1,4 @@
-package lk.ijse.autocert.service;
+package lk.ijse.autocert.service.impl;
 
 import jakarta.transaction.Transactional;
 import lk.ijse.autocert.dto.AuthDTO;
@@ -9,6 +9,8 @@ import lk.ijse.autocert.entity.Role;
 import lk.ijse.autocert.entity.User;
 import lk.ijse.autocert.exception.UserAlreadyExistsException;
 import lk.ijse.autocert.repository.UserRepository;
+import lk.ijse.autocert.service.AuthService;
+import lk.ijse.autocert.service.EmailService;
 import lk.ijse.autocert.util.GoogleTokenVerifier;
 import lk.ijse.autocert.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +24,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class AuthServiceImpl {
+public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;

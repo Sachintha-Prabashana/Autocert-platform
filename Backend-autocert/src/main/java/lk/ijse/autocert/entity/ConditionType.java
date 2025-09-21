@@ -1,4 +1,8 @@
 package lk.ijse.autocert.entity;
 
-public class ConditionType {
+public enum ConditionType {
+    EXCELLENT,
+    GOOD,
+    FAIR,
+    NEEDS_REPAIR
 }

@@ -17,5 +17,4 @@ public class ApiResponse {
         this.data = data;
     }
 
-
 }

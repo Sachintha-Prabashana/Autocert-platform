@@ -30,10 +30,6 @@ public class Payment {
     private Booking booking;
 
     @ManyToOne
-    @JoinColumn(name = "vehicle_id", nullable = true)
-    private Vehicle vehicle;
-
-    @ManyToOne
     @JoinColumn(name = "payer_id")
     private User payer;
 }

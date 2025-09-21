@@ -572,11 +572,11 @@
             color: white;
             font-size: 3rem;
         }
-
+/* 
         .listing-image::before {
             content: '🚗';
             font-size: 4rem;
-        }
+        } */
 
         .listing-badge {
             position: absolute;

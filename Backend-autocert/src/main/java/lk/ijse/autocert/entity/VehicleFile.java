@@ -1,3 +1,4 @@
+/*
 package lk.ijse.autocert.entity;
 
 import jakarta.persistence.*;
@@ -23,3 +24,4 @@ public class VehicleFile {
     @JoinColumn(name = "vehicle_id")
     private Vehicle vehicle;
 }
+*/

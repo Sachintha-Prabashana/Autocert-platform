@@ -1,0 +1,1576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoCert Pro - Industrial Vehicle Inspection</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+    <style>
+        /* ================== INDUSTRIAL DESIGN SYSTEM ================== */
+        :root {
+            /* Primary Blues - Industrial */
+            --primary-dark-blue: #1e3a8a;
+            --primary-medium-blue: #1e40af;
+            --primary-light-blue: #3b82f6;
+
+            /* Accent Greens - Industrial */
+            --accent-green: #10b981;
+            --accent-dark-green: #059669;
+            --accent-light-green: #34d399;
+
+            /* Industrial Neutrals */
+            --steel-dark: #1e293b;
+            --steel-medium: #334155;
+            --steel-light: #475569;
+            --concrete: #64748b;
+            --aluminum: #94a3b8;
+            --metal-light: #cbd5e1;
+            --metal-lighter: #e2e8f0;
+            
+            /* Backgrounds */
+            --bg-primary: #f8fafc;
+            --bg-secondary: #f1f5f9;
+            --bg-card: #ffffff;
+            --bg-input: #fafbfc;
+
+            /* Status Colors */
+            --error-red: #dc2626;
+            --warning-orange: #f59e0b;
+            --success-green: #10b981;
+
+            /* Gradients */
+            --gradient-primary: linear-gradient(135deg, var(--primary-dark-blue) 0%, var(--primary-medium-blue) 100%);
+            --gradient-green: linear-gradient(135deg, var(--accent-dark-green) 0%, var(--accent-green) 100%);
+            --gradient-steel: linear-gradient(135deg, var(--steel-dark) 0%, var(--steel-medium) 100%);
+            --gradient-metal: linear-gradient(135deg, var(--metal-light) 0%, var(--metal-lighter) 100%);
+        }
+
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        }
+        
+        body { 
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            background: var(--bg-primary);
+            min-height: 100vh; 
+            overflow-x: hidden;
+            color: var(--steel-medium);
+            line-height: 1.6;
+        }
+
+        /* ================== INDUSTRIAL HEADER ================== */
+        .header {
+            background: var(--gradient-steel);
+            color: white;
+            padding: 0.8rem 0;
+            box-shadow: 0 4px 20px rgba(30, 58, 138, 0.25);
+            position: relative;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.05) 50%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.4rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .logo i {
+            color: var(--accent-green);
+            font-size: 1.6rem;
+        }
+
+        /* Navigation */
+        .nav-bar {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .nav-links li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            padding: 10px 16px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-links li a:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-1px);
+        }
+
+        .nav-links li a.active {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.3), rgba(5, 150, 105, 0.3));
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+        }
+
+        /* User Info */
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn-list-vehicle {
+            background: var(--gradient-green);
+            color: white;
+            border: none;
+            font-weight: 700;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+            padding: 10px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-list-vehicle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(5, 150, 105, 0.4);
+        }
+
+        .profile-trigger {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+        }
+
+        .profile-trigger:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .profile-dropdown {
+            position: relative;
+        }
+
+        .profile-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(30, 58, 138, 0.2);
+            padding: 10px;
+            min-width: 200px;
+            z-index: 1000;
+            margin-top: 8px;
+            border: 1px solid var(--metal-light);
+        }
+
+        .profile-menu a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            text-decoration: none;
+            color: var(--steel-medium);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .profile-menu a:hover {
+            background: var(--bg-secondary);
+        }
+
+        .profile-menu hr {
+            margin: 8px 0;
+            border: none;
+            border-top: 1px solid var(--metal-light);
+        }
+
+        .profile-menu a.logout {
+            color: var(--error-red);
+        }
+
+        .profile-menu a.logout:hover {
+            background: rgba(220, 38, 38, 0.1);
+        }
+
+        /* Mobile menu toggle */
+        .mobile-menu-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            padding: 6px;
+        }
+
+        .mobile-menu-toggle span {
+            width: 22px;
+            height: 2px;
+            background: white;
+            margin: 3px 0;
+            transition: 0.3s;
+            border-radius: 2px;
+        }
+
+        /* ================== INDUSTRIAL CONTENT ================== */
+        .main-container {
+            position: relative;
+            min-height: calc(100vh - 70px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .background-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 0;
+        }
+        
+        .floating-shape {
+            position: absolute;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .floating-shape:nth-child(1) {
+            width: 60px;
+            height: 60px;
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+        
+        .floating-shape:nth-child(2) {
+            width: 80px;
+            height: 80px;
+            top: 60%;
+            right: 15%;
+            animation-delay: 2s;
+        }
+        
+        .floating-shape:nth-child(3) {
+            width: 40px;
+            height: 40px;
+            bottom: 20%;
+            left: 20%;
+            animation-delay: 4s;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            33% { transform: translateY(-15px) rotate(90deg); }
+            66% { transform: translateY(-8px) rotate(180deg); }
+        }
+        
+        /* Industrial Workspace */
+        .inspection-workspace {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 1200px;
+            background: var(--bg-card);
+            border-radius: 16px;
+            box-shadow: 
+                0 10px 30px rgba(0, 0, 0, 0.1),
+                0 0 0 1px rgba(255, 255, 255, 0.8);
+            overflow: hidden;
+            border: 1px solid var(--metal-light);
+        }
+        
+        /* Industrial Hero Section */
+        .hero-section {
+            background: var(--gradient-primary);
+            position: relative;
+            padding: 40px 30px;
+            text-align: center;
+            overflow: hidden;
+        }
+        
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                linear-gradient(45deg, transparent 40%, rgba(255, 255, 255, 0.05) 50%, transparent 60%),
+                url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.6;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .hero-title {
+            font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+            font-weight: 800;
+            color: white;
+            margin-bottom: 15px;
+            letter-spacing: -0.02em;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .hero-subtitle {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 30px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.5;
+        }
+        
+        /* Industrial Progress System */
+        .progress-system {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .progress-track {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 25px;
+            position: relative;
+        }
+        
+        .progress-indicator {
+            height: 100%;
+            background: var(--accent-green);
+            border-radius: 2px;
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            width: 25%;
+        }
+        
+        .step-navigation {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+        
+        .nav-step {
+            position: relative;
+            text-align: center;
+            padding: 15px 8px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .nav-step.active {
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .nav-step-number {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.8);
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .nav-step.active .nav-step-number {
+            background: var(--accent-green);
+            color: white;
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+        
+        .nav-step-label {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-step.active .nav-step-label {
+            color: white;
+        }
+        
+        /* Content Area */
+        .content-area {
+            padding: 40px 30px;
+        }
+        
+        .step-container {
+            display: none;
+        }
+        
+        .step-container.active {
+            display: block;
+        }
+        
+        /* Section Header */
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 35px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--metal-light);
+        }
+        
+        .section-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.4rem;
+            box-shadow: 0 6px 15px rgba(30, 58, 138, 0.2);
+        }
+        
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--steel-dark);
+            margin-bottom: 5px;
+            letter-spacing: -0.02em;
+        }
+        
+        .section-description {
+            color: var(--concrete);
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+        
+        /* Form Layout */
+        .form-layout {
+            display: grid;
+            gap: 25px;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .input-group {
+            position: relative;
+        }
+        
+        .input-label {
+            display: block;
+            font-weight: 600;
+            color: var(--steel-medium);
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+        }
+        
+        .required-indicator {
+            color: var(--error-red);
+            margin-left: 3px;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid var(--metal-light);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            background: var(--bg-input);
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-light-blue);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        /* Service Grid */
+        .service-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 15px;
+        }
+        
+        .service-option {
+            position: relative;
+            border: 1px solid var(--metal-light);
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--bg-card);
+            overflow: hidden;
+        }
+        
+        .service-option:hover {
+            border-color: var(--primary-light-blue);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .service-option.selected {
+            border-color: var(--primary-light-blue);
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.15);
+        }
+        
+        .service-option input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .service-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .service-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 10px;
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            box-shadow: 0 5px 15px rgba(30, 58, 138, 0.2);
+        }
+        
+        .service-details h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--steel-dark);
+            margin-bottom: 6px;
+        }
+        
+        .service-details p {
+            color: var(--concrete);
+            line-height: 1.5;
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+        }
+        
+        .service-price {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: var(--primary-medium-blue);
+        }
+        
+        /* Location Options */
+        .location-grid {
+            display: grid;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .location-option {
+            border: 1px solid var(--metal-light);
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--bg-card);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .location-option:hover {
+            border-color: var(--primary-light-blue);
+            transform: translateX(3px);
+        }
+        
+        .location-option.selected {
+            border-color: var(--primary-light-blue);
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        }
+        
+        .location-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .location-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1rem;
+        }
+        
+        .location-details h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--steel-dark);
+            margin-bottom: 4px;
+        }
+        
+        .location-details p {
+            color: var(--concrete);
+            font-size: 0.9rem;
+        }
+        
+        .location-badge {
+            margin-left: auto;
+            background: var(--gradient-green);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 16px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        /* Time Selection */
+        .time-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 12px;
+            margin-top: 15px;
+        }
+        
+        .time-slot {
+            padding: 12px 15px;
+            text-align: center;
+            border: 1px solid var(--metal-light);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            background: var(--bg-card);
+            font-size: 0.9rem;
+        }
+        
+        .time-slot:hover {
+            border-color: var(--primary-light-blue);
+        }
+        
+        .time-slot.selected {
+            background: var(--gradient-primary);
+            color: white;
+            border-color: var(--primary-light-blue);
+        }
+        
+        .time-slot.unavailable {
+            background: #f8fafc;
+            color: var(--aluminum);
+            cursor: not-allowed;
+            text-decoration: line-through;
+        }
+        
+        /* Summary Panel */
+        .summary-panel {
+            background: var(--gradient-primary);
+            border-radius: 12px;
+            padding: 30px;
+            color: white;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .summary-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .summary-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+        
+        .summary-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+        
+        .summary-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            font-size: 0.95rem;
+        }
+        
+        .summary-item:last-child {
+            border-bottom: none;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.3);
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+        
+        /* Terms Section */
+        .terms-section {
+            margin-top: 25px;
+        }
+        
+        .terms-checkbox {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 20px;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            border: 1px solid var(--metal-light);
+            transition: all 0.3s ease;
+        }
+        
+        .terms-checkbox:hover {
+            border-color: var(--primary-light-blue);
+        }
+        
+        .terms-checkbox input {
+            width: 18px;
+            height: 18px;
+            margin-top: 2px;
+        }
+        
+        .terms-text {
+            color: var(--steel-medium);
+            line-height: 1.6;
+            font-size: 0.9rem;
+        }
+        
+        .terms-link {
+            color: var(--primary-light-blue);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .terms-link:hover {
+            text-decoration: underline;
+        }
+        
+        /* Action Bar */
+        .action-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 30px;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--metal-light);
+        }
+        
+        .action-btn {
+            padding: 14px 26px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .btn-secondary {
+            background: var(--steel-medium);
+            color: white;
+            box-shadow: 0 4px 12px rgba(51, 65, 85, 0.2);
+            display: none;
+        }
+        
+        .btn-secondary:hover {
+            background: var(--steel-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(51, 65, 85, 0.3);
+        }
+        
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(30, 58, 138, 0.2);
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--primary-medium-blue), var(--primary-dark-blue));
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(30, 58, 138, 0.3);
+        }
+        
+        /* Error Message */
+        .error-message {
+            color: var(--error-red);
+            font-size: 0.85rem;
+            margin-top: 6px;
+            display: none;
+            padding: 6px 10px;
+            background: rgba(220, 38, 38, 0.08);
+            border-radius: 6px;
+            border-left: 2px solid var(--error-red);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .mobile-menu-toggle {
+                display: flex;
+            }
+
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: var(--gradient-steel);
+                flex-direction: column;
+                padding: 20px;
+                box-shadow: 0 8px 20px rgba(30, 58, 138, 0.2);
+                gap: 6px;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .nav-links li a {
+                padding: 14px 16px;
+                width: 100%;
+                justify-content: flex-start;
+            }
+
+            .header-content {
+                flex-wrap: wrap;
+                position: relative;
+                padding: 0 20px;
+            }
+
+            .user-info {
+                order: 3;
+                width: 100%;
+                justify-content: center;
+                margin-top: 20px;
+            }
+
+            .hero-section {
+                padding: 30px 20px;
+            }
+            
+            .content-area {
+                padding: 30px 20px;
+            }
+            
+            .action-bar {
+                padding: 20px;
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .action-btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .service-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .step-navigation {
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+            }
+            
+            .nav-step {
+                padding: 12px 8px;
+            }
+            
+            .time-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .section-title {
+                font-size: 1.5rem;
+            }
+            
+            .section-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Industrial Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <i class="fas fa-car"></i>
+                <span>AutoCert</span>
+            </div>
+            
+            <div class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            
+            <nav class="nav-bar">
+                <ul class="nav-links" id="navLinks">
+                    <li><a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a></li>
+                    <li><a href="test-ins.html" class="active"><i class="fas fa-clipboard-check"></i> Inspections</a></li>
+                    <li><a href="my-listings.html"><i class="fas fa-list"></i> My Listings</a></li>
+                    <li><a href="add-listing.html" class="btn-list-vehicle"><i class="fas fa-plus-circle"></i> List Vehicle</a></li>
+                </ul>
+            </nav>
+
+            <div class="user-info">
+                <div class="profile-dropdown">
+                    <div class="profile-trigger" onclick="toggleProfileMenu()">
+                        <i class="fas fa-user-circle" style="font-size: 1.8rem;"></i>
+                        <div>
+                            <div style="font-weight: 700; font-size: 0.9rem;">John Smith</div>
+                            <div style="font-size: 0.75rem; opacity: 0.9;">Premium Member</div>
+                        </div>
+                        <i class="fas fa-chevron-down" style="font-size: 0.7rem; opacity: 0.8;"></i>
+                    </div>
+                    <div id="profileMenu" class="profile-menu">
+                        <a href="#" onclick="viewProfile()">
+                            <i class="fas fa-user"></i>
+                            <span>View Profile</span>
+                        </a>
+                        <a href="#" onclick="viewProfile()">
+                            <i class="fas fa-edit"></i>
+                            <span>Update Profile</span>
+                        </a>
+                        <hr>
+                        <a href="#" class="logout" onclick="logout()">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Logout</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <div class="background-elements">
+            <div class="floating-shape"></div>
+            <div class="floating-shape"></div>
+            <div class="floating-shape"></div>
+        </div>
+        
+        <div class="inspection-workspace">
+            <div class="hero-section">
+                <div class="hero-content">
+                    <h1 class="hero-title">
+                        <i class="fas fa-shield-alt"></i>
+                        Premium Vehicle Inspection
+                    </h1>
+                    <p class="hero-subtitle">
+                        Certified professionals • Advanced diagnostics • Comprehensive reporting • Complete peace of mind
+                    </p>
+                    
+                    <div class="progress-system">
+                        <div class="progress-track">
+                            <div class="progress-indicator" id="progressFill"></div>
+                        </div>
+                        
+                        <div class="step-navigation">
+                            <div class="nav-step active">
+                                <div class="nav-step-number">1</div>
+                                <div class="nav-step-label">Vehicle Details</div>
+                            </div>
+                            <div class="nav-step">
+                                <div class="nav-step-number">2</div>
+                                <div class="nav-step-label">Service Selection</div>
+                            </div>
+                            <div class="nav-step">
+                                <div class="nav-step-number">3</div>
+                                <div class="nav-step-label">Schedule & Location</div>
+                            </div>
+                            <div class="nav-step">
+                                <div class="nav-step-number">4</div>
+                                <div class="nav-step-label">Final Review</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <form id="bookingForm">
+                <div class="content-area">
+                    <!-- Step 1: Vehicle Information -->
+                    <div class="step-container active" id="step1">
+                        <div class="section-header">
+                            <div class="section-icon">
+                                <i class="fas fa-car"></i>
+                            </div>
+                            <div>
+                                <h2 class="section-title">Vehicle Information</h2>
+                                <p class="section-description">Tell us about your vehicle to personalize your inspection experience</p>
+                            </div>
+                        </div>
+                        
+                        <div class="form-layout">
+                            <div class="form-row">
+                                <div class="input-group">
+                                    <label for="brand" class="input-label">
+                                        Vehicle Make <span class="required-indicator">*</span>
+                                    </label>
+                                    <select id="brand" name="brand" class="form-control" required>
+                                        <option value="">Choose your vehicle make</option>
+                                        <option value="Toyota">Toyota</option>
+                                        <option value="BMW">BMW</option>
+                                        <option value="Honda">Honda</option>
+                                        <option value="Mercedes">Mercedes</option>
+                                        <option value="Ford">Ford</option>
+                                        <option value="Nissan">Nissan</option>
+                                        <option value="Audi">Audi</option>
+                                        <option value="Hyundai">Hyundai</option>
+                                        <option value="Kia">Kia</option>
+                                        <option value="Mazda">Mazda</option>
+                                    </select>
+                                    <div class="error-message" id="brand-error">Please select your vehicle make</div>
+                                </div>
+                                
+                                <div class="input-group">
+                                    <label for="model" class="input-label">
+                                        Model <span class="required-indicator">*</span>
+                                    </label>
+                                    <input type="text" id="model" name="model" class="form-control" 
+                                           placeholder="e.g., Camry, Accord, Corolla" required>
+                                    <div class="error-message" id="model-error">Please enter your vehicle model</div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="input-group">
+                                    <label for="year" class="input-label">
+                                        Year <span class="required-indicator">*</span>
+                                    </label>
+                                    <select id="year" name="year" class="form-control" required>
+                                        <option value="">Select manufacturing year</option>
+                                        <option value="2024">2024</option>
+                                        <option value="2023">2023</option>
+                                        <option value="2022">2022</option>
+                                        <option value="2021">2021</option>
+                                        <option value="2020">2020</option>
+                                        <option value="2019">2019</option>
+                                        <option value="2018">2018</option>
+                                        <option value="2017">2017</option>
+                                        <option value="2016">2016</option>
+                                        <option value="2015">2015</option>
+                                        <option value="2014">2014</option>
+                                        <option value="2013">2013</option>
+                                        <option value="2012">2012</option>
+                                        <option value="2011">2011</option>
+                                        <option value="2010">2010</option>
+                                    </select>
+                                    <div class="error-message" id="year-error">Please select the vehicle year</div>
+                                </div>
+                                
+                                <div class="input-group">
+                                    <label for="mileage" class="input-label">
+                                        Odometer Reading (km)
+                                    </label>
+                                    <input type="number" id="mileage" name="mileage" class="form-control" 
+                                           placeholder="Current kilometers" min="0">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 2: Inspection Type Selection -->
+                    <div class="step-container" id="step2">
+                        <div class="section-header">
+                            <div class="section-icon">
+                                <i class="fas fa-clipboard-check"></i>
+                            </div>
+                            <div>
+                                <h2 class="section-title">Choose Your Service Package</h2>
+                                <p class="section-description">Select the inspection package that best meets your needs</p>
+                            </div>
+                        </div>
+                        
+                        <div class="service-grid" id="inspectionGrid">
+                            <div class="service-option">
+                                <input type="radio" name="inspectionType" value="SAFETY" id="insp-SAFETY">
+                                <label for="insp-SAFETY">
+                                    <div class="service-header">
+                                        <div class="service-icon">
+                                            <i class="fas fa-shield-alt"></i>
+                                        </div>
+                                        <div class="service-details">
+                                            <h3>Safety Inspection</h3>
+                                            <p>Essential safety systems and components check</p>
+                                            <div class="service-price">5,000 LKR</div>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+                            
+                            <div class="service-option">
+                                <input type="radio" name="inspectionType" value="COMPREHENSIVE" id="insp-COMPREHENSIVE">
+                                <label for="insp-COMPREHENSIVE">
+                                    <div class="service-header">
+                                        <div class="service-icon">
+                                            <i class="fas fa-search"></i>
+                                        </div>
+                                        <div class="service-details">
+                                            <h3>Comprehensive Inspection</h3>
+                                            <p>Complete vehicle health assessment with detailed diagnostics</p>
+                                            <div class="service-price">10,000 LKR</div>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+                            
+                            <div class="service-option">
+                                <input type="radio" name="inspectionType" value="PRE_PURCHASE" id="insp-PRE_PURCHASE">
+                                <label for="insp-PRE_PURCHASE">
+                                    <div class="service-header">
+                                        <div class="service-icon">
+                                            <i class="fas fa-shopping-cart"></i>
+                                        </div>
+                                        <div class="service-details">
+                                            <h3>Pre Purchase Inspection</h3>
+                                            <p>Thorough pre-purchase inspection for informed buying decisions</p>
+                                            <div class="service-price">7,500 LKR</div>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+                            
+                            <div class="service-option">
+                                <input type="radio" name="inspectionType" value="DIAGNOSTIC" id="insp-DIAGNOSTIC">
+                                <label for="insp-DIAGNOSTIC">
+                                    <div class="service-header">
+                                        <div class="service-icon">
+                                            <i class="fas fa-laptop-medical"></i>
+                                        </div>
+                                        <div class="service-details">
+                                            <h3>Diagnostic Inspection</h3>
+                                            <p>Advanced electronic systems diagnostics and troubleshooting</p>
+                                            <div class="service-price">6,000 LKR</div>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 3: Scheduling & Location -->
+                    <div class="step-container" id="step3">
+                        <div class="section-header">
+                            <div class="section-icon">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            <div>
+                                <h2 class="section-title">Schedule & Location</h2>
+                                <p class="section-description">Choose when and where you'd like your inspection to take place</p>
+                            </div>
+                        </div>
+                        
+                        <div class="form-layout">
+                            <div class="input-group">
+                                <label class="input-label">
+                                    Service Location <span class="required-indicator">*</span>
+                                </label>
+                                <div class="location-grid" id="locationOptions">
+                                    <div class="location-option">
+                                        <input type="radio" name="location" value="mobile" id="location-mobile">
+                                        <label for="location-mobile">
+                                            <div class="location-header">
+                                                <div class="location-icon">
+                                                    <i class="fas fa-truck"></i>
+                                                </div>
+                                                <div class="location-details">
+                                                    <h3>Mobile Service</h3>
+                                                    <p>Our certified inspector comes to your location</p>
+                                                </div>
+                                                <div class="location-badge">+25 LKR</div>
+                                            </div>
+                                        </label>
+                                    </div>
+                                    
+                                    <div class="location-option">
+                                        <input type="radio" name="location" value="center-1" id="location-1">
+                                        <label for="location-1">
+                                            <div class="location-header">
+                                                <div class="location-icon">
+                                                    <i class="fas fa-warehouse"></i>
+                                                </div>
+                                                <div class="location-details">
+                                                    <h3>AutoCert Center Colombo</h3>
+                                                    <p>123 Main Street, Colombo 01</p>
+                                                </div>
+                                                <div class="location-badge">Standard Rate</div>
+                                            </div>
+                                        </label>
+                                    </div>
+                                    
+                                    <div class="location-option">
+                                        <input type="radio" name="location" value="center-2" id="location-2">
+                                        <label for="location-2">
+                                            <div class="location-header">
+                                                <div class="location-icon">
+                                                    <i class="fas fa-warehouse"></i>
+                                                </div>
+                                                <div class="location-details">
+                                                    <h3>AutoCert Center Kandy</h3>
+                                                    <p>456 Queen Street, Kandy</p>
+                                                </div>
+                                                <div class="location-badge">Standard Rate</div>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mobile-address-form" id="mobileAddress">
+                                <h3 style="margin-bottom: 20px; color: var(--steel-dark); font-size: 1.1rem; font-weight: 700;">
+                                    <i class="fas fa-map-marker-alt" style="color: var(--primary-light-blue); margin-right: 8px;"></i>
+                                    Service Address
+                                </h3>
+                                <div class="form-row">
+                                    <div class="input-group">
+                                        <label for="streetAddress" class="input-label">
+                                            Street Address <span class="required-indicator">*</span>
+                                        </label>
+                                        <input type="text" id="streetAddress" name="streetAddress" class="form-control" 
+                                               placeholder="123 Main Street">
+                                    </div>
+                                    <div class="input-group">
+                                        <label for="city" class="input-label">
+                                            City <span class="required-indicator">*</span>
+                                        </label>
+                                        <input type="text" id="city" name="city" class="form-control" 
+                                               placeholder="Colombo">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="input-group">
+                                        <label for="stateProvince" class="input-label">
+                                            State/Province <span class="required-indicator">*</span>
+                                        </label>
+                                        <input type="text" id="stateProvince" name="stateProvince" class="form-control" 
+                                               placeholder="Western Province">
+                                    </div>
+                                    <div class="input-group">
+                                        <label for="postalCode" class="input-label">
+                                            Postal Code <span class="required-indicator">*</span>
+                                        </label>
+                                        <input type="text" id="postalCode" name="postalCode" class="form-control" 
+                                               placeholder="10000">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="input-group">
+                                    <label for="inspectionDate" class="input-label">
+                                        Preferred Date <span class="required-indicator">*</span>
+                                    </label>
+                                    <input type="date" id="inspectionDate" name="inspectionDate" class="form-control" required>
+                                </div>
+                                <div class="input-group">
+                                    <label class="input-label">
+                                        Available Time Slots <span class="required-indicator">*</span>
+                                    </label>
+                                    <div class="time-grid" id="timeSlots">
+                                        <div class="time-slot" data-time="09:00">09:00</div>
+                                        <div class="time-slot" data-time="10:30">10:30</div>
+                                        <div class="time-slot" data-time="12:00">12:00</div>
+                                        <div class="time-slot" data-time="15:00">15:00</div>
+                                        <div class="time-slot" data-time="16:30">16:30</div>
+                                    </div>
+                                    <input type="hidden" id="selectedTime" name="selectedTime" required>
+                                </div>
+                            </div>
+                            
+                            <div class="input-group">
+                                <label for="specialRequests" class="input-label">
+                                    Special Requests or Concerns
+                                </label>
+                                <textarea id="specialRequests" name="specialRequests" class="form-control" 
+                                         rows="4" style="resize: vertical;"
+                                         placeholder="Any specific issues you'd like our inspectors to focus on during the inspection..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 4: Confirmation -->
+                    <div class="step-container" id="step4">
+                        <div class="section-header">
+                            <div class="section-icon">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div>
+                                <h2 class="section-title">Review & Confirm</h2>
+                                <p class="section-description">Review your inspection details and confirm your booking</p>
+                            </div>
+                        </div>
+                        
+                        <div class="summary-panel">
+                            <div class="summary-header">
+                                <div class="summary-icon">
+                                    <i class="fas fa-file-contract"></i>
+                                </div>
+                                <div class="summary-title">Inspection Summary</div>
+                            </div>
+                            <div class="summary-content" id="bookingSummary">
+                                <div class="summary-item"><span>Vehicle:</span><span>Toyota Camry (2020)</span></div>
+                                <div class="summary-item"><span>Service Package:</span><span>Safety Inspection</span></div>
+                                <div class="summary-item"><span>Service Type:</span><span>Service Center</span></div>
+                                <div class="summary-item"><span>Date & Time:</span><span>Monday, December 25, 2023 at 09:00</span></div>
+                                <div class="summary-item"><span>Total Amount:</span><span>5,000 LKR</span></div>
+                            </div>
+                        </div>
+                        
+                        <div class="terms-section">
+                            <div class="terms-checkbox">
+                                <input type="checkbox" id="termsAccepted" required>
+                                <div class="terms-text">
+                                    I agree to the <a href="#" class="terms-link">Terms of Service</a> and 
+                                    <a href="#" class="terms-link">Privacy Policy</a>. I understand that the inspection 
+                                    will be conducted by certified professionals and the report will be provided within 
+                                    24 hours of completion. <span class="required-indicator">*</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="action-bar">
+                    <button type="button" class="action-btn btn-secondary" id="prevBtn">
+                        <i class="fas fa-arrow-left"></i>
+                        Previous Step
+                    </button>
+                    <button type="button" class="action-btn btn-primary" id="nextBtn">
+                        Continue
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Toggle mobile menu
+        function toggleMobileMenu() {
+            const navLinks = document.getElementById('navLinks');
+            navLinks.classList.toggle('active');
+        }
+
+        // Toggle profile menu
+        function toggleProfileMenu() {
+            const profileMenu = document.getElementById('profileMenu');
+            profileMenu.style.display = profileMenu.style.display === 'block' ? 'none' : 'block';
+        }
+
+        // Close profile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const profileMenu = document.getElementById('profileMenu');
+            const profileTrigger = document.querySelector('.profile-trigger');
+            
+            if (!profileTrigger.contains(event.target) && !profileMenu.contains(event.target)) {
+                profileMenu.style.display = 'none';
+            }
+        });
+
+        // View profile function
+        function viewProfile() {
+            alert('Profile view functionality would go here');
+        }
+
+        // Logout function
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                alert('Logout functionality would go here');
+            }
+        }
+
+        // Form navigation logic
+        document.addEventListener('DOMContentLoaded', function() {
+            const steps = document.querySelectorAll('.step-container');
+            const navSteps = document.querySelectorAll('.nav-step');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const progressFill = document.getElementById('progressFill');
+            
+            let currentStep = 0;
+            
+            // Show current step
+            function showStep(stepIndex) {
+                steps.forEach((step, index) => {
+                    step.classList.toggle('active', index === stepIndex);
+                });
+                
+                navSteps.forEach((navStep, index) => {
+                    navStep.classList.toggle('active', index === stepIndex);
+                });
+                
+                // Update progress bar
+                progressFill.style.width = `${(stepIndex + 1) * 25}%`;
+                
+                // Show/hide buttons
+                prevBtn.style.display = stepIndex === 0 ? 'none' : 'flex';
+                nextBtn.innerHTML = stepIndex === steps.length - 1 ? 'Confirm Booking <i class="fas fa-check"></i>' : 'Continue <i class="fas fa-arrow-right"></i>';
+            }
+            
+            // Next button click
+            nextBtn.addEventListener('click', function() {
+                if (currentStep < steps.length - 1) {
+                    currentStep++;
+                    showStep(currentStep);
+                } else {
+                    // Submit form
+                    alert('Form would be submitted here');
+                }
+            });
+            
+            // Previous button click
+            prevBtn.addEventListener('click', function() {
+                if (currentStep > 0) {
+                    currentStep--;
+                    showStep(currentStep);
+                }
+            });
+            
+            // Service option selection
+            document.querySelectorAll('.service-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    document.querySelectorAll('.service-option').forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    this.classList.add('selected');
+                    this.querySelector('input').checked = true;
+                });
+            });
+            
+            // Location option selection
+            document.querySelectorAll('.location-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    document.querySelectorAll('.location-option').forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    this.classList.add('selected');
+                    this.querySelector('input').checked = true;
+                    
+                    // Show/hide mobile address form
+                    const mobileAddress = document.getElementById('mobileAddress');
+                    if (this.querySelector('input').value === 'mobile') {
+                        mobileAddress.classList.add('show');
+                    } else {
+                        mobileAddress.classList.remove('show');
+                    }
+                });
+            });
+            
+            // Time slot selection
+            document.querySelectorAll('.time-slot').forEach(slot => {
+                slot.addEventListener('click', function() {
+                    if (this.classList.contains('unavailable')) return;
+                    
+                    document.querySelectorAll('.time-slot').forEach(s => {
+                        s.classList.remove('selected');
+                    });
+                    this.classList.add('selected');
+                    document.getElementById('selectedTime').value = this.getAttribute('data-time');
+                });
+            });
+        });
+    </script>
+    <script src="/Frontend/js/book-inspection.js"></script>
+</body>
+</html>

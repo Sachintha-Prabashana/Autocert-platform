@@ -1,4 +1,8 @@
 package lk.ijse.autocert.entity;
 
-public class ResultStatus {
+public enum ResultStatus {
+    PASSED,
+    FAILED,
+    PASS,   // optional
+    FAIL    // optional
 }

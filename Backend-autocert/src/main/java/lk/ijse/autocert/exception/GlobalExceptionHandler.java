@@ -42,5 +42,11 @@ public class GlobalExceptionHandler {
 
     }
 
+    @ExceptionHandler(TimeSlotFullException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiResponse handleTimeSlotFullException(TimeSlotFullException e) {
+        return new ApiResponse(400, "Bad Request", e.getMessage());
+    }
+
 
 }

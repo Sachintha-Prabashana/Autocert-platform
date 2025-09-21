@@ -4,7 +4,153 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Autocert - Trust in Every Vehicle Transaction</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <link rel="stylesheet" href="/Frontend/css/style.css">
+    <style>
+       
+        /* Listings Section */
+        .listings {
+            padding: 80px 0;
+            background-color: #f5f7fa;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 50px;
+            color: #2c3e50;
+            font-weight: 700;
+        }
+        
+        .listings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .listing-card {
+            background-color: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .listing-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .listing-image {
+            position: relative;
+            height: 200px;
+            overflow: hidden;
+        }
+        
+        .listing-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+        
+        .listing-card:hover .listing-image img {
+            transform: scale(1.05);
+        }
+        
+        .listing-badge {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background-color: #27ae60;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .listing-price {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background-color: #e74c3c;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 700;
+        }
+        
+        .listing-content {
+            padding: 20px;
+        }
+        
+        .listing-content h3 {
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        
+        .listing-details {
+            color: #7f8c8d;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+        
+        .listing-description {
+            color: #5a6c7d;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+        
+        .listing-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .feature-tag {
+            background-color: #f0f5ff;
+            color: #3498db;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .btn-listing {
+            display: block;
+            text-align: center;
+            background-color: #3498db;
+            color: white;
+            padding: 10px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+        
+        .btn-listing:hover {
+            background-color: #2980b9;
+        }
+        
+        .listings-cta {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+    </style>
 </head>
 <body>
     <!-- Navigation -->
@@ -141,63 +287,14 @@
         </div>
     </section>
 
-    <!-- Listings Section -->
+     <!-- Listings Section -->
     <section class="listings" id="listings">
         <div class="container">
             <h2 class="section-title fade-in">Featured Listings</h2>
-            <div class="listings-grid">
-                <div class="listing-card fade-in">
-                    <div class="listing-image">
-                        <div class="listing-badge">✅ Certified</div>
-                        <div class="listing-price">$24,999</div>
-                    </div>
-                    <div class="listing-content">
-                        <h3>2020 Honda Civic LX</h3>
-                        <p class="listing-details">45,000 miles • Automatic • FWD</p>
-                        <p class="listing-description">Excellent condition with full inspection report. One owner, clean history.</p>
-                        <div class="listing-features">
-                            <span class="feature-tag">🛡️ Warranty</span>
-                            <span class="feature-tag">📋 Inspected</span>
-                            <span class="feature-tag">🔧 Serviced</span>
-                        </div>
-                        <a href="#" class="btn-listing">View Details</a>
-                    </div>
-                </div>
-                
-                <div class="listing-card fade-in">
-                    <div class="listing-image">
-                        <div class="listing-badge">✅ Certified</div>
-                        <div class="listing-price">$31,500</div>
-                    </div>
-                    <div class="listing-content">
-                        <h3>2019 Toyota Camry SE</h3>
-                        <p class="listing-details">38,000 miles • Automatic • FWD</p>
-                        <p class="listing-description">Sport edition with premium features. Comprehensive inspection passed.</p>
-                        <div class="listing-features">
-                            <span class="feature-tag">🛡️ Warranty</span>
-                            <span class="feature-tag">📋 Inspected</span>
-                            <span class="feature-tag">⭐ Premium</span>
-                        </div>
-                        <a href="#" class="btn-listing">View Details</a>
-                    </div>
-                </div>
-                
-                <div class="listing-card fade-in">
-                    <div class="listing-image">
-                        <div class="listing-badge">✅ Certified</div>
-                        <div class="listing-price">$18,900</div>
-                    </div>
-                    <div class="listing-content">
-                        <h3>2018 Nissan Altima S</h3>
-                        <p class="listing-details">52,000 miles • CVT • FWD</p>
-                        <p class="listing-description">Well-maintained sedan with excellent fuel economy and safety ratings.</p>
-                        <div class="listing-features">
-                            <span class="feature-tag">🛡️ Warranty</span>
-                            <span class="feature-tag">📋 Inspected</span>
-                            <span class="feature-tag">⛽ Efficient</span>
-                        </div>
-                        <a href="#" class="btn-listing">View Details</a>
-                    </div>
+            <div class="listings-grid" id="vehicleContainer">
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    <p>Loading vehicles...</p>
                 </div>
             </div>
             <div class="listings-cta">
@@ -206,6 +303,7 @@
             </div>
         </div>
     </section>
+
     <section class="features" id="features">
         <div class="container">
             <h2 class="section-title fade-in">Why Choose Autocert?</h2>
@@ -292,8 +390,145 @@
             <p>&copy; 2025 Autocert. All rights reserved. Your trusted vehicle inspection and marketplace platform.</p>
         </div>
     </footer>
+   
+       <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            console.log("DOM loaded, fetching vehicles...");
+            loadApprovedVehicles();
+            setupAnimations();
+        });
+
+        async function loadApprovedVehicles() {
+            const container = document.getElementById("vehicleContainer");
+            if (!container) {
+                console.error("Vehicle container not found!");
+                return;
+            }
+
+            try {
+                // Try to fetch from API first
+                const res = await fetch(`http://localhost:8080/api/vehicles/approved`, {
+                    method: "GET",
+                    headers: { "Content-Type": "application/json" }
+                });
+
+                let vehicles = [];
+
+                if (res && res.ok) {
+                    vehicles = await res.json();
+                    console.log("Vehicles received from API:", vehicles);
+                } else {
+                    // If API fails, use sample data
+                    console.log("API not available, using sample data");
+                    vehicles = sampleVehicles;
+                }
+
+                renderVehicles(vehicles);
+                
+            } catch (error) {
+                console.error("Error loading vehicles, using sample data:", error);
+                renderVehicles(sampleVehicles);
+            }
+        }
+
+        function renderVehicles(vehicles) {
+            const container = document.getElementById("vehicleContainer");
+            
+            if (!vehicles || vehicles.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-car" style="font-size: 48px; margin-bottom: 15px; color: #ddd;"></i>
+                        <h3>No vehicles available</h3>
+                        <p>Check back later for new listings</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = vehicles.map(vehicle => {
+                const mainImage = (vehicle.photos && vehicle.photos.length > 0) 
+                    ? vehicle.photos[0] 
+                    : `https://via.placeholder.com/300x200/95a5a6/ffffff?text=${vehicle.make}+${vehicle.model}`;
+
+                return `
+                    <div class="listing-card fade-in">
+                        <div class="listing-image">
+                            <img src="${mainImage}" alt="${vehicle.make} ${vehicle.model}">
+                            <div class="listing-badge">✅ Certified</div>
+                            <div class="listing-price">${formatPrice(vehicle.price)}</div>
+                        </div>
+                        <div class="listing-content">
+                            <h3>${vehicle.year} ${vehicle.make} ${vehicle.model}</h3>
+                            <p class="listing-details">
+                                ${vehicle.mileage || "N/A"} miles • ${vehicle.transmission || "-"} • ${vehicle.bodyType || "-"}
+                            </p>
+                            <p class="listing-description">${vehicle.description || "No description available."}</p>
+                            <div class="listing-features">
+                                <span class="feature-tag">🛡️ Warranty</span>
+                                <span class="feature-tag">📋 Inspected</span>
+                                <span class="feature-tag">🔧 Serviced</span>
+                            </div>
+                            <a href="vehicle-details.html?id=${vehicle.id}" class="btn-listing">View Details</a>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Re-initialize animations for new elements
+            setTimeout(setupAnimations, 100);
+        }
+
+        function formatPrice(price) {
+            if (!price) return "Contact for price";
+            return "LKR " + price.toLocaleString("en-US");
+        }
+
+        function setupAnimations() {
+            const fadeElements = document.querySelectorAll('.fade-in');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            fadeElements.forEach(el => observer.observe(el));
+            
+            // Animate stats
+            animateValue("inspections", 0, 12500, 2000);
+            animateValue("vehicles", 0, 8400, 2000);
+            animateValue("customers", 0, 15600, 2000);
+            animateValue("rating", 0, 4.9, 2000);
+        }
+
+        function animateValue(id, start, end, duration) {
+            const element = document.getElementById(id);
+            if (!element) return;
+            
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                
+                if (id === "rating") {
+                    element.innerHTML = (progress * end).toFixed(1);
+                } else {
+                    element.innerHTML = Math.floor(progress * (end - start) + start).toLocaleString();
+                }
+                
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+    </script>
+
 
     <!-- <script src="/Frontend/js/utils.js"></script> -->
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
      <script src="/Frontend/js/script.js"></script>
     <!-- <script src="/Frontend/js/login.js"></script>
     <script src="/Frontend/js/register.js"></script> -->
