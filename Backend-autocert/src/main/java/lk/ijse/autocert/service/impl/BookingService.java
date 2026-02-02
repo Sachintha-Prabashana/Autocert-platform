@@ -26,14 +26,14 @@ public class BookingService {
     private final InspectionCenterRepository centerRepository;
     private final ModelMapper modelMapper;
     private final InspectorProfileRepository inspectorProfileRepository;
-    private final EmailService emailService;  // ✅ Inject EmailService
+    private final EmailService emailService;  //  Inject EmailService
 
     private static final int MAX_BOOKINGS_PER_SLOT = 5;
 
     @Transactional
     public BookingResponseDTO createBooking(BookingRequestDTO dto, User customer) {
 
-        // 1️⃣ Validate FACILITY → must have centerName
+        // 1️ Validate FACILITY → must have centerName
         InspectionCenter center = null;
         if (dto.getServiceType() == ServiceType.FACILITY) {
             if (dto.getCenterName() == null)
@@ -43,11 +43,11 @@ public class BookingService {
                     .orElseThrow(() -> new RuntimeException("Center not found"));
         }
 
-        // 2️⃣ Validate MOBILE → must have address
+        // 2️ Validate MOBILE → must have address
         if (dto.getServiceType() == ServiceType.MOBILE && dto.getStreetAddress() == null)
             throw new IllegalArgumentException("Address is required for MOBILE service type.");
 
-        // 3️⃣ Validate time slot
+        // 3️ Validate time slot
         long bookedCount = center != null ?
                 bookingRepository.countByAppointmentDateAndTimeSlotAndInspectionCenter(
                         dto.getAppointmentDate(), dto.getTimeSlot(), center) : 0;
@@ -55,7 +55,7 @@ public class BookingService {
         if (bookedCount >= MAX_BOOKINGS_PER_SLOT)
             throw new RuntimeException("Time slot fully booked at this center");
 
-        // 4️⃣ Map vehicle
+        // 4️ Map vehicle
         BookingVehicle vehicle = BookingVehicle.builder()
                 .brand(dto.getBrand())
                 .model(dto.getModel())
@@ -64,7 +64,7 @@ public class BookingService {
                 .mileage(dto.getMileage())
                 .build();
 
-        // 5️⃣ Service address
+        // 5️ Service address
         ServiceAddress address = null;
         if (dto.getServiceType() == ServiceType.MOBILE) {
             address = ServiceAddress.builder()
@@ -76,7 +76,7 @@ public class BookingService {
                     .build();
         }
 
-        // 6️⃣ Create booking
+        // 6️ Create booking
         Booking booking = Booking.builder()
                 .appointmentDate(dto.getAppointmentDate())
                 .inspectionType(dto.getInspectionType())
@@ -90,7 +90,7 @@ public class BookingService {
                 .build();
         vehicle.setBooking(booking);
 
-        // 7️⃣ Auto-assign inspector
+        // 7️ Auto-assign inspector
         if (center != null) {
             // Get all inspectors for this center
             List<InspectorProfile> inspectors = userRepository.findInspectorsByCenter(center.getId())
@@ -116,12 +116,12 @@ public class BookingService {
 
         Booking savedBooking = bookingRepository.save(booking);
 
-        // ✅ Send email if inspector assigned automatically
+        //  Send email if inspector assigned automatically
         if (savedBooking.getInspector() != null) {
             emailService.sendAssignmentEmail(savedBooking);
         }
 
-        // 8️⃣ Manual mapping to DTO
+        // 8️ Manual mapping to DTO
         BookingResponseDTO response = new BookingResponseDTO();
         response.setId(savedBooking.getId());
         response.setBrand(savedBooking.getBookingVehicle().getBrand());
@@ -193,7 +193,7 @@ public class BookingService {
         try {
             emailService.sendAssignmentEmail(booking);
         } catch (Exception e) {
-            System.err.println("❌ Failed to send assignment email: " + e.getMessage());
+            System.err.println("Failed to send assignment email: " + e.getMessage());
         }
 
         return true;

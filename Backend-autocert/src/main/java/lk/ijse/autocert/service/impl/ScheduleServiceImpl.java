@@ -19,7 +19,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         return bookingRepository.findTodayBookings()
                 .stream()
                 .map(b -> {
-                    // 1️⃣ Format location based on service type
+                    // 1️ Format location based on service type
                     String location;
                     if (b.getServiceType() == ServiceType.MOBILE && b.getServiceAddress() != null) {
                         location = b.getServiceAddress().getStreetAddress()
@@ -33,13 +33,13 @@ public class ScheduleServiceImpl implements ScheduleService {
                         location = "N/A";
                     }
 
-                    // 2️⃣ Format time nicely (if stored as LocalTime)
+                    // 2️ Format time nicely (if stored as LocalTime)
                     String formattedTime = b.getTimeSlot() != null ? b.getTimeSlot().toString() : "N/A";
                     // You can use DateTimeFormatter for nicer formatting:
                     // DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hh:mm a");
                     // formattedTime = b.getTimeSlot().format(formatter);
 
-                    // 3️⃣ Map status to user-friendly text
+                    // 3️ Map status to user-friendly text
                     String status;
                     switch (b.getStatus()) {
                         case PENDING_ASSIGNMENT:
@@ -58,7 +58,7 @@ public class ScheduleServiceImpl implements ScheduleService {
                             status = b.getStatus().name();
                     }
 
-                    // 4️⃣ Build DTO
+                    // 4️ Build DTO
                     return TodayScheduleDTO.builder()
                             .time(formattedTime)
                             .bookingId(b.getId())

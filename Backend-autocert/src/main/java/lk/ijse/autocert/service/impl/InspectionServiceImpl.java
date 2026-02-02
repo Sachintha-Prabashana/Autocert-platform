@@ -35,11 +35,11 @@ public class InspectionServiceImpl implements InspectionService {
 
         try {
 
-            // 1️⃣ Get logged-in inspector entity
+            // 1️ Get logged-in inspector entity
             User inspector = userRepository.findByEmail(loggedInUser)
                     .orElseThrow(() -> new RuntimeException("Inspector not found"));
 
-            // 2️⃣ Get booking
+            // 2️ Get booking
             Booking booking = bookingRepository.findById(dto.getBookingId())
                     .orElseThrow(() -> new RuntimeException("Booking not found"));
 
@@ -48,7 +48,7 @@ public class InspectionServiceImpl implements InspectionService {
                 throw new RuntimeException("Customer email not found");
             }
 
-            // 2️⃣ Save inspection
+            // 2️ Save inspection
             Inspection inspection = Inspection.builder()
                     .inspector(inspector)
                     .booking(booking)
@@ -61,11 +61,11 @@ public class InspectionServiceImpl implements InspectionService {
 
             inspectionRepository.save(inspection);
 
-            // 3️⃣ Send report to customer email
+            // 3️ Send report to customer email
             boolean success = emailService.sendEmailWithReport(customer.getEmail(), inspection.getReportUrl());
 
             if (success) {
-                // 4️⃣ Update booking/inspection status to COMPLETE
+                // 4 Update booking/inspection status to COMPLETE
                 booking.setStatus(BookingStatus.COMPLETED);
                 bookingRepository.save(booking);
                 System.out.println("Booking status updated to COMPLETE for booking: " + dto.getBookingId());

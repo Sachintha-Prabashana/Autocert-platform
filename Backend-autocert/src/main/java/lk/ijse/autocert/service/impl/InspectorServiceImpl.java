@@ -39,10 +39,10 @@ public class InspectorServiceImpl implements InspectorService {
             throw new RuntimeException("Email already exists");
         }
 
-        // 1️⃣ Generate a temporary password
+        // 1️ Generate a temporary password
         String tempPassword = PasswordGenerator.generateTempPassword();
 
-        // 1️⃣ Create User
+        // 1️ Create User
         User user = User.builder()
                 .firstName(dto.getFirstName())
                 .lastName(dto.getLastName())
@@ -59,18 +59,18 @@ public class InspectorServiceImpl implements InspectorService {
         InspectorProfile profile = InspectorProfile.builder()
                 .user(user)
                 .inspectionCenter(center)
-                .specializations(dto.getSpecializations()) // ✅ now a List<String>
+                .specializations(dto.getSpecializations()) //  now a List<String>
                 .build();
         profile = inspectorProfileRepository.save(profile);
 
-        // ✅ Just set profile, no extra save needed
+        //  Just set profile, no extra save needed
         user.setInspectorProfile(profile);
 
-        // 5️⃣ Send email with credentials
+        // 5️ Send email with credentials
         emailService.sendInspectorCredentials(user, center.getName(), dto.getSpecializations(), tempPassword);
 
 
-        // 5️⃣ Return response
+        // 5️ Return response
         InspectorResponseDTO response = new InspectorResponseDTO();
         response.setId(user.getId());
         response.setFullName(user.getFirstName() + " " + user.getLastName());

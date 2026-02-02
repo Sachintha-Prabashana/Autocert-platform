@@ -65,7 +65,7 @@ public class VehicleServiceImpl implements VehicleService {
     public VehicleResponseDTO approveVehicle(Long vehicleId) {
         Vehicle vehicle = getVehicle(vehicleId);
 
-        // ✅ Only allow approving vehicles that are still pending
+        // Only allow approving vehicles that are still pending
         if (!vehicle.getStatus().equals(VehicleStatus.PENDING_APPROVAL)) {
             throw new IllegalStateException("Only vehicles with PENDING_APPROVAL status can be approved.");
         }
@@ -231,12 +231,12 @@ public class VehicleServiceImpl implements VehicleService {
         if (vehicleOpt.isPresent() && userOpt.isPresent()) {
             Vehicle vehicle = vehicleOpt.get();
 
-            // ✅ Check if the logged-in user is the owner
+            //  Check if the logged-in user is the owner
             if (!vehicle.getOwner().getId().equals(userId)) {
                 return false; // Not authorized
             }
 
-            // ✅ Update allowed fields
+            //  Update allowed fields
             vehicle.setMake(updateDTO.getBrand());
             vehicle.setModel(updateDTO.getModel());
             vehicle.setYear(updateDTO.getYear());

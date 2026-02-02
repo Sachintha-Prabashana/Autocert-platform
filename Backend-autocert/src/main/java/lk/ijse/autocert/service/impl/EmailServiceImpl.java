@@ -47,7 +47,7 @@ public class EmailServiceImpl implements EmailService {
 
             mailSender.send(mimeMessage);
         } catch (MessagingException e) {
-            System.err.println("❌ Failed to send registration email: " + e.getMessage());
+            System.err.println("Failed to send registration email: " + e.getMessage());
         }
     }
 
@@ -181,9 +181,9 @@ public class EmailServiceImpl implements EmailService {
             helper.setFrom(fromEmail);
 
             mailSender.send(mimeMessage);
-            System.out.println("✅ Assignment email sent to: " + user.getEmail());
+            System.out.println("Assignment email sent to: " + user.getEmail());
         } catch (MessagingException e) {
-            System.err.println("❌ Failed to send assignment email: " + e.getMessage());
+            System.err.println("Failed to send assignment email: " + e.getMessage());
         }
     }
 
