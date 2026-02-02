@@ -129,7 +129,7 @@ const signInBtn = document.getElementById('signInBtn');
                 return; 
             }
 
-            // ✅ Store token and role in localStorage
+            //  Store token and role in localStorage
             localStorage.setItem("token", data.accessToken);
             localStorage.setItem("role", data.role);
 
@@ -141,10 +141,10 @@ const signInBtn = document.getElementById('signInBtn');
                 timer: 2000,
                 showConfirmButton: false
             }).then(() => {
-                // ✅ Redirect based on role
-                if(data.role === "ADMIN") window.location.href = "/Frontend/pages/admin-dashboard.html";
-                else if(data.role === "INSPECTOR") window.location.href = "/Frontend/pages/test/test.html";
-                else if(data.role === "CUSTOMER") window.location.href = "/Frontend/pages/customer-dashboard.html";
+                //  Redirect based on role
+                if(data.role === "ADMIN") window.location.href = "pages/admin-dashboard.html";
+                else if(data.role === "INSPECTOR") window.location.href = "pages/test/test.html";
+                else if(data.role === "CUSTOMER") window.location.href = "pages/customer-dashboard.html";
                 else {
                     Swal.fire({
                         icon: 'error',

@@ -22,9 +22,6 @@ public class ChatController {
     private final ChatMessageService chatService;
     private final UserService userService;
 
-    /**
-     * Get all conversations for the logged-in user
-     */
     @GetMapping("/conversations")
     public ResponseEntity<List<ChatMessageDTO>> getConversations(
             @AuthenticationPrincipal User principal) {
@@ -39,9 +36,7 @@ public class ChatController {
         }
     }
 
-    /**
-     * Get all messages between the logged-in user and another user for a specific vehicle
-     */
+
     @GetMapping("/messages/{vehicleId}/{otherUserId}")
     public ResponseEntity<List<ChatMessage>> getMessages(
             @PathVariable Long vehicleId,
@@ -56,9 +51,6 @@ public class ChatController {
         }
     }
 
-    /**
-     * Send a text message
-     */
     @PostMapping("/send")
     public ResponseEntity<ChatMessage> sendMessage(
             @RequestBody ChatMessage message,
@@ -73,9 +65,6 @@ public class ChatController {
         }
     }
 
-    /**
-     * Send an image message
-     */
     @PostMapping("/send-image")
     public ResponseEntity<?> sendImage(
             @RequestParam("vehicleId") Long vehicleId,
@@ -92,9 +81,6 @@ public class ChatController {
         }
     }
 
-    /**
-     * Get unread message count for the logged-in user
-     */
     @GetMapping("/unread-count")
     public ResponseEntity<Long> getUnreadCount(@AuthenticationPrincipal User principal) {
         try {

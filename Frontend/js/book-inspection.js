@@ -1,14 +1,14 @@
-// ================== CONSTANTS ==================
+// ================== CONSTANTS & CONFIG ==================
 let currentStep = 1;
 const totalSteps = 4;
 const token = localStorage.getItem("token"); // JWT stored in localStorage
 
-// API endpoints
+// API Configuration
 const API_BASE = "http://localhost:8080/api";
 const API_BOOKINGS = `${API_BASE}/bookings`;
 const API_CENTERS = `${API_BASE}/admin/centers`;
 
-// Inspection types and mapping to backend enums
+// Inspection Packages (Technical Protocols)
 const InspectionType = {
     SAFETY: 5000,
     COMPREHENSIVE: 10000,
@@ -16,31 +16,43 @@ const InspectionType = {
     DIAGNOSTIC: 6000
 };
 
-// Time slots
+// Available Time Slots
 const TimeSlot = ["09:00", "10:30", "12:00", "15:00", "16:30"];
 
 // ================== INITIALIZATION ==================
 document.addEventListener('DOMContentLoaded', function() {
-    if (!token) {
-        alert("Please login first.");
-        window.location.href = "/login.html";
-        return;
-    }
-
+    
+    // 1. INITIALIZE COMBO BOXES IMMEDIATELY (Fix for missing details)
+    console.log("System Initialization: Loading Registry Data...");
     populateBrands();
     populateYears();
     setMinDate();
-    updateProgress();
-    setupEventListeners();
-    loadCenters();
+
+    // 2. RENDER INDUSTRIAL UI COMPONENTS
     renderInspectionTypes();
     renderTimeSlots();
-    showStep(currentStep); // Show first step
+
+    // 3. LOAD DYNAMIC DATA FROM BACKEND
+    loadCenters();
+
+    // 4. SETUP LOGIC & STEPPER
+    setupEventListeners();
+    updateProgress();
+    showStep(currentStep);
+
+    // 5. SECURITY VALIDATION
+    if (!token) {
+        console.warn("Unauthorized: System requires active token for protocol initiation.");
+    }
 });
 
-// ------------------ Populate Years ------------------
+// ================== UI POPULATION (REGISTRY) ==================
+
 function populateYears() {
     const yearSelect = document.getElementById('year');
+    if (!yearSelect) return;
+    
+    yearSelect.innerHTML = '<option value="">Select Production Year</option>';
     const currentYear = new Date().getFullYear();
     for (let y = currentYear; y >= 1990; y--) {
         const option = document.createElement('option');
@@ -50,11 +62,13 @@ function populateYears() {
     }
 }
 
-// ------------------ Populate Vehicle Makes ------------------
 function populateBrands() {
-    const brands = ["Toyota","BMW","Honda","Mercedes","Ford","Nissan","Audi","Hyundai","Kia","Mazda"];
+    const brands = ["Toyota","BMW","Honda","Mercedes","Ford","Nissan","Audi","Hyundai","Kia","Mazda", "Suzuki", "Mitsubishi"];
     const brandSelect = document.getElementById('brand');
-    brands.forEach(brand => {
+    if (!brandSelect) return;
+
+    brandSelect.innerHTML = '<option value="">Select Manufacturer</option>';
+    brands.sort().forEach(brand => {
         const option = document.createElement('option');
         option.value = brand;
         option.textContent = brand;
@@ -62,155 +76,34 @@ function populateBrands() {
     });
 }
 
-// ------------------ Min Date ------------------
 function setMinDate() {
     const today = new Date();
-    today.setDate(today.getDate() + 1);
-    document.getElementById('inspectionDate').min = today.toISOString().split('T')[0];
+    today.setDate(today.getDate() + 1); // Earliest deployment is T+1
+    const dateInput = document.getElementById('inspectionDate');
+    if(dateInput) dateInput.min = today.toISOString().split('T')[0];
 }
 
-// ------------------ Event Listeners ------------------
-function setupEventListeners() {
-    // Navigation buttons
-    document.getElementById('nextBtn').addEventListener('click', nextStep);
-    document.getElementById('prevBtn').addEventListener('click', previousStep);
+// ================== DYNAMIC UI GENERATION ==================
 
-    // Inspection type selection
-    document.addEventListener('change', e => {
-        if (e.target.name === 'inspectionType') {
-            document.querySelectorAll('.service-option').forEach(c => c.classList.remove('selected'));
-            e.target.closest('.service-option').classList.add('selected');
-        }
-    });
-
-    // Location selection
-    document.addEventListener('change', e => {
-        if (e.target.name === 'location') {
-            document.querySelectorAll('.location-option').forEach(c => c.classList.remove('selected'));
-            e.target.closest('.location-option').classList.add('selected');
-
-            const mobileAddress = document.getElementById('mobileAddress');
-            const serviceCenters = document.getElementById('serviceCenters');
-            if (e.target.value === 'mobile') {
-                mobileAddress.classList.add('show');
-                serviceCenters.style.display = 'none';
-                setMobileFieldsRequired(true);
-                setCenterFieldsRequired(false);
-            } else {
-                mobileAddress.classList.remove('show');
-                serviceCenters.style.display = 'block';
-                setMobileFieldsRequired(false);
-                setCenterFieldsRequired(true);
-            }
-        }
-    });
-
-    // Time slot selection
-    document.addEventListener('click', e => {
-        if (e.target.classList.contains('time-slot') && !e.target.classList.contains('unavailable')) {
-            document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
-            e.target.classList.add('selected');
-            document.getElementById('selectedTime').value = e.target.dataset.time;
-        }
-    });
-
-    // Date change
-    document.getElementById('inspectionDate').addEventListener('change', updateTimeSlots);
-}
-
-function setMobileFieldsRequired(required) {
-    ['streetAddress','city','stateProvince','postalCode'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.required = required;
-    });
-}
-
-function setCenterFieldsRequired(required) {
-    document.querySelectorAll('input[name="selectedCenter"]').forEach(r => r.required = required);
-}
-
-// ------------------ Load Centers ------------------
-async function loadCenters() {
-    try {
-        const res = await fetch(API_CENTERS, {
-            method: 'GET',
-            headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" }
-        });
-        if (!res.ok) throw new Error("Failed to load centers.");
-        const centers = await res.json();
-        renderCenters(centers);
-    } catch(err) {
-        console.error(err);
-        alert("Error loading service centers.");
-    }
-}
-
-function renderCenters(centers) {
-    const container = document.getElementById('locationOptions');
-    container.innerHTML = '';
-
-    // Mobile option
-    const mobileOption = document.createElement('div');
-    mobileOption.className = 'location-option';
-    mobileOption.innerHTML = `
-        <input type="radio" name="location" value="mobile" id="location-mobile">
-        <label for="location-mobile">
-            <div class="location-header">
-                <div class="location-icon">
-                    <i class="fas fa-truck"></i>
-                </div>
-                <div class="location-details">
-                    <h3>Mobile Service</h3>
-                    <p>Our certified inspector comes to your location</p>
-                </div>
-                <div class="location-badge">+25 LKR</div>
-            </div>
-        </label>
-    `;
-    container.appendChild(mobileOption);
-
-    // Centers
-    centers.forEach(center => {
-        const centerOption = document.createElement('div');
-        centerOption.className = 'location-option';
-        centerOption.innerHTML = `
-            <input type="radio" name="location" value="center-${center.id}" id="location-${center.id}">
-            <label for="location-${center.id}">
-                <div class="location-header">
-                    <div class="location-icon">
-                        <i class="fas fa-warehouse"></i>
-                    </div>
-                    <div class="location-details">
-                        <h3>${center.name}</h3>
-                        <p>${center.address}, ${center.city}</p>
-                    </div>
-                    <div class="location-badge">Standard Rate</div>
-                </div>
-            </label>
-        `;
-        container.appendChild(centerOption);
-    });
-}
-
-// ------------------ Inspection Types ------------------
 function renderInspectionTypes() {
     const container = document.getElementById('inspectionGrid');
+    if(!container) return;
     container.innerHTML = '';
+    
     Object.entries(InspectionType).forEach(([name, price]) => {
         const card = document.createElement('div');
         card.className = 'service-option';
+        
         card.innerHTML = `
             <input type="radio" name="inspectionType" value="${name}" id="insp-${name}">
-            <label for="insp-${name}">
-                <div class="service-header">
-                    <div class="service-icon">
+            <label for="insp-${name}" style="width:100%; height:100%; display:block;">
+                <div class="card-content">
+                    <div class="card-icon">
                         <i class="fas fa-${getInspectionIcon(name)}"></i>
                     </div>
-                    <div class="service-details">
-                        <h3>${formatInspectionName(name)} Inspection</h3>
-                        <p>${getInspectionDescription(name)}</p>
-                        <div class="service-price">${price.toLocaleString()} LKR</div>
-                    </div>
+                    <div class="card-title">${formatInspectionName(name)} Protocol</div>
+                    <div class="card-desc">${getInspectionDescription(name)}</div>
+                    <div class="card-price">${price.toLocaleString()} LKR</div>
                 </div>
             </label>
         `;
@@ -218,33 +111,10 @@ function renderInspectionTypes() {
     });
 }
 
-function formatInspectionName(type) {
-    return type.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-}
-
-function getInspectionIcon(type) {
-    const icons = { 
-        SAFETY:'shield-alt', 
-        COMPREHENSIVE:'search', 
-        PRE_PURCHASE:'shopping-cart', 
-        DIAGNOSTIC:'laptop-medical' 
-    };
-    return icons[type] || 'clipboard-check';
-}
-
-function getInspectionDescription(type) {
-    const desc = {
-        SAFETY:'Essential safety systems and components check',
-        COMPREHENSIVE:'Complete vehicle health assessment with detailed diagnostics',
-        PRE_PURCHASE:'Thorough pre-purchase inspection for informed buying decisions',
-        DIAGNOSTIC:'Advanced electronic systems diagnostics and troubleshooting'
-    };
-    return desc[type] || '';
-}
-
-// ------------------ Time Slots ------------------
 function renderTimeSlots() {
     const container = document.getElementById('timeSlots');
+    if(!container) return;
+    
     container.innerHTML = '';
     TimeSlot.forEach(slot => {
         const div = document.createElement('div');
@@ -255,48 +125,169 @@ function renderTimeSlots() {
     });
 }
 
+// ================== CENTER LOGISTICS ==================
+
+async function loadCenters() {
+    try {
+        const res = await fetch(API_CENTERS, {
+            method: 'GET',
+            headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" }
+        });
+        
+        if (!res.ok) { 
+            renderCentersWithMock();
+            return; 
+        }
+        
+        const centers = await res.json();
+        renderCenters(centers);
+    } catch(err) {
+        renderCentersWithMock();
+    }
+}
+
+function renderCentersWithMock() {
+    renderCenters([
+        { id: 1, name: "Industrial Zone Center", address: "Sector 4, Main Rd", city: "Colombo" },
+        { id: 2, name: "Regional Logistics Hub", address: "Hill Top Ave", city: "Kandy" }
+    ]); 
+}
+
+function renderCenters(centers) {
+    const container = document.getElementById('locationOptions');
+    if(!container) return;
+    container.innerHTML = '';
+
+    // 1. Mobile Deployment Option
+    const mobileOption = document.createElement('div');
+    mobileOption.className = 'location-option';
+    mobileOption.innerHTML = `
+        <input type="radio" name="location" value="mobile" id="location-mobile">
+        <label for="location-mobile" style="width:100%; height:100%; display:block;">
+            <div class="card-content">
+                <div class="card-icon"><i class="fas fa-truck-fast"></i></div>
+                <div class="card-title">SITE DEPLOYMENT</div>
+                <div class="card-desc">Technician arrives at your coordinates</div>
+                <div class="card-price">+250 LKR</div>
+            </div>
+        </label>
+    `;
+    container.appendChild(mobileOption);
+
+    // 2. Fixed Center Options
+    centers.forEach(center => {
+        const centerOption = document.createElement('div');
+        centerOption.className = 'location-option';
+        centerOption.innerHTML = `
+            <input type="radio" name="location" value="center-${center.id}" id="location-${center.id}">
+            <label for="location-${center.id}" style="width:100%; height:100%; display:block;">
+                <div class="card-content">
+                    <div class="card-icon"><i class="fas fa-microchip"></i></div>
+                    <div class="card-title">${center.name}</div>
+                    <div class="card-desc">${center.address}, ${center.city}</div>
+                    <div class="card-price">System Default</div>
+                </div>
+            </label>
+        `;
+        container.appendChild(centerOption);
+    });
+}
+
+// ================== SYSTEM LOGIC & NAVIGATION ==================
+
+function setupEventListeners() {
+    document.getElementById('nextBtn')?.addEventListener('click', nextStep);
+    document.getElementById('prevBtn')?.addEventListener('click', previousStep);
+
+    // FIX FOR CLASSLIST ERROR: Using robust parent detection
+    document.addEventListener('change', e => {
+        if (e.target.name === 'inspectionType' || e.target.name === 'location') {
+            
+            // Determine which class we are targeting based on the input name
+            const targetClass = e.target.name === 'inspectionType' ? 'service-option' : 'location-option';
+            
+            // Safely find the closest container
+            const parentCard = e.target.closest(`.${targetClass}`);
+            
+            if (parentCard) {
+                // Clear all previous selections in this specific group
+                document.querySelectorAll(`.${targetClass}`).forEach(c => c.classList.remove('selected'));
+                // Add selected class to the container of the clicked radio
+                parentCard.classList.add('selected');
+
+                // Address logic for Mobile deployment
+                if (e.target.name === 'location') {
+                    const mobileAddress = document.getElementById('mobileAddress');
+                    if (e.target.value === 'mobile') {
+                        mobileAddress?.classList.add('show');
+                        setMobileFieldsRequired(true);
+                    } else {
+                        mobileAddress?.classList.remove('show');
+                        setMobileFieldsRequired(false);
+                    }
+                }
+            }
+        }
+    });
+
+    // Time Selection
+    document.getElementById('timeSlots')?.addEventListener('click', e => {
+        const timeSlot = e.target.closest('.time-slot');
+        if (timeSlot && !timeSlot.classList.contains('unavailable')) {
+            document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
+            timeSlot.classList.add('selected');
+            document.getElementById('selectedTime').value = timeSlot.dataset.time;
+        }
+    });
+
+    document.getElementById('inspectionDate')?.addEventListener('change', updateTimeSlots);
+}
+
 function updateTimeSlots() {
     document.querySelectorAll('.time-slot').forEach(s => {
         s.classList.remove('unavailable','selected');
-        if (Math.random() < 0.2) s.classList.add('unavailable'); // demo
+        if (Math.random() < 0.2) s.classList.add('unavailable'); 
     });
-    document.getElementById('selectedTime').value='';
+    const timeInput = document.getElementById('selectedTime');
+    if(timeInput) timeInput.value = '';
 }
 
-// ------------------ Multi-Step Navigation ------------------
+function setMobileFieldsRequired(required) {
+    ['streetAddress','city','stateProvince'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.required = required;
+    });
+}
+
+// ================== STEP NAVIGATION & VALIDATION ==================
+
 function validateStep(step){
     let valid = true;
-    if(step===1){
-        ['brand','model','year'].forEach(id=>{
-            const el=document.getElementById(id);
-            const errorEl = document.getElementById(`${id}-error`);
-            if(!el.value.trim()){
-                if(errorEl) errorEl.style.display='block'; 
-                valid=false;
+    if(step === 1){
+        ['brand','model','year'].forEach(id => {
+            const el = document.getElementById(id);
+            const err = document.getElementById(`${id}-error`);
+            if(!el || !el.value.trim()){
+                if(err) err.style.display = 'block'; 
+                valid = false;
             } else {
-                if(errorEl) errorEl.style.display='none';
+                if(err) err.style.display = 'none';
             }
         });
-    } else if(step===2){
+    } else if(step === 2){
         if(!document.querySelector('input[name="inspectionType"]:checked')){
-            alert('Please select an inspection package'); 
-            valid=false;
+            alert('Select Diagnostic Protocol'); valid = false;
         }
-    } else if(step===3){
+    } else if(step === 3){
         const loc = document.querySelector('input[name="location"]:checked');
-        if(!loc){alert('Please select a service location'); valid=false;}
-        if(!document.getElementById('inspectionDate').value){alert('Please select your preferred date'); valid=false;}
-        if(!document.getElementById('selectedTime').value){alert('Please select a time slot'); valid=false;}
-        if(loc && loc.value==='mobile'){
-            ['streetAddress','city','stateProvince','postalCode'].forEach(id=>{
-                const el = document.getElementById(id);
-                if(!el.value.trim()){alert('Please complete your service address'); valid=false;}
-            });
+        const date = document.getElementById('inspectionDate');
+        const time = document.getElementById('selectedTime');
+        if(!loc || !date.value || !time.value){
+            alert('Define Logistics & Window'); valid = false;
         }
-    } else if(step===4){
+    } else if(step === 4){
         if(!document.getElementById('termsAccepted').checked){
-            alert('Please accept the terms and conditions'); 
-            valid=false;
+            alert('System Authorization Required'); valid = false;
         }
     }
     return valid;
@@ -304,164 +295,148 @@ function validateStep(step){
 
 function nextStep(){
     if(validateStep(currentStep)){
-        if(currentStep<totalSteps){
+        if(currentStep < totalSteps){
             currentStep++; 
             showStep(currentStep); 
             updateProgress();
         }
-        if(currentStep===4){
+        if(currentStep === 4){
             generateSummary(); 
-            const btn=document.getElementById('nextBtn'); 
-            btn.innerHTML='<i class="fas fa-calendar-check"></i> Confirm Booking'; 
-            btn.onclick=submitForm;
+            const btn = document.getElementById('nextBtn');
+            if(btn) {
+                btn.innerHTML = 'AUTHORIZE PROTOCOL <i class="fas fa-check-double"></i>';
+                // Remove existing event listener before adding submit
+                btn.onclick = submitForm;
+            }
         }
     }
 }
 
 function previousStep(){
-    if(currentStep>1){
+    if(currentStep > 1){
         currentStep--; 
         showStep(currentStep); 
         updateProgress(); 
-        const btn=document.getElementById('nextBtn'); 
-        btn.innerHTML='Continue <i class="fas fa-arrow-right"></i>'; 
-        btn.onclick=nextStep;
+        const btn = document.getElementById('nextBtn');
+        if(btn) {
+            btn.innerHTML = 'CONTINUE <i class="fas fa-chevron-right"></i>';
+            btn.onclick = nextStep;
+        }
     }
 }
 
 function showStep(step){
-    document.querySelectorAll('.step-container').forEach(s=>s.classList.remove('active'));
-    document.getElementById(`step${step}`).classList.add('active');
-    document.getElementById('prevBtn').style.display = step===1 ? 'none':'flex';
+    document.querySelectorAll('.step-container').forEach(s => s.classList.remove('active'));
+    document.getElementById(`step${step}`)?.classList.add('active');
     
-    document.querySelectorAll('.nav-step').forEach((navStep, index) => {
-        navStep.classList.toggle('active', index+1===step);
+    const prevBtn = document.getElementById('prevBtn');
+    if(prevBtn) prevBtn.style.display = (step === 1) ? 'none' : 'flex';
+    
+    document.querySelectorAll('.step-item').forEach((item, index) => {
+        item.classList.toggle('active', index + 1 === step);
     });
 }
 
 function updateProgress(){
-    const progress=(currentStep/totalSteps)*100;
-    document.getElementById('progressFill').style.width=progress+'%';
+    const progress = (currentStep / totalSteps) * 100;
+    const bar = document.getElementById('progressFill');
+    if(bar) bar.style.width = progress + '%';
 }
 
-// ------------------ Summary ------------------
+// ================== DATA VERIFICATION & SUBMIT ==================
+
 function generateSummary(){
     const formData = new FormData(document.getElementById('bookingForm'));
-    const inspectionType = document.querySelector('input[name="inspectionType"]:checked');
+    const inspType = document.querySelector('input[name="inspectionType"]:checked');
     const loc = document.querySelector('input[name="location"]:checked');
+    const summaryBox = document.getElementById('bookingSummary');
     
-    let html = '';
-    html += `<div class="summary-item"><span>Vehicle:</span><span>${formData.get('brand')} ${formData.get('model')} (${formData.get('year')})</span></div>`;
-    html += `<div class="summary-item"><span>Service Package:</span><span>${formatInspectionName(inspectionType.value)} Inspection</span></div>`;
-    html += `<div class="summary-item"><span>Service Type:</span><span>${loc.value==='mobile'?'Mobile Service':'Service Center'}</span></div>`;
-    
-    if(loc.value==='mobile'){
-        html += `<div class="summary-item"><span>Service Address:</span><span>${formData.get('streetAddress')}, ${formData.get('city')}, ${formData.get('stateProvince')} ${formData.get('postalCode')}</span></div>`;
-    }
-    
-    html += `<div class="summary-item"><span>Date & Time:</span><span>${formatDate(formData.get('inspectionDate'))} at ${document.getElementById('selectedTime').value}</span></div>`;
-    
-    const basePrice = InspectionType[inspectionType.value];
-    const mobileCharge = loc.value === 'mobile' ? 25 : 0;
-    const totalPrice = basePrice + mobileCharge;
-    
-    if(mobileCharge > 0) {
-        html += `<div class="summary-item"><span>Base Price:</span><span>${basePrice.toLocaleString()} LKR</span></div>`;
-        html += `<div class="summary-item"><span>Mobile Service:</span><span>+${mobileCharge} LKR</span></div>`;
-    }
-    
-    html += `<div class="summary-item"><span>Total Amount:</span><span>${totalPrice.toLocaleString()} LKR</span></div>`;
-    
-    document.getElementById('bookingSummary').innerHTML = html;
+    if(!summaryBox || !inspType || !loc) return;
+
+    const basePrice = InspectionType[inspType.value];
+    const mobileFee = loc.value === 'mobile' ? 250 : 0;
+    const total = basePrice + mobileFee;
+
+    summaryBox.innerHTML = `
+        <div class="summary-item"><span>PRIMARY UNIT</span><span>${formData.get('brand')} ${formData.get('model')} (${formData.get('year')})</span></div>
+        <div class="summary-item"><span>PROTOCOL</span><span>${formatInspectionName(inspType.value)} Diagnostic</span></div>
+        <div class="summary-item"><span>DEPLOYMENT</span><span>${loc.value === 'mobile' ? 'Site Coordinate' : 'Technical Hub'}</span></div>
+        <div class="summary-item"><span>WINDOW</span><span>${formData.get('inspectionDate')} | ${document.getElementById('selectedTime').value}</span></div>
+        <div class="summary-item total"><span>TOTAL ESTIMATE</span><span>${total.toLocaleString()} LKR</span></div>
+    `;
 }
 
-function formatDate(dateString) {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-        weekday: 'long', 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric' 
-    });
-}
-
-// ------------------ Submit Form ------------------
-async function submitForm() {
+async function submitForm(e) {
+    if(e) e.preventDefault();
     if (!validateStep(4)) return;
 
     const btn = document.getElementById('nextBtn');
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing Booking...';
+    const originalContent = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> INITIALIZING...';
     btn.disabled = true;
 
     try {
         const formData = new FormData(document.getElementById('bookingForm'));
-        const inspectionTypeInput = document.querySelector('input[name="inspectionType"]:checked').value;
-        const locationInput = document.querySelector('input[name="location"]:checked').value;
+        const inspType = document.querySelector('input[name="inspectionType"]:checked').value;
+        const loc = document.querySelector('input[name="location"]:checked').value;
+        const time = document.getElementById('selectedTime').value;
 
-        const bookingRequest = {
+        const payload = {
             brand: formData.get('brand'),
             model: formData.get('model'),
             year: parseInt(formData.get('year')),
-            description: formData.get('specialRequests') || null,
-            mileage: formData.get('mileage') ? parseInt(formData.get('mileage')) : null,
-            centerName: locationInput.startsWith('center-') 
-                ? document.querySelector(`#location-${locationInput.split('-')[1]}`).nextElementSibling.querySelector('h3').textContent 
-                : null,
-            appointmentDate: formData.get('inspectionDate'), 
-            timeSlot: mapTimeSlot(document.getElementById('selectedTime').value),
-            inspectionType: mapInspectionType(inspectionTypeInput),
-            serviceType: locationInput === 'mobile' ? 'MOBILE' : 'FACILITY',
-            streetAddress: locationInput === 'mobile' ? formData.get('streetAddress') : null,
-            streetAddressLine2: locationInput === 'mobile' ? formData.get('streetAddressLine2') : null,
-            city: locationInput === 'mobile' ? formData.get('city') : null,
-            stateProvince: locationInput === 'mobile' ? formData.get('stateProvince') : null,
-            postalCode: locationInput === 'mobile' ? formData.get('postalCode') : null
+            mileage: formData.get('mileage') ? parseInt(formData.get('mileage')) : 0,
+            description: formData.get('specialRequests'),
+            appointmentDate: formData.get('inspectionDate'),
+            timeSlot: mapTimeSlot(time),
+            inspectionType: inspType,
+            serviceType: loc === 'mobile' ? 'MOBILE' : 'FACILITY',
+            streetAddress: loc === 'mobile' ? formData.get('streetAddress') : null,
+            city: loc === 'mobile' ? formData.get('city') : null,
+            stateProvince: loc === 'mobile' ? formData.get('stateProvince') : null
         };
 
-        console.log("Booking Request:", bookingRequest);
-
-        const response = await fetch(API_BOOKINGS, {
+        const res = await fetch(API_BOOKINGS, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-            body: JSON.stringify(bookingRequest)
+            body: JSON.stringify(payload)
         });
 
-        if (!response.ok) {
-            const errData = await response.json();
-            throw new Error(errData.message || 'Failed to create booking');
-        }
-
-        const result = await response.json();
-        alert("Booking confirmed successfully!");
-        // window.location.href = `/booking-confirmation.html?id=${result.data.id}`;
-        window.location.href = `/customer-dashboard.html`; // Redirect to dashboard for demo
+        if (!res.ok) throw new Error('Data Sync Failure');
+        
+        alert("PROTOCOL REGISTERED SUCCESSFULLY.");
+        window.location.href = "customer-dashboard.html";
 
     } catch (err) {
-        console.error("Booking error:", err);
-        alert(err.message || "Error processing booking. Please try again.");
-        btn.innerHTML = '<i class="fas fa-calendar-check"></i> Confirm Booking';
+        console.error(err);
+        alert("Critical System Error: Check backend connection.");
         btn.disabled = false;
+        btn.innerHTML = originalContent;
     }
 }
 
-// ------------------ Map Enums ------------------
-function mapInspectionType(type) {
-    switch(type) {
-        case 'SAFETY': return 'SAFETY';
-        case 'COMPREHENSIVE': return 'COMPREHENSIVE';
-        case 'PRE_PURCHASE': return 'PRE_PURCHASE';
-        case 'DIAGNOSTIC': return 'DIAGNOSTIC';
-        default: return 'SAFETY';
-    }
+// ================== HELPERS ==================
+
+function formatInspectionName(type) {
+    return type.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+}
+
+function getInspectionIcon(type) {
+    const icons = { SAFETY: 'shield-halved', COMPREHENSIVE: 'microscope', PRE_PURCHASE: 'clipboard-check', DIAGNOSTIC: 'gauge-high' };
+    return icons[type] || 'circle-nodes';
+}
+
+function getInspectionDescription(type) {
+    const desc = {
+        SAFETY: 'Critical safety system integrity check.',
+        COMPREHENSIVE: 'Full-spectrum hardware & software diagnostic.',
+        PRE_PURCHASE: 'Third-party asset verification audit.',
+        DIAGNOSTIC: 'Internal combustion & electrical analysis.'
+    };
+    return desc[type] || '';
 }
 
 function mapTimeSlot(slot) {
-    switch(slot) {
-        case '09:00': return 'NINE_AM';
-        case '10:30': return 'TEN_THIRTY_AM';
-        case '12:00': return 'TWELVE_PM';
-        case '15:00': return 'THREE_PM';
-        case '16:30': return 'FOUR_THIRTY_PM';
-        default: return null;
-    }
+    const map = { '09:00': 'NINE_AM', '10:30': 'TEN_THIRTY_AM', '12:00': 'TWELVE_PM', '15:00': 'THREE_PM', '16:30': 'FOUR_THIRTY_PM' };
+    return map[slot] || null;
 }

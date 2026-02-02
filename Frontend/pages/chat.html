@@ -572,42 +572,6 @@
             margin-top: 0.5rem;
         }
 
-        /* Debug panel */
-        .debug-panel {
-            background: #fefce8;
-            border: 1px solid #fef08a;
-            border-radius: 8px;
-            padding: 1rem;
-            margin: 1rem;
-            font-size: 0.85rem;
-        }
-
-        .debug-toggle {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            cursor: pointer;
-        }
-
-        .debug-content {
-            margin-top: 1rem;
-            display: none;
-        }
-
-        .debug-content.show {
-            display: block;
-        }
-
-        .request-info {
-            background: #f1f5f9;
-            border-radius: 4px;
-            padding: 0.75rem;
-            font-family: monospace;
-            font-size: 0.8rem;
-            overflow-x: auto;
-            margin-top: 0.5rem;
-        }
-
         /* Notification toast */
         .notification-toast {
             position: fixed;
@@ -658,6 +622,79 @@
             line-height: 1.4;
         }
 
+        /* User List Styles */
+        .user-list-section {
+            border-top: 1px solid var(--border);
+            padding: 1rem;
+        }
+
+        .user-list-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--gray-600);
+            margin-bottom: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .user-item {
+            padding: 0.8rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .user-item:hover {
+            background-color: var(--gray-100);
+        }
+
+        .user-item.active {
+            background-color: var(--industrial-light);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--industrial-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: var(--white);
+            font-size: 0.8rem;
+        }
+
+        .user-details {
+            flex: 1;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: var(--gray-800);
+            margin-bottom: 0.2rem;
+        }
+
+        .user-role {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+        }
+
+        .user-status {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--gray-400);
+        }
+
+        .user-status.online {
+            background: #10b981;
+        }
+
         /* Responsive */
         @media (max-width: 992px) {
             .chat-container {
@@ -696,6 +733,28 @@
                 max-width: 85%;
             }
         }
+
+        /* //////////// */
+        .message-bubble.sent {
+            background: var(--whatsapp-green);
+            color: var(--gray-800);
+            border-bottom-right-radius: 3px;
+            float: right;
+            clear: both;
+            margin-left: auto;
+            margin-right: 0;
+        }
+
+        .message-bubble.received {
+            background: var(--white);
+            color: var(--gray-800);
+            border-bottom-left-radius: 3px;
+            box-shadow: var(--shadow);
+            float: left;
+            clear: both;
+            margin-left: 0;
+            margin-right: auto;
+        }
     </style>
 </head>
 <body>
@@ -707,7 +766,7 @@
                     <i class="fas fa-car"></i>
                     <span>AutoCert</span>
                 </a>
-                <a href="vehicle-details.html" class="back-btn">
+                <a href="customer-dashboard.html" class="back-btn">
                     <i class="fas fa-arrow-left"></i>
                     Back to Vehicle
                 </a>
@@ -721,7 +780,7 @@
             <!-- Conversation List -->
             <div class="chat-conv-list">
                 <div class="chat-conv-header">
-                    <span><i class="fas fa-comments me-2"></i>Conversations</span>
+                    <span><i class="fas fa-comments me-2"></i>Chats</span>
                     <button class="chat-header-btn" id="refreshConvsBtn" title="Refresh">
                         <i class="fas fa-rotate"></i>
                     </button>
@@ -731,6 +790,16 @@
                 </div>
                 <div class="chat-conv-items" id="chatConversations">
                     <!-- Conversations will be loaded here -->
+                </div>
+                
+                <!-- All Users List -->
+                <div class="user-list-section">
+                    <div class="user-list-title">
+                        <i class="fas fa-users me-1"></i>All Users
+                    </div>
+                    <div id="allUsersList">
+                        <!-- All registered users will be loaded here -->
+                    </div>
                 </div>
             </div>
 
@@ -770,28 +839,6 @@
                     <p>The chat feature is currently experiencing issues connecting to the server. Using demo mode.</p>
                     <div class="error-details" id="errorDetails">
                         Error details will appear here
-                    </div>
-                </div>
-                
-                <!-- Debug Panel -->
-                <div class="debug-panel">
-                    <div class="debug-toggle" id="debugToggle">
-                        <div class="debug-title">
-                            <i class="fas fa-bug"></i>
-                            Debug Information
-                        </div>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="debug-content" id="debugContent">
-                        <p><strong>Current Status:</strong> <span id="debugStatus">Initializing...</span></p>
-                        <p><strong>WebSocket Connection:</strong> <span id="websocketStatus">Not connected</span></p>
-                        <p><strong>Last Message Sent:</strong> <span id="lastMessageStatus">None</span></p>
-                        <div class="request-info" id="requestInfo">
-                            No requests yet
-                        </div>
-                        <button class="btn btn-sm btn-outline-primary mt-2" id="clearDebugBtn">
-                            <i class="fas fa-trash"></i> Clear Debug
-                        </button>
                     </div>
                 </div>
 
@@ -841,6 +888,7 @@
 
             const API_BASE = "http://localhost:8080/api";
             const CHAT_API = `${API_BASE}/chat`;
+            const USER_API = `${API_BASE}/users`;
             const WS_URL = "http://localhost:8080/ws";
 
             // Get URL parameters
@@ -854,6 +902,7 @@
             console.log("URL Parameters:", { sellerId, sellerName, sellerAvatar, vehicleId, vehicleTitle });
 
             const convsDiv = document.getElementById('chatConversations');
+            const allUsersList = document.getElementById('allUsersList');
             const msgsDiv = document.getElementById('chatMessages');
             const chatInputBar = document.getElementById('chatInputBar');
             const chatActiveTitle = document.getElementById('chatActiveTitle');
@@ -863,13 +912,7 @@
             const imagePreviewContainer = document.getElementById('imagePreviewContainer');
             const apiErrorPanel = document.getElementById('apiErrorPanel');
             const errorDetails = document.getElementById('errorDetails');
-            const debugContent = document.getElementById('debugContent');
             const chatSendBtn = document.getElementById('chatSendBtn');
-            const debugStatus = document.getElementById('debugStatus');
-            const websocketStatus = document.getElementById('websocketStatus');
-            const lastMessageStatus = document.getElementById('lastMessageStatus');
-            const requestInfo = document.getElementById('requestInfo');
-            const debugToggle = document.getElementById('debugToggle');
             
             let current = { vehicleId: null, sellerId: null, vehicleTitle: '', sellerName: '' };
             let stompClient = null;
@@ -877,11 +920,11 @@
             let reconnectAttempts = 0;
             const maxReconnectAttempts = 5;
             let isWebSocketConnected = false;
-            let requestHistory = [];
 
             const currentUserId = Number(localStorage.getItem('userId')) || 999;
             const currentUserName = localStorage.getItem('userName') || 'You';
 
+            // Mock data for demo
             const mockConversations = [
                 {
                     vehicleId: 1,
@@ -927,6 +970,18 @@
                 }
             ];
 
+            // Mock users data
+            const mockUsers = [
+                { id: 1, name: "Chamod Ananda", role: "Seller", online: true },
+                { id: 2, name: "Sarah Johnson", role: "Buyer", online: true },
+                { id: 3, name: "Mike Wilson", role: "Seller", online: false },
+                { id: 4, name: "Emily Davis", role: "Buyer", online: true },
+                { id: 5, name: "John Smith", role: "Seller", online: false },
+                { id: 6, name: "Lisa Brown", role: "Buyer", online: true },
+                { id: 7, name: "David Miller", role: "Seller", online: true },
+                { id: 8, name: "Anna Taylor", role: "Buyer", online: false }
+            ];
+
             function truncate(str, len) { 
                 return str && str.length > len ? str.slice(0, len - 1) + '…' : str || ''; 
             }
@@ -950,37 +1005,6 @@
                 }, 5000);
             }
 
-            function updateDebugStatus(message) {
-                debugStatus.textContent = message;
-                addToRequestHistory('STATUS', message);
-            }
-
-            function updateWebSocketStatus(message) {
-                websocketStatus.textContent = message;
-                addToRequestHistory('WEBSOCKET', message);
-            }
-
-            function updateLastMessageStatus(message) {
-                lastMessageStatus.textContent = message;
-            }
-
-            function addToRequestHistory(type, message) {
-                const timestamp = new Date().toLocaleTimeString();
-                requestHistory.push({ type, message, timestamp });
-                
-                if (requestHistory.length > 10) {
-                    requestHistory = requestHistory.slice(-10);
-                }
-                
-                updateRequestInfo();
-            }
-
-            function updateRequestInfo() {
-                requestInfo.innerHTML = requestHistory.map(item => 
-                    `<div><strong>[${item.timestamp}] ${item.type}:</strong> ${item.message}</div>`
-                ).join('');
-            }
-
             async function apiCall(url, options = {}) {
                 const defaultOptions = {
                     headers: {
@@ -989,9 +1013,6 @@
                         ...options.headers
                     }
                 };
-                
-                updateDebugStatus(`Calling API: ${url}`);
-                addToRequestHistory('API_REQUEST', `GET ${url}`);
                 
                 try {
                     const response = await fetch(url, { ...defaultOptions, ...options });
@@ -1007,11 +1028,9 @@
                     }
                     
                     const data = await response.json();
-                    addToRequestHistory('API_RESPONSE', `SUCCESS: ${JSON.stringify(data).substring(0, 100)}...`);
                     return data;
                 } catch (error) {
                     console.error('API call failed:', error);
-                    addToRequestHistory('API_ERROR', error.message);
                     
                     errorDetails.textContent = `${error.message}: ${url}`;
                     apiErrorPanel.style.display = 'block';
@@ -1026,7 +1045,6 @@
                 }
 
                 updateConnectionStatus('connecting');
-                updateWebSocketStatus('Connecting...');
                 
                 const socket = new SockJS(WS_URL);
                 stompClient = Stomp.over(socket);
@@ -1040,12 +1058,10 @@
                     reconnectAttempts = 0;
                     isWebSocketConnected = true;
                     updateConnectionStatus('connected');
-                    updateWebSocketStatus('Connected');
                     chatSendBtn.disabled = false;
                     
                     chatSubscription = stompClient.subscribe(`/user/${currentUserId}/queue/messages`, function(message) {
                         const receivedMessage = JSON.parse(message.body);
-                        addToRequestHistory('WEBSOCKET_MSG', `Received: ${JSON.stringify(receivedMessage)}`);
                         
                         if (current.vehicleId === receivedMessage.vehicleId && 
                             (current.sellerId === receivedMessage.senderId || current.sellerId === receivedMessage.receiverId)) {
@@ -1056,7 +1072,6 @@
                     
                     stompClient.subscribe(`/user/${currentUserId}/queue/errors`, function(error) {
                         const errorData = JSON.parse(error.body);
-                        addToRequestHistory('WEBSOCKET_ERROR', `Error: ${JSON.stringify(errorData)}`);
                         showNotification('Failed to send message: ' + errorData.message, 'error');
                     });
                     
@@ -1067,7 +1082,6 @@
                     console.error('STOMP error: ' + error);
                     isWebSocketConnected = false;
                     updateConnectionStatus('disconnected');
-                    updateWebSocketStatus('Disconnected');
                     chatSendBtn.disabled = true;
                     
                     if (reconnectAttempts < maxReconnectAttempts) {
@@ -1218,6 +1232,62 @@
                 });
             }
 
+            async function loadAllUsers() {
+                allUsersList.innerHTML = '<div class="p-2 text-center text-muted small">Loading users...</div>';
+                try {
+                    const users = await apiCall(`${USER_API}/all`);
+                    renderUsers(users);
+                } catch(e) {
+                    console.error('Failed to load users:', e);
+                    loadMockUsers();
+                }
+            }
+
+            function loadMockUsers() {
+                // Filter out current user from the list
+                const filteredUsers = mockUsers.filter(user => user.id !== currentUserId);
+                renderUsers(filteredUsers);
+            }
+
+            function renderUsers(users) {
+                allUsersList.innerHTML = '';
+                
+                if (users.length === 0) {
+                    allUsersList.innerHTML = '<div class="p-3 text-center text-muted small">No users found</div>';
+                    return;
+                }
+                
+                users.forEach((user, index) => {
+                    const userItem = document.createElement('div');
+                    userItem.className = 'user-item';
+                    if (current.sellerId === user.id) userItem.classList.add('active');
+                    
+                    const initials = user.name.split(' ').map(n => n[0]).join('').toUpperCase();
+                    
+                    userItem.innerHTML = `
+                        <div class="user-avatar">${initials}</div>
+                        <div class="user-details">
+                            <div class="user-name">${user.name}</div>
+                            <div class="user-role">${user.role}</div>
+                        </div>
+                        <div class="user-status ${user.online ? 'online' : ''}"></div>
+                    `;
+                    
+                    userItem.onclick = () => startNewChat(user.id, user.name);
+                    allUsersList.appendChild(userItem);
+                    
+                    setTimeout(() => userItem.style.opacity = '1', index * 50);
+                });
+            }
+
+            function startNewChat(userId, userName) {
+                // For new chats, we use a generic vehicle ID and title
+                const newVehicleId = 999; // Special ID for direct user-to-user chats
+                const newVehicleTitle = "Direct Message";
+                
+                openConversation(newVehicleId, userId, newVehicleTitle, userName);
+            }
+
             function formatDay(ts) { 
                 const d = new Date(ts); 
                 const today = new Date();
@@ -1233,7 +1303,6 @@
                 if (!current.vehicleId || !current.sellerId) return;
                 
                 try {
-                    updateDebugStatus(`Loading messages for vehicle ${current.vehicleId} and seller ${current.sellerId}`);
                     const messages = await apiCall(`${CHAT_API}/messages/${current.vehicleId}/${current.sellerId}`);
                     
                     renderMessages(messages);
@@ -1388,8 +1457,6 @@
                 
                 setTimeout(() => messageEl.style.opacity = '1', 10);
                 msgsDiv.scrollTop = msgsDiv.scrollHeight;
-                
-                updateLastMessageStatus(`Message displayed: ${message.content ? message.content.substring(0, 30) + '...' : 'Image message'}`);
             }
 
             async function sendMessage() {
@@ -1414,7 +1481,6 @@
                     };
                     
                     displayMessage(tempMessage);
-                    updateLastMessageStatus(`Temporary message displayed: ${content.substring(0, 30)}...`);
                 }
                 
                 chatInput.disabled = true;
@@ -1429,9 +1495,6 @@
                         if (content) formData.append('content', content);
                         formData.append('image', imageFile);
                         
-                        updateDebugStatus(`Sending image message to ${CHAT_API}/send-image`);
-                        addToRequestHistory('SEND_IMAGE', `Vehicle: ${current.vehicleId}, Receiver: ${current.sellerId}`);
-                        
                         const response = await fetch(`${CHAT_API}/send-image`, {
                             method: 'POST',
                             headers: {
@@ -1445,7 +1508,6 @@
                         }
                         
                         const responseData = await response.json();
-                        addToRequestHistory('SEND_SUCCESS', `Image message sent: ${JSON.stringify(responseData)}`);
                         
                         imageInput.value = '';
                         clearImagePreview();
@@ -1456,9 +1518,6 @@
                             receiverId: parseInt(current.sellerId),
                             content: content
                         };
-                        
-                        updateDebugStatus(`Sending via HTTP: ${content.substring(0, 30)}...`);
-                        addToRequestHistory('SEND_HTTP', JSON.stringify(messageData));
                         
                         const response = await fetch(`${CHAT_API}/send`, {
                             method: 'POST',
@@ -1475,7 +1534,6 @@
                         }
                         
                         const responseData = await response.json();
-                        addToRequestHistory('SEND_SUCCESS', `Message sent: ${JSON.stringify(responseData)}`);
                         
                         if (isWebSocketConnected && stompClient) {
                             const wsMessageData = {
@@ -1486,9 +1544,7 @@
                                 timestamp: new Date().toISOString()
                             };
                             
-                            updateDebugStatus(`Also sending via WebSocket for real-time delivery`);
-                            addToRequestHistory('SEND_WS', JSON.stringify(wsMessageData));
-                                            stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(wsMessageData));
+                            stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(wsMessageData));
                         }
                     }
                     
@@ -1500,7 +1556,6 @@
                 } catch(e) {
                     console.error('Send error:', e);
                     showNotification('Failed to send message. Please try again.', 'error');
-                    addToRequestHistory('SEND_ERROR', e.message);
                     
                     if (tempMessage) {
                         const messages = msgsDiv.querySelectorAll('.message-bubble');
@@ -1566,6 +1621,7 @@
                 chatInputBar.style.display = 'flex';
                 
                 document.querySelectorAll('.chat-conv-item').forEach(i => i.classList.remove('active'));
+                document.querySelectorAll('.user-item').forEach(i => i.classList.remove('active'));
                 
                 loadMessages();
                 chatInput.focus();
@@ -1574,11 +1630,20 @@
                     initWebSocket();
                 }
                 
-                // Highlight the active conversation
+                // Highlight the active conversation/user
                 setTimeout(() => {
+                    // Highlight in conversations
                     document.querySelectorAll('.chat-conv-item').forEach(i => {
                         const title = i.querySelector('.conv-title').textContent;
                         if (title.includes(sellerName)) {
+                            i.classList.add('active');
+                        }
+                    });
+                    
+                    // Highlight in users list
+                    document.querySelectorAll('.user-item').forEach(i => {
+                        const name = i.querySelector('.user-name').textContent;
+                        if (name === sellerName) {
                             i.classList.add('active');
                         }
                     });
@@ -1596,9 +1661,11 @@
             
             function filterConversations() {
                 const searchTerm = document.getElementById('convSearchInput').value.toLowerCase();
-                const items = document.querySelectorAll('.chat-conv-item');
+                const convItems = document.querySelectorAll('.chat-conv-item');
+                const userItems = document.querySelectorAll('.user-item');
                 
-                items.forEach(item => {
+                // Search in conversations
+                convItems.forEach(item => {
                     const title = item.querySelector('.conv-title').textContent.toLowerCase();
                     const preview = item.querySelector('.conv-preview').textContent.toLowerCase();
                     
@@ -1608,10 +1675,25 @@
                         item.style.display = 'none';
                     }
                 });
+                
+                // Search in users list
+                userItems.forEach(item => {
+                    const name = item.querySelector('.user-name').textContent.toLowerCase();
+                    const role = item.querySelector('.user-role').textContent.toLowerCase();
+                    
+                    if (name.includes(searchTerm) || role.includes(searchTerm)) {
+                        item.style.display = 'flex';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
             }
 
             // Event Listeners
-            document.getElementById('refreshConvsBtn').addEventListener('click', loadConversations);
+            document.getElementById('refreshConvsBtn').addEventListener('click', function() {
+                loadConversations();
+                loadAllUsers();
+            });
             document.getElementById('chatSendBtn').addEventListener('click', sendMessage);
             document.getElementById('chatImageInput').addEventListener('change', handleImageSelection);
             document.getElementById('convSearchInput').addEventListener('input', filterConversations);
@@ -1619,16 +1701,6 @@
                 if (current.vehicleId && current.vehicleId !== 999) {
                     window.open(`vehicle-details.html?id=${current.vehicleId}`, '_blank');
                 }
-            });
-            document.getElementById('clearDebugBtn').addEventListener('click', function() {
-                requestHistory = [];
-                updateRequestInfo();
-            });
-            debugToggle.addEventListener('click', function() {
-                debugContent.classList.toggle('show');
-                const icon = debugToggle.querySelector('.fa-chevron-down');
-                icon.classList.toggle('fa-chevron-down');
-                icon.classList.toggle('fa-chevron-up');
             });
             
             chatInput.addEventListener('keydown', e => { 
@@ -1643,8 +1715,8 @@
                 this.style.height = Math.min(this.scrollHeight, 120) + 'px';
             });
 
-            updateDebugStatus('Application initialized');
             loadConversations();
+            loadAllUsers();
             initWebSocket();
 
             window.addEventListener('beforeunload', () => {

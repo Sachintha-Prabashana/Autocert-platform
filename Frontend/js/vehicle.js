@@ -183,68 +183,7 @@ document.addEventListener("DOMContentLoaded", function () {
 // -------------------------
 // Validate Current Step with SweetAlert
 // -------------------------
-function validateCurrentStep() {
-    const province = document.getElementById("province").value;
-    const district = document.getElementById("district").value;
-    const city = document.getElementById("city").value;
-
-    if (!province || !district || !city) {
-        Swal.fire({
-            icon: 'warning',
-            title: 'Incomplete Information',
-            text: 'Please select province, district, and city before proceeding.',
-            confirmButtonText: 'OK',
-            confirmButtonColor: '#f59e0b'
-        });
-        return false;
-    }
-
-    // Additional validation can be added here
-    const make = document.getElementById("make").value;
-    const model = document.getElementById("model").value;
-    const year = document.getElementById("year").value;
-    const price = document.getElementById("price").value;
-
-    if (!make || !model || !year || !price) {
-        Swal.fire({
-            icon: 'warning',
-            title: 'Required Fields Missing',
-            html: 'Please fill in all required fields:<br/><strong>Make, Model, Year, and Price</strong>',
-            confirmButtonText: 'OK',
-            confirmButtonColor: '#f59e0b'
-        });
-        return false;
-    }
-
-    // Validate year range
-    const currentYear = new Date().getFullYear();
-    const vehicleYear = parseInt(year);
-    if (vehicleYear < 1900 || vehicleYear > currentYear + 1) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Invalid Year',
-            text: `Please enter a valid year between 1900 and ${currentYear + 1}.`,
-            confirmButtonText: 'OK',
-            confirmButtonColor: '#ef4444'
-        });
-        return false;
-    }
-
-    // Validate price
-    const vehiclePrice = parseFloat(price);
-    if (vehiclePrice <= 0) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Invalid Price',
-            text: 'Please enter a valid price greater than 0.',
-            confirmButtonText: 'OK',
-            confirmButtonColor: '#ef4444'
-        });
-        return false;
-    }
-
-    return true;
-}
+// validateCurrentStep is handled by sell.js (which is loaded after this script)
 
 // -------------------------
 // Show Step (for multi-step form)

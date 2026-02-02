@@ -2,19 +2,47 @@
         // Location data structure
         const locationData = {
             'western': {
-                'colombo': ['Colombo', 'Dehiwala-Mount Lavinia', 'Moratuwa', 'Sri Jayawardenepura Kotte', 'Maharagama', 'Kesbewa', 'Padukka'],
-                'gampaha': ['Gampaha', 'Negombo', 'Katunayake', 'Minuwangoda', 'Wattala', 'Kelaniya', 'Ja-Ela', 'Kadawatha'],
-                'kalutara': ['Kalutara', 'Panadura', 'Horana', 'Beruwala', 'Aluthgama', 'Matugama', 'Bandaragama']
+                'colombo': ['Colombo', 'Dehiwala-Mount Lavinia', 'Moratuwa', 'Sri Jayawardenepura Kotte', 'Maharagama', 'Kesbewa', 'Padukka', 'Homagama', 'Piliyandala'],
+                'gampaha': ['Gampaha', 'Negombo', 'Katunayake', 'Minuwangoda', 'Wattala', 'Kelaniya', 'Ja-Ela', 'Kadawatha', 'Divulapitiya'],
+                'kalutara': ['Kalutara', 'Panadura', 'Horana', 'Beruwala', 'Aluthgama', 'Matugama', 'Bandaragama', 'Wadduwa']
             },
             'central': {
-                'kandy': ['Kandy', 'Gampola', 'Nawalapitiya', 'Wattegama', 'Harispattuwa'],
-                'matale': ['Matale', 'Dambulla', 'Sigiriya', 'Galewela'],
-                'nuwara-eliya': ['Nuwara Eliya', 'Hatton', 'Nallathanniya', 'Ginigathena']
+                'kandy': ['Kandy', 'Gampola', 'Nawalapitiya', 'Wattegama', 'Harispattuwa', 'Peradeniya', 'Katugastota'],
+                'matale': ['Matale', 'Dambulla', 'Sigiriya', 'Galewela', 'Ukuwela'],
+                'nuwara-eliya': ['Nuwara Eliya', 'Hatton', 'Nallathanniya', 'Ginigathena', 'Talawakele']
             },
             'southern': {
-                'galle': ['Galle', 'Hikkaduwa', 'Bentota', 'Ambalangoda', 'Elpitiya'],
-                'matara': ['Matara', 'Weligama', 'Mirissa', 'Akuressa'],
-                'hambantota': ['Hambantota', 'Tangalle', 'Tissamaharama']
+                'galle': ['Galle', 'Hikkaduwa', 'Bentota', 'Ambalangoda', 'Elpitiya', 'Karapitiya'],
+                'matara': ['Matara', 'Weligama', 'Mirissa', 'Akuressa', 'Dikwella', 'Kamburupitiya'],
+                'hambantota': ['Hambantota', 'Tangalle', 'Tissamaharama', 'Ambalantota', 'Beliatta']
+            },
+            'northern': {
+                'jaffna': ['Jaffna', 'Chavakachcheri', 'Point Pedro', 'Nallur'],
+                'kilinochchi': ['Kilinochchi', 'Paranthan'],
+                'mannar': ['Mannar', 'Talaimannar'],
+                'vavuniya': ['Vavuniya', 'Cheddikulam'],
+                'mullaitivu': ['Mullaitivu', 'Puthukkudiyiruppu']
+            },
+            'eastern': {
+                'trincomalee': ['Trincomalee', 'Mutur', 'Kinniya', 'Kantale'],
+                'batticaloa': ['Batticaloa', 'Kattankudy', 'Eravur'],
+                'ampara': ['Ampara', 'Kalmunai', 'Sainthamaruthu', 'Akkaraipattu']
+            },
+            'north-western': {
+                'kurunegala': ['Kurunegala', 'Kuliyapitiya', 'Pannala', 'Narammala', 'Wariyapola'],
+                'puttalam': ['Puttalam', 'Chilaw', 'Wennappuwa', 'Dankotuwa', 'Marawila']
+            },
+            'north-central': {
+                'anuradhapura': ['Anuradhapura', 'Kekirawa', 'Thambuttegama', 'Mihintale', 'Eppawala'],
+                'polonnaruwa': ['Polonnaruwa', 'Hingurakgoda', 'Medirigiriya', 'Kaduruwela']
+            },
+            'uva': {
+                'badulla': ['Badulla', 'Bandarawela', 'Haputale', 'Welimada', 'Ella', 'Mahiyanganaya'],
+                'monaragala': ['Monaragala', 'Wellawaya', 'Buttala', 'Kataragama', 'Bibile']
+            },
+            'sabaragamuwa': {
+                'ratnapura': ['Ratnapura', 'Balangoda', 'Embilipitiya', 'Pelmadulla', 'Eheliyagoda'],
+                'kegalle': ['Kegalle', 'Mawanella', 'Warakapola', 'Rambukkana', 'Ruwanwella']
             }
         };
 
@@ -122,18 +150,90 @@
         }
 
         function validateCurrentStep() {
+            // Step 1: Location Validation
+            if (currentStep === 1) {
+                const province = document.getElementById("province").value;
+                const district = document.getElementById("district").value;
+                const city = document.getElementById("city").value;
+
+                if (!province || !district || !city) {
+                     Swal.fire({
+                        icon: 'warning',
+                        title: 'Incomplete Information',
+                        text: 'Please select province, district, and city before proceeding.',
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#f59e0b'
+                    });
+                    return false;
+                }
+            }
+
+            // Step 2: Basic Info Validation
+            if (currentStep === 2) {
+                const make = document.getElementById("make").value;
+                const model = document.getElementById("model").value;
+                const year = document.getElementById("year").value;
+                
+                if (!make || !model || !year) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Required Fields Missing',
+                        text: 'Please fill in Make, Model, and Year.',
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#f59e0b'
+                    });
+                    return false;
+                }
+                
+                // Validate year range
+                const currentYear = new Date().getFullYear();
+                const vehicleYear = parseInt(year);
+                if (vehicleYear < 1900 || vehicleYear > currentYear + 1) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Invalid Year',
+                        text: `Please enter a valid year between 1900 and ${currentYear + 1}.`,
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#ef4444'
+                    });
+                    return false;
+                }
+            }
+
+            // Step 6: Price Validation
+            if (currentStep === 6) {
+                const price = document.getElementById("price").value;
+                 if (!price || parseFloat(price) <= 0) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Invalid Price',
+                        text: 'Please enter a valid price greater than 0.',
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#ef4444'
+                    });
+                    return false;
+                }
+            }
+            
+            // Generic check for other required fields in the current step
             const currentStepElement = document.querySelector(`.step-content[data-step="${currentStep}"]`);
             const requiredInputs = currentStepElement.querySelectorAll('input[required], select[required]');
             
             let isValid = true;
-            requiredInputs.forEach(input => {
+            for (let input of requiredInputs) {
                 if (!input.value.trim()) {
+                     Swal.fire({
+                        icon: 'warning',
+                        title: 'Required Field',
+                        text: `Please fill in the ${input.previousElementSibling.textContent.replace(' *', '')} field.`,
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#f59e0b'
+                    });
                     input.focus();
-                    alert(`Please fill in the ${input.previousElementSibling.textContent.replace(' *', '')} field.`);
                     isValid = false;
-                    return false;
+                    break; 
                 }
-            });
+            }
             
             return isValid;
         }
@@ -195,25 +295,8 @@
             e.target.value = value;
         });
 
-        // Form submission
-        document.getElementById('vehicleForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            
-            if (validateCurrentStep()) {
-                // Hide current step
-                document.querySelector(`.step-content[data-step="${currentStep}"]`).classList.remove('active');
-                document.querySelector(`.step[data-step="${currentStep}"]`).classList.add('completed');
-                
-                // Show success message
-                document.querySelector('.step-content[data-step="success"]').classList.add('active');
-                
-                // Scroll to top
-                window.scrollTo(0, 0);
-                
-                // Here you would normally send data to server
-                console.log('Form submitted successfully');
-            }
-        });
+        // Form submission is handled by vehicle.js
+        // Conflicting submit handler removed
 
         // Initialize feature items
         document.querySelectorAll('.feature-item').forEach(item => {

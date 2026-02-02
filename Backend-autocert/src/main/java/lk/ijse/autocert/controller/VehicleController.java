@@ -26,10 +26,10 @@ public class VehicleController {
     public VehicleResponseDTO addVehicle(@RequestBody VehicleRequestDTO dto,
                                          @AuthenticationPrincipal org.springframework.security.core.userdetails.User principal) {
 
-        // 👇 Extract email from logged-in user
+        // Extract email from logged-in user
         String email = principal.getUsername();
 
-        // 👇 Find user by email
+        // Find user by email
         UserDTO owner = userService.getUserByEmail(email);
 
         return vehicleService.saveVehicle(dto, owner.getId());

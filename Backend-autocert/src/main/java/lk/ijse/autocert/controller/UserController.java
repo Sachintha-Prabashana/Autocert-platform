@@ -2,6 +2,7 @@ package lk.ijse.autocert.controller;
 
 import lk.ijse.autocert.dto.*;
 import lk.ijse.autocert.entity.User;
+import lk.ijse.autocert.service.impl.ChatServiceImpl;
 import lk.ijse.autocert.service.impl.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -23,6 +24,7 @@ import java.util.Map;
 public class UserController {
 
     private final UserServiceImpl userService;  // Your service layer
+    private final ChatServiceImpl chatService;
 
 
     @GetMapping("/me")
@@ -55,7 +57,7 @@ public class UserController {
 
 
         } catch (RuntimeException e) {
-            // ❌ failure response
+            // failure response
             return ResponseEntity.badRequest().body(
                     new ApiResponse(400, e.getMessage(), null)
             );
@@ -87,6 +89,14 @@ public class UserController {
     @GetMapping
     public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
+    }
+
+
+    @GetMapping("/all")
+    public List<ChatContactDTO> getAllUsers(Authentication authentication) {
+        // Get the current logged-in user from SecurityContext
+        String email = authentication.getName(); // from JWT / login principal
+        return chatService.getAllUsersExcluding(email);
     }
 
 

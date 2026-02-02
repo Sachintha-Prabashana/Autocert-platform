@@ -28,7 +28,7 @@
         /* Sidebar Styles */
         .sidebar {
             width: 280px;
-            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
             color: white;
             transition: all 0.3s ease;
             position: relative;
@@ -93,7 +93,7 @@
         .nav-link.active {
             background: rgba(255, 255, 255, 0.1);
             color: white;
-            border-left-color: #34d399;
+            border-left-color: #60a5fa;
         }
 
         .nav-link i {
@@ -229,7 +229,7 @@
         .user-avatar {
             width: 40px;
             height: 40px;
-            background: linear-gradient(135deg, #10b981, #059669);
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -854,6 +854,49 @@
 }
 
 
+
+    /* Highlighting Styles */
+    .highlight-customer {
+        font-weight: 600;
+        color: #1f2937;
+    }
+
+    .highlight-vehicle {
+        font-weight: 600;
+        color: #1d4ed8; /* Blue-700 */
+    }
+
+    .type-badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.025em;
+    }
+
+    .type-safety { background-color: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
+    .type-comprehensive { background-color: #e0e7ff; color: #4338ca; border: 1px solid #c7d2fe; } /* Indigo */
+    .type-pre-purchase { background-color: #ffedd5; color: #c2410c; border: 1px solid #fed7aa; }
+    .type-diagnostic { background-color: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
+
+    .status-badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.025em;
+    }
+
+    .status-badge.status-scheduled { background-color: #dbeafe; color: #1e40af; }
+    .status-badge.status-assigned { background-color: #dbeafe; color: #1e40af; } /* Same as scheduled */
+    .status-badge.status-in-progress { background-color: #fff7ed; color: #9a3412; }
+    .status-badge.status-completed { background-color: #dcfce7; color: #15803d; }
+    .status-badge.status-passed { background-color: #dcfce7; color: #15803d; }
+    .status-badge.status-failed { background-color: #fee2e2; color: #b91c1c; }
     </style>
 </head>
 <body>
@@ -1599,10 +1642,28 @@ async function loadTodaySchedule() {
 function formatTime(timeString) {
     if (!timeString) return 'N/A';
 
-    // Handle case "09:00:00" -> "09:00"
+    // Handle Enum formats like "TWELVE_PM", "THREE_PM"
+    if (!timeString.includes(':')) {
+        const parts = timeString.split('_');
+        const hourMap = {
+            'ONE': 1, 'TWO': 2, 'THREE': 3, 'FOUR': 4, 'FIVE': 5, 'SIX': 6,
+            'SEVEN': 7, 'EIGHT': 8, 'NINE': 9, 'TEN': 10, 'ELEVEN': 11, 'TWELVE': 12
+        };
+        
+        const hourStr = parts[0]; 
+        // If parsing fails, just return cleaned string
+        if (!hourMap[hourStr]) return timeString.replace(/_/g, ' ');
+        
+        const hour = hourMap[hourStr];
+        const meridiem = parts.length > 1 ? parts[1] : 'PM';
+        
+        return `${hour}:00 ${meridiem}`;
+    }
+
+    // Handle standard time format "09:00:00" -> "9:00 AM"
     const parts = timeString.split(':');
     const hours = parseInt(parts[0], 10);
-    const minutes = parts[1];
+    const minutes = parts[1] || '00';
 
     const period = hours >= 12 ? 'PM' : 'AM';
     const formattedHour = hours % 12 || 12;
@@ -2916,6 +2977,10 @@ function viewDetails(bookingId) {
     showNotification(`Viewing details for ${bookingId}`, 'info');
 }
 
+function viewInspection(inspectionId) {
+    showNotification(`Viewing inspection ${inspectionId}`, 'info');
+}
+
 function viewReport(bookingId) {
     showNotification(`Opening report for ${bookingId}`, 'info');
 }
@@ -3040,12 +3105,12 @@ async function loadAssignments() {
             const row = document.createElement("tr");
             row.innerHTML = `
                 <td>${item.bookingId}</td>
-                <td>${item.customerName}</td>
-                <td>${item.vehicleBrand} ${item.vehicleModel} (${item.vehicleYear})</td>
-                <td>${item.inspectionType}</td>
+                <td><span class="highlight-customer">${item.customerName}</span></td>
+                <td><span class="highlight-vehicle">${item.vehicleBrand} ${item.vehicleModel}</span> <span style="font-size:0.85em; color:#6b7280;">(${item.vehicleYear})</span></td>
+                <td><span class="type-badge type-${item.inspectionType.toLowerCase().replace('_', '-')}">${formatInspectionType(item.inspectionType)}</span></td>
                 <td>${item.scheduledDate}</td>
-                <td>${item.timeSlot}</td>
-                <td><span class="status ${item.status.toLowerCase()}">${item.status}</span></td>
+                <td>${formatTime(item.timeSlot)}</td>
+                <td><span class="status-badge status-${item.status.toLowerCase().replace('_', '-')}">${item.status.replace(/_/g, ' ')}</span></td>
                 <td>
                     <div style="display:flex; gap:6px;">
                         <button class="btn btn-sm btn-primary" title="View"><i class="fas fa-eye"></i></button>
@@ -3077,13 +3142,17 @@ async function loadInspectionHistory() {
             const row = document.createElement("tr");
             row.innerHTML = `
                 <td>${item.inspectionId}</td>
-                <td>${item.customerName}</td>
-                <td>${item.vehicleBrand} ${item.vehicleModel} (${item.vehicleYear})</td>
-                <td>${formatInspectionType(item.inspectionType)}</td>
+                <td><span class="highlight-customer">${item.customerName}</span></td>
+                <td><span class="highlight-vehicle">${item.vehicleBrand} ${item.vehicleModel}</span> <span style="font-size:0.85em; color:#6b7280;">(${item.vehicleYear})</span></td>
+                <td><span class="type-badge type-${item.inspectionType.toLowerCase().replace('_', '-')}">${formatInspectionType(item.inspectionType)}</span></td>
                 <td>${formatDate(item.dateCompleted)}</td>
-                <td><span class="status ${item.result.toLowerCase()}">${item.result}</span></td>
+                <td><span class="status-badge status-${item.result.toLowerCase()}">${item.result}</span></td>
                 <td>
-                    <button class="btn btn-info btn-sm" onclick="viewInspection(${item.inspectionId})">View</button>
+                    <div class="action-buttons">
+                        <button class="action-btn view" title="View Details" onclick="viewInspection(${item.inspectionId})">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
                 </td>
             `;
             return row;

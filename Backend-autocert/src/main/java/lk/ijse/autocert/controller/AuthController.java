@@ -27,17 +27,17 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponseDTO> loginUser(@RequestBody AuthDTO authDTO) {
-        // ✅ Get AuthResponseDTO (token + role)
+        // Get AuthResponseDTO (token + role)
         AuthResponseDTO authResponse = authService.authenticate(authDTO);
 
-        // ❌ Do not set cookie anymore
+        // Do not set cookie anymore
         return ResponseEntity.ok(authResponse);
     }
 
 
     @PostMapping("/logout")
     public ResponseEntity<ApiResponse> logout() {
-        // ✅ Just return success, frontend will delete JS cookie
+        // Just return success, frontend will delete JS cookie
         return ResponseEntity.ok(new ApiResponse(
                 200,
                 "User logged out successfully",
@@ -51,7 +51,7 @@ public class AuthController {
         try {
             authService.loginWithGoogle(googleLoginDTO);
 
-            // ✅ No cookie is set, frontend will create JS cookie
+            // No cookie is set, frontend will create JS cookie
             return ResponseEntity.ok(new ApiResponse(200, "Google login successful", null));
         } catch (GeneralSecurityException | IOException e) {
             return ResponseEntity.status(401).body(new ApiResponse(401, "Invalid Google token", e.getMessage()));

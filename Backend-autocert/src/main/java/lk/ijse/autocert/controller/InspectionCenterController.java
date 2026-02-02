@@ -10,13 +10,13 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/centers")  // ✅ Base path
+@RequestMapping("/api/centers")  //  Base path
 @RequiredArgsConstructor
 
 public class InspectionCenterController {
     private final InspectionCenterService centerService;
 
-    // ✅ Get center by name
+    //  Get center by name
     @GetMapping("/name/{name}")
     public ResponseEntity<InspectionCenterDTO> getCenterByName(@PathVariable String name) {
         return ResponseEntity.ok(centerService.getCenterByName(name));

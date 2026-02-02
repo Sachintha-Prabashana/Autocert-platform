@@ -32,11 +32,11 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors(cors -> {}) // ✅ enable CORS, will use CorsConfig bean
+                .cors(cors -> {}) // enable CORS, will use CorsConfig bean
                 .csrf(AbstractHttpConfigurer::disable) // Disable CSRF for stateless APIs
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll() // Allow unauthenticated access to auth endpoints
-                        .requestMatchers("/api/vehicles/approved").permitAll() // ✅ Public: approved vehicles listing
+                        .requestMatchers("/api/vehicles/approved").permitAll() // Public: approved vehicles listing
                         .requestMatchers("/ws/**").permitAll() // allow websocket connections
                         .anyRequest().authenticated() // Require authentication for all other endpoints
                 )
@@ -60,10 +60,10 @@ public class SecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://127.0.0.1:3000", "http://localhost:3000")); // frontend
+        configuration.setAllowedOrigins(Arrays.asList("http://127.0.0.1:3000", "http://localhost:3000", "http://localhost:63343")); // frontend
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
-        configuration.setAllowCredentials(true); // ✅ very important for cookies
+        configuration.setAllowCredentials(true); // very important for cookies
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;

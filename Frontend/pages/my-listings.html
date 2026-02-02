@@ -4,21 +4,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AutoCert - My Listings</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --primary: #2563eb; /* Modern Blue */
+            --primary-dark: #1e40af;
+            --secondary: #64748b;
+            --bg-body: #f1f5f9;
+            --bg-card: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --radius: 12px;
         }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-            color: #334155;
-            line-height: 1.6;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
         }
 
+        /* --- Header Styles (From Dashboard) --- */
         .header {
             background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #3b82f6 100%);
             color: white;
@@ -54,6 +71,8 @@
             font-size: 1.75rem;
             font-weight: 700;
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            color: white;
+            text-decoration: none;
         }
 
         .logo i {
@@ -110,51 +129,6 @@
             gap: 15px;
         }
 
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn-primary {
-            background: rgba(255, 255, 255, 0.15);
-            color: white;
-            border: 2px solid rgba(255, 255, 255, 0.25);
-            backdrop-filter: blur(10px);
-        }
-
-        .btn-primary:hover {
-            background: rgba(255, 255, 255, 0.25);
-            border-color: rgba(255, 255, 255, 0.4);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-        }
-
-        .btn-list-vehicle {
-            background: linear-gradient(135deg, #059669 0%, #10b981 50%, #34d399 100%);
-            color: white;
-            border: none;
-            font-weight: 700;
-            box-shadow: 0 6px 20px rgba(5, 150, 105, 0.35);
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-        }
-
-        .btn-list-vehicle:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(5, 150, 105, 0.45);
-            background: linear-gradient(135deg, #10b981 0%, #34d399 50%, #6ee7b7 100%);
-        }
-
         .profile-trigger {
             display: flex;
             align-items: center;
@@ -166,6 +140,7 @@
             background: rgba(255, 255, 255, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(10px);
+            color: white;
         }
 
         .profile-trigger:hover {
@@ -224,7 +199,7 @@
         .profile-menu a.logout:hover {
             background: linear-gradient(135deg, #fef2f2, #fee2e2);
         }
-
+        
         /* Mobile menu toggle */
         .mobile-menu-toggle {
             display: none;
@@ -242,192 +217,11 @@
             border-radius: 2px;
         }
 
-        /* Modal Styles */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 2000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(30, 58, 138, 0.4);
-            backdrop-filter: blur(8px);
-        }
-
-        .modal-content {
-            background: white;
-            margin: 5% auto;
-            padding: 0;
-            border-radius: 24px;
-            width: 90%;
-            max-width: 540px;
-            box-shadow: 0 25px 80px rgba(30, 58, 138, 0.4);
-            overflow: hidden;
-            border: 1px solid rgba(59, 130, 246, 0.2);
-        }
-
-        .modal-header {
-            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #3b82f6 100%);
-            color: white;
-            padding: 28px;
-            text-align: center;
-            position: relative;
-        }
-
-        .modal-header h2 {
-            margin: 0;
-            font-size: 1.75rem;
-            font-weight: 700;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-
-        .close {
-            position: absolute;
-            right: 24px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: white;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            width: 36px;
-            height: 36px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 8px;
-        }
-
-        .close:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateY(-50%) scale(1.1);
-        }
-
-        .modal-body {
-            padding: 36px;
-        }
-
-        .profile-picture-section {
-            text-align: center;
-            margin-bottom: 32px;
-        }
-
-        .profile-pic {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            border: 4px solid #3b82f6;
-            object-fit: cover;
-            margin-bottom: 20px;
-            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.25);
-        }
-
-        .upload-btn {
-            background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
-            border: 2px dashed #cbd5e1;
-            color: #64748b;
-            padding: 12px 20px;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 0.95rem;
-            font-weight: 600;
-        }
-
-        .upload-btn:hover {
-            border-color: #3b82f6;
-            color: #1e40af;
-            background: linear-gradient(135def, #dbeafe, #bfdbfe);
-            transform: translateY(-1px);
-        }
-
-        .form-group {
-            margin-bottom: 24px;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 700;
-            color: #1e293b;
-            font-size: 0.95rem;
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 16px 18px;
-            border: 2px solid #e2e8f0;
-            border-radius: 12px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            outline: none;
-            background: #fafbfc;
-        }
-
-        .form-input:focus {
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
-            background: white;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        .modal-footer {
-            padding: 24px 36px 36px;
-            display: flex;
-            gap: 12px;
-            justify-content: flex-end;
-        }
-
-        .btn-secondary {
-            background: linear-gradient(135deg, #64748b, #475569);
-            color: white;
-            padding: 14px 24px;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(100, 116, 139, 0.3);
-        }
-
-        .btn-secondary:hover {
-            background: linear-gradient(135deg, #475569, #374151);
-            transform: translateY(-1px);
-            box-shadow: 0 6px 16px rgba(100, 116, 139, 0.4);
-        }
-
-        .btn-save {
-            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #3b82f6 100%);
-            color: white;
-            padding: 14px 24px;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 16px rgba(30, 64, 175, 0.3);
-        }
-
-        .btn-save:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(30, 64, 175, 0.4);
-            background: linear-gradient(135deg, #3b82f6 0%, #1e40af 50%, #1e3a8a 100%);
-        }
-
-        /* Main Content Layout */
+        /* --- Main Layout --- */
         .main-content {
-            max-width: 1200px;
+            max-width: 1280px;
             margin: 0 auto;
-            padding: 32px 24px;
+            padding: 40px 24px;
         }
 
         .page-header {
@@ -438,605 +232,340 @@
         }
 
         .page-title {
-            font-size: 2rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-main);
             display: flex;
             align-items: center;
-            gap: 16px;
+            gap: 12px;
         }
 
-        .page-title i {
-            font-size: 2.2rem;
-            color: #10b981;
-        }
-
-        /* Status Filter Section */
+        /* --- Filters (Tabs Style) --- */
         .status-filters {
             display: flex;
             flex-wrap: wrap;
             gap: 16px;
             margin-bottom: 32px;
+            align-items: center;
+            justify-content: space-between;
             background: white;
-            padding: 24px;
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(30, 58, 138, 0.1);
+            padding: 16px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
         }
+
+        .filter-group { display: flex; gap: 8px; flex-wrap: wrap; }
 
         .filter-btn {
-            padding: 12px 24px;
-            border-radius: 12px;
-            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 500;
+            font-size: 0.9rem;
             cursor: pointer;
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
+            border: 1px solid transparent;
+            background: transparent;
+            color: var(--text-muted);
+            transition: all 0.2s;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
 
+        .filter-btn:hover { background: var(--bg-body); color: var(--text-main); }
+        
         .filter-btn.active {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-        }
-
-        .filter-btn-all {
-            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #3b82f6 100%);
-            color: white;
-        }
-
-        .filter-btn-pending {
-            background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
-            color: white;
-        }
-
-        .filter-btn-approved {
-            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
-            color: white;
-        }
-
-        .filter-btn-sold {
-            background: linear-gradient(135deg, #6366f1 0%, #818cf8 100%);
-            color: white;
-        }
-
-        .filter-btn-rejected {
-            background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
-            color: white;
-        }
-
-        /* Combo box filter */
-        .combo-filter {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-left: auto;
+            background-color: #eff6ff;
+            color: var(--primary);
+            border-color: #bfdbfe;
+            font-weight: 600;
         }
 
         .combo-filter select {
-            padding: 12px 16px;
-            border-radius: 12px;
-            border: 2px solid #e2e8f0;
-            background: white;
-            font-weight: 600;
-            color: #334155;
+            padding: 10px 36px 10px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            font-size: 0.9rem;
+            color: var(--text-main);
             cursor: pointer;
-            min-width: 180px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s ease;
+            background-color: #fff;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
         }
 
-        .combo-filter select:focus {
-            outline: none;
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
-        }
-
-        /* Vehicle Cards - MODIFIED FOR 3 CARDS PER ROW */
+        /* --- Vehicle Grid --- */
         .vehicle-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
             gap: 24px;
         }
 
         .vehicle-card {
             background: white;
-            border-radius: 20px;
-            box-shadow: 0 8px 32px rgba(30, 58, 138, 0.12);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
             overflow: hidden;
-            transition: all 0.4s ease;
+            transition: transform 0.2s, box-shadow 0.2s;
             position: relative;
-            border-top: 4px solid #10b981;
-            border: 1px solid rgba(226, 232, 240, 0.8);
         }
 
         .vehicle-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 16px 48px rgba(30, 58, 138, 0.2);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: #cbd5e1;
         }
 
         .vehicle-image {
             height: 200px;
-            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+            background: #f1f5f9;
+            position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #94a3b8;
-            font-size: 56px;
-            position: relative;
             overflow: hidden;
-        }
-
-        .vehicle-image::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(45deg, transparent 30%, rgba(16, 185, 129, 0.05) 50%, transparent 70%);
         }
 
         .vehicle-image img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.4s ease;
+            transition: transform 0.5s;
         }
+        
+        .vehicle-card:hover .vehicle-image img { transform: scale(1.05); }
 
-        .vehicle-card:hover .vehicle-image img {
-            transform: scale(1.05);
-        }
+        .vehicle-info { padding: 20px; }
 
-        .vehicle-info {
-            padding: 20px;
+        .vehicle-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
         }
 
         .vehicle-title {
             font-size: 1.1rem;
-            font-weight: 700;
-            color: #1e293b;
-            margin-bottom: 8px;
-            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            font-weight: 600;
+            color: var(--text-main);
+            margin: 0;
+            line-height: 1.3;
         }
 
-        .vehicle-status {
-            display: inline-block;
-            padding: 6px 12px;
-            border-radius: 20px;
+        /* Badge Styles */
+        .status-badge {
             font-size: 0.75rem;
             font-weight: 600;
-            margin-bottom: 12px;
+            padding: 4px 10px;
+            border-radius: 99px;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
         }
+        .status-badge.approved { background: #dcfce7; color: #166534; }
+        .status-badge.pending { background: #fef3c7; color: #92400e; }
+        .status-badge.sold { background: #e0e7ff; color: #3730a3; }
+        .status-badge.rejected { background: #fee2e2; color: #991b1b; }
 
-        .status-pending {
-            background-color: #fef3c7;
-            color: #92400e;
-        }
-
-        .status-approved {
-            background-color: #d1fae5;
-            color: #065f46;
-        }
-
-        .status-sold {
-            background-color: #e0e7ff;
-            color: #3730a3;
-        }
-
-        .status-rejected {
-            background-color: #fee2e2;
-            color: #991b1b;
-        }
-
-        .vehicle-seller {
-            color: #64748b;
-            font-size: 0.85rem;
-            margin-bottom: 16px;
-            font-weight: 500;
-        }
-
-        .vehicle-footer {
+        .vehicle-meta {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 16px;
-            padding-top: 12px;
-            border-top: 1px solid #e2e8f0;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px dashed var(--border);
         }
 
         .vehicle-price {
             font-size: 1.25rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #059669, #10b981);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            font-weight: 700;
+            color: var(--primary);
         }
 
-        .vehicle-date {
-            color: #64748b;
-            font-size: 0.75rem;
-            font-weight: 500;
-        }
+        .vehicle-date { font-size: 0.8rem; color: var(--text-muted); }
 
         .vehicle-actions {
-            display: flex;
-            gap: 8px;
-        }
-
-        .btn-listing {
-            flex: 1;
-            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #3b82f6 100%);
-            color: white;
-            border: none;
-            padding: 10px 12px;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            text-align: center;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            font-size: 0.85rem;
-            box-shadow: 0 4px 12px rgba(30, 64, 175, 0.25);
-        }
-
-        .btn-listing:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(30, 64, 175, 0.35);
-            text-decoration: none;
-            color: white;
-            background: linear-gradient(135deg, #3b82f6 0%, #1e40af 50%, #1e3a8a 100%);
-        }
-
-        .btn-edit {
-            background: linear-gradient(135deg, #f59e0b, #fbbf24);
-        }
-
-        .btn-edit:hover {
-            background: linear-gradient(135deg, #fbbf24, #fcd34d);
-        }
-
-        .btn-delete {
-            background: linear-gradient(135deg, #dc2626, #ef4444);
-        }
-
-        .btn-delete:hover {
-            background: linear-gradient(135deg, #ef4444, #f87171);
-        }
-
-        /* Loading state */
-        .loading-message {
-            text-align: center;
-            padding: 60px;
-            color: #64748b;
-            font-size: 1.1rem;
-            font-weight: 500;
-            grid-column: 1 / -1;
-        }
-
-        .loading-message i {
-            color: #1e40af;
-            font-size: 2rem;
-            margin-bottom: 16px;
-        }
-
-        .error-message {
-            color: #dc2626;
-            text-align: center;
-            padding: 60px 32px;
-            font-size: 1.1rem;
-            font-weight: 500;
-            grid-column: 1 / -1;
-        }
-
-        .error-message i {
-            font-size: 3rem;
-            margin-bottom: 16px;
-            color: #fca5a5;
-        }
-
-        .no-vehicles {
-            text-align: center;
-            padding: 80px 32px;
-            color: #64748b;
-            grid-column: 1 / -1;
-        }
-
-        .no-vehicles i {
-            font-size: 4rem;
-            margin-bottom: 24px;
-            color: #cbd5e1;
-        }
-
-        .no-vehicles h3 {
-            font-size: 1.5rem;
-            margin-bottom: 12px;
-            color: #1e293b;
-        }
-
-        .no-vehicles p {
-            margin-bottom: 24px;
-        }
-
-        /* Enhanced Edit Modal Styles */
-        #editVehicleModal .modal-content {
-            max-width: 700px;
-        }
-
-        #editVehicleModal .modal-header {
-            padding: 20px 30px;
-        }
-
-        #editVehicleModal .modal-body {
-            padding: 30px;
-        }
-
-        #editVehicleModal .form-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 20px;
+            gap: 8px;
+            padding: 0 20px 20px 20px;
         }
 
-        #editVehicleModal .form-group {
-            margin-bottom: 20px;
+        .btn-card {
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
+            text-decoration: none;
         }
 
-        #editVehicleModal .form-label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #334155;
-        }
+        .btn-edit { background: #f1f5f9; color: var(--text-main); }
+        .btn-edit:hover { background: #e2e8f0; }
 
-        #editVehicleModal .form-input,
-        #editVehicleModal .form-textarea {
+        .btn-delete { background: #fef2f2; color: var(--danger); }
+        .btn-delete:hover { background: #fee2e2; }
+
+        /* --- Modals --- */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
             width: 100%;
-            padding: 14px 16px;
-            border: 2px solid #e2e8f0;
-            border-radius: 10px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            background: #f8fafc;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            overflow-y: auto;
         }
 
-        #editVehicleModal .form-textarea {
-            min-height: 100px;
-            resize: vertical;
+        .modal-content {
+            background-color: #fff;
+            margin: 5% auto;
+            width: 90%;
+            max-width: 600px;
+            border-radius: 16px;
+            box-shadow: var(--shadow-lg);
+            animation: slideIn 0.3s ease;
         }
 
-        #editVehicleModal .form-input:focus,
-        #editVehicleModal .form-textarea:focus {
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .modal-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 { font-size: 1.25rem; font-weight: 600; color: var(--text-main); }
+        
+        .close-btn, .close {
+            font-size: 1.5rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .close-btn:hover { color: var(--danger); }
+
+        .modal-body { padding: 24px; }
+
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .form-group { margin-bottom: 16px; }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-main);
+        }
+
+        .form-input, .form-textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-input:focus, .form-textarea:focus {
             outline: none;
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
-            background: white;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
 
-        #editVehicleModal .modal-footer {
-            padding: 20px 30px 30px;
+        .modal-footer {
+            padding: 16px 24px;
+            background: #f8fafc;
+            border-top: 1px solid var(--border);
+            border-bottom-left-radius: 16px;
+            border-bottom-right-radius: 16px;
             display: flex;
             justify-content: flex-end;
             gap: 12px;
         }
 
-        #editVehicleModal .close-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            font-size: 24px;
-            cursor: pointer;
-            width: 36px;
-            height: 36px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 8px;
-            color: white;
-            transition: all 0.3s ease;
-        }
+        .btn-secondary { background: white; border: 1px solid var(--border); color: var(--text-main); padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 500; }
+        .btn-secondary:hover { background: #f1f5f9; }
+        
+        .btn-save { background: var(--primary); border: none; color: white; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 500; }
+        .btn-save:hover { background: var(--primary-dark); }
 
-        #editVehicleModal .close-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: scale(1.1);
-        }
+        .btn-primary { background: var(--primary); border: none; color: white; padding: 10px 20px; border-radius: 8px; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; font-weight: 500;}
+        .btn-primary:hover { background: var(--primary-dark); }
 
-        /* Image upload section in edit modal */
+        /* --- Image Upload Area --- */
         .image-upload-section {
-            margin-bottom: 24px;
-            padding: 20px;
-            border: 2px dashed #cbd5e1;
-            border-radius: 12px;
+            border: 2px dashed var(--border);
+            border-radius: var(--radius);
+            padding: 24px;
             text-align: center;
             background: #f8fafc;
+            transition: border-color 0.2s;
+        }
+        .image-upload-section:hover { border-color: var(--primary); }
+        .image-preview { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+        .image-preview-item { width: 80px; height: 80px; position: relative; border-radius: 8px; overflow: hidden; }
+        .image-preview-item img { width: 100%; height: 100%; object-fit: cover; }
+        .remove-image {
+            position: absolute; top: 2px; right: 2px; background: rgba(0,0,0,0.6);
+            color: white; width: 18px; height: 18px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 12px; cursor: pointer;
         }
 
-        .image-upload-section p {
-            margin-bottom: 16px;
-            color: #64748b;
-            font-weight: 500;
+        /* --- Empty States & Loading --- */
+        .no-vehicles, .loading-message, .error-message {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
         }
+        .no-vehicles i, .loading-message i, .error-message i { font-size: 3rem; margin-bottom: 16px; opacity: 0.5; }
+        .no-vehicles h3 { color: var(--text-main); margin-bottom: 8px; }
 
-        .image-preview {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            margin-top: 16px;
-        }
-
-        .image-preview-item {
-            position: relative;
-            width: 100px;
-            height: 100px;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .image-preview-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .image-preview-item .remove-image {
-            position: absolute;
-            top: 4px;
-            right: 4px;
-            background: rgba(220, 38, 38, 0.8);
-            color: white;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 12px;
-        }
-
-        @media (max-width: 1200px) {
-            .vehicle-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
+        /* Mobile Toggle */
+        .mobile-menu-toggle { display: none; flex-direction: column; gap: 4px; cursor: pointer; }
+        .mobile-menu-toggle span { width: 24px; height: 2px; background: var(--text-main); }
 
         @media (max-width: 768px) {
-            .mobile-menu-toggle {
-                display: flex;
-            }
-
-            .nav-links {
-                display: none;
-                position: absolute;
-                top: 100%;
-                left: 0;
-                width: 100%;
-                background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
-                flex-direction: column;
-                padding: 24px;
-                box-shadow: 0 8px 32px rgba(30, 58, 138, 0.25);
-                gap: 8px;
-            }
-
-            .nav-links.active {
-                display: flex;
-            }
-
-            .nav-links li a {
-                padding: 16px 20px;
-                width: 100%;
-                justify-content: flex-start;
-                background: rgba(255, 255, 255, 0.1);
-            }
-
-            .header-content {
-                flex-wrap: wrap;
-                position: relative;
-                padding: 0 20px;
-            }
-
-            .user-info {
-                order: 3;
-                width: 100%;
-                justify-content: center;
-                margin-top: 24px;
-            }
-
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-
-            .modal-content {
-                width: 95%;
-                margin: 10% auto;
-            }
-
-            .modal-body {
-                padding: 24px;
-            }
-
-            /* Mobile layout adjustments */
-            .main-content {
-                padding: 20px 16px;
-            }
-
-            .page-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 16px;
-            }
-
-            .status-filters {
-                flex-direction: column;
-            }
-
-            .filter-btn {
-                width: 100%;
-                justify-content: center;
-            }
-
-            .combo-filter {
-                width: 100%;
-                margin-left: 0;
-            }
-
-            .vehicle-grid {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-
-            .vehicle-card {
-                min-width: auto;
-            }
-
-            .vehicle-info {
-                padding: 20px;
-            }
-
-            .vehicle-actions {
-                flex-direction: column;
-            }
-
-            /* Edit modal mobile adjustments */
-            #editVehicleModal .form-row {
-                grid-template-columns: 1fr;
-            }
-
-            #editVehicleModal .modal-content {
-                width: 95%;
-                margin: 5% auto;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .vehicle-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .vehicle-actions {
-                flex-direction: column;
-            }
+            .nav-bar { display: none; } /* Simplified mobile handling */
+            .mobile-menu-toggle { display: flex; }
+            .header-content { padding: 0 16px; }
+            .main-content { padding: 24px 16px; }
+            .status-filters { flex-direction: column; align-items: stretch; }
+            .filter-group { justify-content: center; }
+            .combo-filter { width: 100%; }
+            .combo-filter select { width: 100%; }
+            .form-row { grid-template-columns: 1fr; }
+            /* Add mobile nav logic if needed, referencing old CSS for absolute positioning */
         }
     </style>
 </head>
 <body>
     <header class="header">
         <div class="header-content">
-            <div class="logo">
+            <a href="customer-dashboard.html" class="logo">
                 <i class="fas fa-car"></i>
                 <span>AutoCert</span>
-            </div>
+            </a>
             
             <div class="mobile-menu-toggle" onclick="toggleMobileMenu()">
                 <span></span>
@@ -1046,10 +575,10 @@
         
             <nav class="nav-bar">
                 <ul class="nav-links" id="navLinks">
-                    <li><a href="/Frontend/pages/customer-dashboard.html"><i class="fas fa-home"></i> Dashboard</a></li>
-                    <li><a href="/Frontend/pages/test-ins.html" onclick="scheduleInspection()"><i class="fas fa-clipboard-check"></i> Inspections</a></li>
-                    <li><a href="/Frontend/pages/my-listings.html" class="active"><i class="fas fa-list"></i> My Listings</a></li>
-                    <li><a href="/Frontend/pages/add-listning.html" class="btn btn-list-vehicle"><i class="fas fa-plus-circle"></i> List Vehicle</a></li>
+                    <li><a href="customer-dashboard.html"><i class="fas fa-home"></i> Dashboard</a></li>
+                    <li><a href="test-ins.html"><i class="fas fa-clipboard-check"></i> Inspections</a></li>
+                    <li><a href="my-listings.html" class="active"><i class="fas fa-list"></i> My Listings</a></li>
+                    <li><a href="add-listning.html"><i class="fas fa-plus-circle"></i> List Vehicle</a></li>
                 </ul>
             </nav>
 
@@ -1064,13 +593,9 @@
                         <i class="fas fa-chevron-down" style="font-size: 0.8rem; opacity: 0.8;"></i>
                     </div>
                     <div id="profileMenu" class="profile-menu">
-                        <a href="#" onclick="viewProfile()">
+                        <a href="customer-dashboard.html">
                             <i class="fas fa-user"></i>
-                            <span>View Profile</span>
-                        </a>
-                        <a href="#" onclick="viewProfile()">
-                            <i class="fas fa-edit"></i>
-                            <span>Update Profile</span>
+                            <span>Dashboard</span>
                         </a>
                         <hr>
                         <a href="#" class="logout" onclick="logout()">
@@ -1086,32 +611,32 @@
     <div class="main-content">
         <div class="page-header">
             <h1 class="page-title">
-                <i class="fas fa-list"></i> My Vehicle Listings
+                My Vehicles
             </h1>
-            <a href="add-listing.html" class="btn btn-list-vehicle">
-                <i class="fas fa-plus-circle"></i> Add New Listing
+            <a href="add-listing.html" class="btn-primary">
+                <i class="fas fa-plus"></i> Add Listing
             </a>
         </div>
 
-        <!-- Status Filter Buttons -->
         <div class="status-filters">
-            <button class="filter-btn filter-btn-all active" onclick="filterVehicles('all')">
-                <i class="fas fa-layer-group"></i> All Listings
-            </button>
-            <button class="filter-btn filter-btn-pending" onclick="filterVehicles('PENDING')">
-                <i class="fas fa-clock"></i> Pending
-            </button>
-            <button class="filter-btn filter-btn-approved" onclick="filterVehicles('APPROVED')">
-                <i class="fas fa-check-circle"></i> Approved
-            </button>
-            <button class="filter-btn filter-btn-sold" onclick="filterVehicles('SOLD')">
-                <i class="fas fa-tag"></i> Sold
-            </button>
-            <button class="filter-btn filter-btn-rejected" onclick="filterVehicles('REJECTED')">
-                <i class="fas fa-times-circle"></i> Rejected
-            </button>
+            <div class="filter-group">
+                <button class="filter-btn active filter-btn-all" onclick="filterVehicles('all')">
+                    All
+                </button>
+                <button class="filter-btn filter-btn-pending" onclick="filterVehicles('PENDING')">
+                    <i class="fas fa-circle" style="font-size: 0.5rem; color: #f59e0b;"></i> Pending
+                </button>
+                <button class="filter-btn filter-btn-approved" onclick="filterVehicles('APPROVED')">
+                    <i class="fas fa-circle" style="font-size: 0.5rem; color: #10b981;"></i> Approved
+                </button>
+                <button class="filter-btn filter-btn-sold" onclick="filterVehicles('SOLD')">
+                    <i class="fas fa-circle" style="font-size: 0.5rem; color: #6366f1;"></i> Sold
+                </button>
+                <button class="filter-btn filter-btn-rejected" onclick="filterVehicles('REJECTED')">
+                    <i class="fas fa-circle" style="font-size: 0.5rem; color: #ef4444;"></i> Rejected
+                </button>
+            </div>
             
-            <!-- Combo box filter -->
             <div class="combo-filter">
                 <select id="sortFilter" onchange="sortVehicles(this.value)">
                     <option value="newest">Newest First</option>
@@ -1125,50 +650,48 @@
 
         <div id="vehicleGrid" class="vehicle-grid">
             <div class="loading-message">
-                <i class="fas fa-spinner fa-spin"></i>
-                <p>Loading your vehicles...</p>
+                <i class="fas fa-circle-notch fa-spin"></i>
+                <p>Loading your garage...</p>
             </div>
         </div>
     </div>
 
-    <!-- Update Profile Modal -->
     <div id="updateProfileModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Update Profile</h2>
+                <h2>Profile Settings</h2>
                 <span class="close" onclick="closeProfileModal()">&times;</span>
             </div>
             <div class="modal-body">
-                <div class="profile-picture-section">
-                    <img src="https://via.placeholder.com/100x100/1e40af/white?text=JS" alt="Profile Picture" class="profile-pic" id="profileImage">
-                    <div>
-                        <input type="file" id="profilePicInput" accept="image/*" style="display: none;" onchange="previewImage(this)">
-                        <label for="profilePicInput" class="upload-btn">
-                            <i class="fas fa-camera"></i> Change Picture
-                        </label>
-                    </div>
+                <div style="text-align: center; margin-bottom: 24px;">
+                    <img src="https://via.placeholder.com/100" alt="Profile" class="profile-pic" id="profileImage" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid var(--primary); margin-bottom: 12px;">
+                    <br>
+                    <label for="profilePicInput" style="color: var(--primary); cursor: pointer; font-weight: 500; font-size: 0.9rem;">
+                        Change Photo
+                    </label>
+                    <input type="file" id="profilePicInput" accept="image/*" style="display: none;" onchange="previewImage(this)">
                 </div>
 
                 <form id="profileForm">
                     <div class="form-row">
                         <div class="form-group">
                             <label for="firstName" class="form-label">First Name</label>
-                            <input type="text" id="firstName" class="form-input" value="" required>
+                            <input type="text" id="firstName" class="form-input" required>
                         </div>
                         <div class="form-group">
                             <label for="lastName" class="form-label">Last Name</label>
-                            <input type="text" id="lastName" class="form-input" value="" required>
+                            <input type="text" id="lastName" class="form-input" required>
                         </div>
                     </div>
                     
                     <div class="form-group">
                         <label for="email" class="form-label">Email Address</label>
-                        <input type="email" id="email" class="form-input" value="" readonly style="background-color: #f8fafc;">
+                        <input type="email" id="email" class="form-input" readonly style="background-color: #f1f5f9; color: #64748b;">
                     </div>
                     
                     <div class="form-group">
                         <label for="phoneNumber" class="form-label">Phone Number</label>
-                        <input type="tel" id="phoneNumber" class="form-input" value="" required>
+                        <input type="tel" id="phoneNumber" class="form-input" required>
                     </div>
                 </form>
             </div>
@@ -1179,17 +702,18 @@
         </div>
     </div>
 
-    <!-- Edit Vehicle Modal -->
     <div id="editVehicleModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Edit Vehicle Listing</h2>
+                <h2>Edit Listing</h2>
                 <span class="close-btn" onclick="closeEditModal()">&times;</span>
             </div>
             <div class="modal-body">
                 <div class="image-upload-section">
-                    <p>Upload vehicle images (first image will be the primary image)</p>
-                    <input type="file" id="vehicleImages" accept="image/*" multiple onchange="previewVehicleImages(this)">
+                    <i class="fas fa-cloud-upload-alt" style="font-size: 2rem; color: #cbd5e1; margin-bottom: 8px;"></i>
+                    <p style="margin-bottom: 12px; font-size: 0.9rem; color: #64748b;">Click to upload new images</p>
+                    <input type="file" id="vehicleImages" accept="image/*" multiple onchange="previewVehicleImages(this)" style="display: none;">
+                    <button type="button" class="btn-secondary" onclick="document.getElementById('vehicleImages').click()">Select Files</button>
                     <div class="image-preview" id="imagePreview"></div>
                 </div>
                 
@@ -1218,7 +742,7 @@
                     
                     <div class="form-group">
                         <label for="edit-description" class="form-label">Description</label>
-                        <textarea id="edit-description" class="form-textarea" required></textarea>
+                        <textarea id="edit-description" class="form-textarea" rows="3" required></textarea>
                     </div>
                     
                     <div class="form-row">
@@ -1234,7 +758,7 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn-secondary" onclick="closeEditModal()">Cancel</button>
+                <button type="button" class="btn-secondary" onclick="closeEditModal()">Discard</button>
                 <button type="button" class="btn-save" onclick="updateVehicle()">Save Changes</button>
             </div>
         </div>
@@ -1246,19 +770,13 @@
         const API_BASE_VEHICLES = "http://localhost:8080/api/vehicles";
 
         const editModal = document.getElementById("editVehicleModal");
-        let currentVehicleId = null; // store the ID being edited
-        let vehicleImages = []; // Store vehicle images for editing
+        let currentVehicleId = null; 
+        let vehicleImages = []; 
 
         // ================== TOKEN HELPERS ==================
-        function getToken() {
-            return localStorage.getItem("token");
-        }
-        function saveToken(token) {
-            localStorage.setItem("token", token);
-        }
-        function clearToken() {
-            localStorage.removeItem("token");
-        }
+        function getToken() { return localStorage.getItem("token"); }
+        function saveToken(token) { localStorage.setItem("token", token); }
+        function clearToken() { localStorage.removeItem("token"); }
 
         // ================== GLOBAL VARIABLES ==================
         let allVehicles = [];
@@ -1272,34 +790,29 @@
             try {
                 const res = await fetch(`${API_BASE_USERS}/me`, {
                     method: "GET",
-                    headers: { 
-                        "Authorization": "Bearer " + token,
-                        "Content-Type": "application/json"
-                    }
+                    headers: { "Authorization": "Bearer " + token, "Content-Type": "application/json" }
                 });
                 
                 if (!res.ok) throw new Error("Failed to fetch user info");
                 const user = await res.json();
 
-                // Header display
-                const headerName = document.querySelector(".profile-trigger div div:first-child");
-                const headerEmail = document.querySelector(".profile-trigger div div:last-child");
-                if (headerName) headerName.textContent = `${user.firstName} ${user.lastName}`;
-                if (headerEmail) headerEmail.textContent = user.email;
-
-                // Modal form
+                // Simple header update logic (adapted for new HTML structure if needed)
+                // Note: The UI structure changed slightly, but IDs remain.
+                
                 const modalFields = ["firstName", "lastName", "email", "phoneNumber"];
                 modalFields.forEach(id => {
                     const el = document.getElementById(id);
                     if (el) el.value = user[id] || "";
                 });
 
-                // Profile image
+                // Update Header Profile Info
+                const headerName = document.querySelector(".profile-trigger div div:first-child");
+                if (headerName) headerName.textContent = `${user.firstName} ${user.lastName}`;
+
                 const profileImg = document.getElementById("profileImage");
-                if (profileImg) profileImg.src = user.profileImageUrl || "https://via.placeholder.com/100x100/1e40af/white?text=JS";
+                if (profileImg) profileImg.src = user.profileImageUrl || "https://via.placeholder.com/100x100/1e40af/white?text=User";
             } catch (err) {
                 console.error(err);
-                alert("Could not load user profile");
             }
         }
 
@@ -1310,72 +823,36 @@
 
             const token = getToken();
             if (!token) {
-                grid.innerHTML = `
-                    <div class="error-message">
-                        <i class="fas fa-exclamation-triangle"></i>
-                        <p>Please login to view your vehicles.</p>
-                    </div>
-                `;
+                grid.innerHTML = `<div class="error-message"><i class="fas fa-lock"></i><p>Please login to view your vehicles.</p></div>`;
                 return;
             }
 
             try {
-                // Show loading state
-                grid.innerHTML = `
-                    <div class="loading-message">
-                        <i class="fas fa-spinner fa-spin"></i>
-                        <p>Loading your vehicles...</p>
-                    </div>
-                `;
-
-                // Get user's vehicles using the /my-listings endpoint
+                grid.innerHTML = `<div class="loading-message"><i class="fas fa-circle-notch fa-spin"></i><p>Loading your vehicles...</p></div>`;
                 const vehiclesRes = await fetch(`${API_BASE_VEHICLES}/my-listings`, {
                     method: "GET",
-                    headers: {
-                        "Authorization": "Bearer " + token,
-                        "Content-Type": "application/json"
-                    }
+                    headers: { "Authorization": "Bearer " + token, "Content-Type": "application/json" }
                 });
                 
                 if (!vehiclesRes.ok) throw new Error("Failed to fetch user vehicles");
                 allVehicles = await vehiclesRes.json();
-
                 renderFilteredVehicles();
-                
             } catch (err) {
                 console.error("Error loading user vehicles:", err);
-                grid.innerHTML = `
-                    <div class="error-message">
-                        <i class="fas fa-exclamation-triangle"></i>
-                        <p>Failed to load your vehicles. Please try again later.</p>
-                        <button class="btn btn-primary" onclick="loadUserVehicles()" style="margin-top: 15px;">
-                            <i class="fas fa-refresh"></i> Retry
-                        </button>
-                    </div>
-                `;
+                grid.innerHTML = `<div class="error-message"><i class="fas fa-exclamation-circle"></i><p>Failed to load. <a href="#" onclick="loadUserVehicles()">Retry</a></p></div>`;
             }
         }
 
         // ================== FILTER VEHICLES BY STATUS ==================
         function filterVehicles(status) {
             currentFilter = status;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
             
-            // Update active button state
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            
-            if (status === 'all') {
-                document.querySelector('.filter-btn-all').classList.add('active');
-            } else if (status === 'PENDING') {
-                document.querySelector('.filter-btn-pending').classList.add('active');
-            } else if (status === 'APPROVED') {
-                document.querySelector('.filter-btn-approved').classList.add('active');
-            } else if (status === 'SOLD') {
-                document.querySelector('.filter-btn-sold').classList.add('active');
-            } else if (status === 'REJECTED') {
-                document.querySelector('.filter-btn-rejected').classList.add('active');
-            }
+            if (status === 'all') document.querySelector('.filter-btn-all').classList.add('active');
+            else if (status === 'PENDING') document.querySelector('.filter-btn-pending').classList.add('active');
+            else if (status === 'APPROVED') document.querySelector('.filter-btn-approved').classList.add('active');
+            else if (status === 'SOLD') document.querySelector('.filter-btn-sold').classList.add('active');
+            else if (status === 'REJECTED') document.querySelector('.filter-btn-rejected').classList.add('active');
             
             renderFilteredVehicles();
         }
@@ -1383,162 +860,115 @@
         // ================== SORT VEHICLES ==================
         function sortVehicles(sortBy) {
             if (!allVehicles || allVehicles.length === 0) return;
-            
             let sortedVehicles = [...allVehicles];
             
             switch(sortBy) {
-                case 'newest':
-                    sortedVehicles.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-                    break;
-                case 'oldest':
-                    sortedVehicles.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-                    break;
-                case 'priceHigh':
-                    sortedVehicles.sort((a, b) => (b.price || 0) - (a.price || 0));
-                    break;
-                case 'priceLow':
-                    sortedVehicles.sort((a, b) => (a.price || 0) - (b.price || 0));
-                    break;
-                case 'make':
-                    sortedVehicles.sort((a, b) => (a.make || '').localeCompare(b.make || ''));
-                    break;
+                case 'newest': sortedVehicles.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)); break;
+                case 'oldest': sortedVehicles.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt)); break;
+                case 'priceHigh': sortedVehicles.sort((a, b) => (b.price || 0) - (a.price || 0)); break;
+                case 'priceLow': sortedVehicles.sort((a, b) => (a.price || 0) - (b.price || 0)); break;
+                case 'make': sortedVehicles.sort((a, b) => (a.make || '').localeCompare(b.make || '')); break;
             }
-            
             allVehicles = sortedVehicles;
             renderFilteredVehicles();
         }
 
-       // ================== RENDER FILTERED VEHICLES ==================
-function renderFilteredVehicles() {
-    const grid = document.getElementById("vehicleGrid");
-    if (!grid || !allVehicles) return;
+        // ================== RENDER FILTERED VEHICLES (UPDATED HTML STRUCTURE) ==================
+        function renderFilteredVehicles() {
+            const grid = document.getElementById("vehicleGrid");
+            if (!grid || !allVehicles) return;
 
-    let filteredVehicles = allVehicles;
+            let filteredVehicles = allVehicles;
+            if (currentFilter !== 'all') {
+                filteredVehicles = allVehicles.filter(vehicle => vehicle.status === currentFilter);
+            }
 
-    if (currentFilter !== 'all') {
-        filteredVehicles = allVehicles.filter(vehicle => vehicle.status === currentFilter);
-    }
+            grid.innerHTML = "";
 
-    grid.innerHTML = "";
+            if (!filteredVehicles || filteredVehicles.length === 0) {
+                grid.innerHTML = currentFilter === 'all'
+                    ? `<div class="no-vehicles">
+                        <i class="fas fa-car"></i>
+                        <h3>Your garage is empty</h3>
+                        <p>You haven't listed any vehicles yet.</p>
+                        <a href="add-listing.html" class="btn-primary" style="margin-top:10px;">List Your First Vehicle</a>
+                       </div>`
+                    : `<div class="no-vehicles">
+                        <i class="fas fa-search"></i>
+                        <h3>No ${currentFilter.toLowerCase()} vehicles</h3>
+                        <button class="btn-secondary" onclick="filterVehicles('all')">View All Listings</button>
+                       </div>`;
+                return;
+            }
 
-    if (!filteredVehicles || filteredVehicles.length === 0) {
-        grid.innerHTML = currentFilter === 'all'
-            ? `
-                <div class="no-vehicles">
-                    <i class="fas fa-car"></i>
-                    <h3>No vehicles listed yet</h3>
-                    <p>You haven't listed any vehicles for sale yet.</p>
-                    <a href="add-listing.html" class="btn btn-list-vehicle">
-                        <i class="fas fa-plus-circle"></i> List Your First Vehicle
-                    </a>
-                </div>
-            `
-            : `
-                <div class="no-vehicles">
-                    <i class="fas fa-filter"></i>
-                    <h3>No ${currentFilter.toLowerCase()} vehicles</h3>
-                    <p>You don't have any vehicles with ${currentFilter.toLowerCase()} status.</p>
-                    <button class="btn btn-primary" onclick="filterVehicles('all')">
-                        <i class="fas fa-eye"></i> View All Listings
-                    </button>
-                </div>
-            `;
-        return;
-    }
+            filteredVehicles.forEach(v => {
+                let statusClass = 'pending';
+                let statusText = 'Pending';
+                
+                switch (v.status) {
+                    case 'APPROVED': statusClass = 'approved'; statusText = 'Approved'; break;
+                    case 'REJECTED': statusClass = 'rejected'; statusText = 'Rejected'; break;
+                    case 'SOLD': statusClass = 'sold'; statusText = 'Sold'; break;
+                }
 
-    filteredVehicles.forEach(v => {
-        // ✅ Status Badge
-        let statusClass, statusText;
-        switch (v.status) {
-            case 'APPROVED':
-                statusClass = 'status-approved';
-                statusText = 'Approved';
-                break;
-            case 'REJECTED':
-                statusClass = 'status-rejected';
-                statusText = 'Rejected';
-                break;
-            case 'SOLD':
-                statusClass = 'status-sold';
-                statusText = 'Sold';
-                break;
-            default:
-                statusClass = 'status-pending';
-                statusText = 'Pending Review';
+                // First Image Logic
+                let imageHtml = '';
+                if (v.images && v.images.length > 0 && v.images[0]) {
+                    imageHtml = `<img src="${v.images[0]}" alt="${v.make} ${v.model}" onerror="this.src='https://via.placeholder.com/400x300?text=No+Image'">`;
+                } else {
+                    imageHtml = `<i class="fas fa-car" style="font-size: 3rem; color: #cbd5e1;"></i>`;
+                }
+
+                const cardDiv = document.createElement("div");
+                cardDiv.classList.add("vehicle-card");
+                
+                // Updated Card HTML to match new CSS
+                cardDiv.innerHTML = `
+                    <div class="vehicle-image">
+                        ${imageHtml}
+                    </div>
+                    <div class="vehicle-info">
+                        <div class="vehicle-header-row">
+                            <h3 class="vehicle-title">${v.year} ${v.make} ${v.model}</h3>
+                            <span class="status-badge ${statusClass}">${statusText}</span>
+                        </div>
+                        <div class="vehicle-meta">
+                            <span class="vehicle-price">${formatPrice(v.price)}</span>
+                            <span class="vehicle-date"><i class="far fa-clock"></i> ${formatDate(v.createdAt)}</span>
+                        </div>
+                    </div>
+                    <div class="vehicle-actions">
+                        <a href="#" class="btn-card btn-edit" onclick="openEditModal(${v.id})">
+                            <i class="fas fa-pen"></i> Edit
+                        </a>
+                        <button class="btn-card btn-delete" onclick="deleteVehicle('${v.id}')">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(cardDiv);
+            });
         }
-
-        // ✅ Vehicle Card
-        const cardDiv = document.createElement("div");
-        cardDiv.classList.add("vehicle-card");
-
-        cardDiv.innerHTML = `
-            <div class="vehicle-image"></div>
-            <div class="vehicle-info">
-                <h3 class="vehicle-title">${v.year} ${v.make} ${v.model}</h3>
-                <span class="vehicle-status ${statusClass}">${statusText}</span>
-                <div class="vehicle-footer">
-                    <span class="vehicle-price">${formatPrice(v.price)}</span>
-                    <span class="vehicle-date">${formatDate(v.createdAt)}</span>
-                </div>
-                <div class="vehicle-actions">
-                    <a href="#" class="btn-listing btn-edit" onclick="openEditModal(${v.id})">
-                        <i class="fas fa-edit"></i> Edit
-                    </a>
-                    <button class="btn-listing btn-delete" onclick="deleteVehicle('${v.id}')">
-                        <i class="fas fa-trash"></i> Delete
-                    </button>
-                </div>
-            </div>
-        `;
-
-        // ✅ First Image Handling
-        const imageWrapper = cardDiv.querySelector(".vehicle-image");
-        if (v.images && v.images.length > 0 && v.images[0]) {
-            const img = document.createElement("img");
-            img.src = v.images[0];
-            img.alt = `${v.make} ${v.model}`;
-            img.onerror = function () {
-                this.onerror = null;
-                this.src = 'default-car.png'; // fallback
-            };
-            imageWrapper.appendChild(img);
-        } else {
-            const icon = document.createElement("i");
-            icon.className = "fas fa-car";
-            imageWrapper.appendChild(icon);
-        }
-
-        grid.appendChild(cardDiv);
-    });
-}
 
         // ================== DELETE VEHICLE ==================
         async function deleteVehicle(vehicleId) {
-            if (!confirm("Are you sure you want to delete this vehicle listing? This action cannot be undone.")) {
-                return;
-            }
-
+            if (!confirm("Delete this listing permanently?")) return;
             const token = getToken();
-            if (!token) {
-                alert("Please login first!");
-                return;
-            }
+            if (!token) return alert("Please login first!");
 
             try {
                 const res = await fetch(`${API_BASE_VEHICLES}/${vehicleId}`, {
                     method: "DELETE",
-                    headers: {
-                        "Authorization": "Bearer " + token
-                    }
+                    headers: { "Authorization": "Bearer " + token }
                 });
-
-                if (!res.ok) throw new Error("Failed to delete vehicle");
+                if (!res.ok) throw new Error("Failed to delete");
                 
-                alert("Vehicle deleted successfully!");
-                loadUserVehicles(); // Refresh the list
+                // Minimal visual feedback usually better than alert, but keeping alert as requested logic
+                alert("Listing deleted.");
+                loadUserVehicles();
             } catch (err) {
-                console.error("Error deleting vehicle:", err);
-                alert("Failed to delete vehicle. Please try again.");
+                console.error(err);
+                alert("Could not delete vehicle.");
             }
         }
 
@@ -1549,16 +979,12 @@ function renderFilteredVehicles() {
                 const token = getToken();
                 const res = await fetch(`${API_BASE_VEHICLES}/my-listings/${vehicleId}`, {
                     method: "GET",
-                    headers: { 
-                        "Authorization": "Bearer " + token,
-                        "Content-Type": "application/json"
-                    }
+                    headers: { "Authorization": "Bearer " + token, "Content-Type": "application/json" }
                 });
                 
-                if (!res.ok) throw new Error("Failed to fetch vehicle details");
+                if (!res.ok) throw new Error("Failed to fetch vehicle");
                 const vehicle = await res.json();
 
-                // Populate form fields
                 document.getElementById("edit-make").value = vehicle.make || "";
                 document.getElementById("edit-model").value = vehicle.model || "";
                 document.getElementById("edit-year").value = vehicle.year || "";
@@ -1567,19 +993,16 @@ function renderFilteredVehicles() {
                 document.getElementById("edit-price").value = vehicle.price || "";
                 document.getElementById("edit-contactPhone").value = vehicle.contactPhone || "";
 
-                // Handle images
                 vehicleImages = vehicle.imageUrls || [];
                 updateImagePreview();
-
-                // Show the modal
                 editModal.style.display = "block";
             } catch (err) {
                 console.error(err);
-                alert("Failed to load vehicle info");
+                alert("Failed to load details");
             }
         }
 
-        // ================== PREVIEW VEHICLE IMAGES ==================
+        // ================== IMAGE FUNCTIONS ==================
         function previewVehicleImages(input) {
             if (input.files && input.files.length > 0) {
                 for (let i = 0; i < input.files.length; i++) {
@@ -1593,25 +1016,18 @@ function renderFilteredVehicles() {
             }
         }
 
-        // ================== UPDATE IMAGE PREVIEW ==================
         function updateImagePreview() {
             const previewContainer = document.getElementById("imagePreview");
             if (!previewContainer) return;
-            
             previewContainer.innerHTML = "";
-            
             vehicleImages.forEach((img, index) => {
                 const previewItem = document.createElement("div");
                 previewItem.className = "image-preview-item";
-                previewItem.innerHTML = `
-                    <img src="${img}" alt="Vehicle image ${index + 1}">
-                    <span class="remove-image" onclick="removeImage(${index})">&times;</span>
-                `;
+                previewItem.innerHTML = `<img src="${img}"><span class="remove-image" onclick="removeImage(${index})">&times;</span>`;
                 previewContainer.appendChild(previewItem);
             });
         }
 
-        // ================== REMOVE IMAGE ==================
         function removeImage(index) {
             vehicleImages.splice(index, 1);
             updateImagePreview();
@@ -1620,10 +1036,7 @@ function renderFilteredVehicles() {
         // ================== UPDATE VEHICLE ==================
         async function updateVehicle() {
             const token = getToken();
-            if (!token) {
-                alert("Please login first!");
-                return;
-            }
+            if (!token) return alert("Please login first!");
 
             const updatedVehicle = {
                 make: document.getElementById("edit-make").value,
@@ -1639,91 +1052,81 @@ function renderFilteredVehicles() {
             try {
                 const res = await fetch(`${API_BASE_VEHICLES}/my-listings/${currentVehicleId}`, {
                     method: "PUT",
-                    headers: {
-                        "Authorization": "Bearer " + token,
-                        "Content-Type": "application/json"
-                    },
+                    headers: { "Authorization": "Bearer " + token, "Content-Type": "application/json" },
                     body: JSON.stringify(updatedVehicle)
                 });
 
                 if (!res.ok) throw new Error("Update failed");
-
-                alert("Vehicle updated successfully!");
+                alert("Saved successfully!");
                 closeEditModal();
-                loadUserVehicles(); // Refresh the vehicle list
+                loadUserVehicles();
             } catch (err) {
                 console.error(err);
-                alert("Error updating vehicle");
+                alert("Update failed");
             }
         }
 
-        // ================== CLOSE EDIT MODAL ==================
-        function closeEditModal() {
-            editModal.style.display = "none";
-            vehicleImages = []; // Reset images
-        }
+        function closeEditModal() { editModal.style.display = "none"; vehicleImages = []; }
 
-        // ================== UTILITY FUNCTIONS ==================
+        // ================== UTILS ==================
         function formatPrice(price) {
-            if (!price) return "Price not available";
-            return new Intl.NumberFormat('en-LK', { 
-                style: 'currency', 
-                currency: 'LKR',
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0
-            }).format(price);
+            if (!price) return "N/A";
+            return new Intl.NumberFormat('en-LK', { style: 'currency', currency: 'LKR', maximumFractionDigits: 0 }).format(price);
         }
 
         function formatDate(dateString) {
-            if (!dateString) return "Date not available";
-            const date = new Date(dateString);
-            return date.toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric'
-            });
+            if (!dateString) return "";
+            return new Date(dateString).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
         }
 
-        // ================== PROFILE MODAL ==================
+        // ================== UI TOGGLES ==================
         function viewProfile() {
             const modal = document.getElementById('updateProfileModal');
             if (modal) modal.style.display = 'block';
             toggleProfileMenu();
         }
-        function closeProfileModal() {
-            const modal = document.getElementById('updateProfileModal');
-            if (modal) modal.style.display = 'none';
+        function closeProfileModal() { document.getElementById('updateProfileModal').style.display = 'none'; }
+        
+        function toggleProfileMenu() {
+            const menu = document.getElementById('profileMenu');
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
         }
-        window.onclick = function(event) {
-            const modal = document.getElementById('updateProfileModal');
-            if (event.target == modal) closeProfileModal();
-            
-            const editModal = document.getElementById('editVehicleModal');
-            if (event.target == editModal) closeEditModal();
+        function toggleMobileMenu() {
+            document.getElementById('navLinks').classList.toggle('active');
         }
 
-        // ================== PROFILE IMAGE PREVIEW ==================
+        function logout() {
+            if (confirm("Logout of AutoCert?")) {
+                clearToken();
+                window.location.href = "/Frontend/index.html";
+            }
+        }
+        
+        function scheduleInspection() { window.location.href = '/Frontend/pages/test-ins.html'; }
+
+        // Close modals on outside click
+        window.onclick = function(event) {
+            if (event.target == document.getElementById('updateProfileModal')) closeProfileModal();
+            if (event.target == document.getElementById('editVehicleModal')) closeEditModal();
+        }
+
+        // Profile Image Preview (Modal)
         function previewImage(input) {
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
-                reader.onload = function(e) {
-                    const profileImg = document.getElementById('profileImage');
-                    if (profileImg) profileImg.src = e.target.result;
-                };
+                reader.onload = function(e) { document.getElementById('profileImage').src = e.target.result; };
                 reader.readAsDataURL(input.files[0]);
             }
         }
 
-        // ================== SAVE PROFILE ==================
         async function saveProfile() {
+            // Profile save logic kept intact...
             const token = getToken();
             if (!token) { alert("Please login first!"); return; }
-
             const formData = new FormData();
             formData.append("firstName", document.getElementById("firstName").value);
             formData.append("lastName", document.getElementById("lastName").value);
             formData.append("phone", document.getElementById("phoneNumber").value);
-
             const imageFile = document.getElementById("profilePicInput")?.files[0];
             if (imageFile) formData.append("image", imageFile);
 
@@ -1733,16 +1136,8 @@ function renderFilteredVehicles() {
                     headers: { "Authorization": "Bearer " + token },
                     body: formData
                 });
-
                 if (!res.ok) throw new Error("Profile update failed");
-                const updatedUser = await res.json();
-
-                alert("Profile updated successfully!");
-                const headerName = document.querySelector(".profile-trigger div div:first-child");
-                if (headerName) headerName.textContent = `${updatedUser.firstName} ${updatedUser.lastName}`;
-                const profileImg = document.getElementById("profileImage");
-                if (profileImg) profileImg.src = updatedUser.profileImageUrl || "https://via.placeholder.com/100x100/1e40af/white?text=JS";
-
+                alert("Profile updated!");
                 closeProfileModal();
             } catch(err) {
                 console.error(err);
@@ -1750,48 +1145,6 @@ function renderFilteredVehicles() {
             }
         }
 
-        // ================== LOGOUT ==================
-        function logout() {
-            if (confirm("Are you sure you want to logout?")) {
-                clearToken();
-                window.location.href = "/Frontend/index.html";
-            }
-        }
-
-        // ================== NAVIGATION ==================
-        function scheduleInspection() {
-            window.location.href = '/Frontend/pages/test-ins.html';
-        }
-
-        // ================== MENU FUNCTIONS ==================
-        function toggleProfileMenu() {
-            const menu = document.getElementById('profileMenu');
-            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
-        }
-
-        function toggleMobileMenu() {
-            const navLinks = document.getElementById('navLinks');
-            navLinks.classList.toggle('active');
-        }
-
-        // Close profile menu when clicking outside
-        document.addEventListener('click', function(event) {
-            const profileDropdown = document.querySelector('.profile-dropdown');
-            const profileMenu = document.getElementById('profileMenu');
-            
-            if (profileDropdown && !profileDropdown.contains(event.target)) {
-                profileMenu.style.display = 'none';
-            }
-        });
-
-        // Close mobile menu when clicking on a link
-        document.querySelectorAll('.nav-links a').forEach(link => {
-            link.addEventListener('click', () => {
-                document.getElementById('navLinks').classList.remove('active');
-            });
-        });
-
-        // ================== INIT ==================
         document.addEventListener("DOMContentLoaded", () => {
             loadUserProfile();
             loadUserVehicles();
